@@ -20,7 +20,7 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    private String password;
+    private String senha;
 
     @Enumerated(EnumType.STRING) // garante que o valor seja salvo como texto no db, e não como numero.
     private TipoUsuario tipoUsuario; //Professor ou Estudante
