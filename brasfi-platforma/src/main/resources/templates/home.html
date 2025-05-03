@@ -9,6 +9,10 @@
 </head>
 <body>
 <p sec:authentication="name">Usuário</p>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Sair</button>
+</form>
+<p th:if="${param.logout}" style="color: green;">Você saiu com sucesso.</p>
 
 </body>
 </html>
