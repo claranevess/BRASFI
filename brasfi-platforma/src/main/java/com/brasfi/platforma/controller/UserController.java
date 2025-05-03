@@ -1,0 +1,30 @@
+package com.brasfi.platforma.controller;
+
+import com.brasfi.platforma.model.User;
+import com.brasfi.platforma.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+@Controller
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    // Rota para exibir o formulário de registro
+    @GetMapping("/registrar")
+    public String mostrarRegistroForm(Model model) {
+        model.addAttribute("user", new User()); // Adiciona um objeto "user" vazio para o formulário
+        return "registrarUser"; // Retorna a página de registro
+    }
+
+    // Rota para processar o envio do formulário
+    @PostMapping("/registrar")
+    public String registrarUser(User user) {
+        userService.salvarUser(user); // Salva o usuário no banco de dados
+        return "redirect:/login"; // Redireciona para a página de login após o registro
+    }
+}
