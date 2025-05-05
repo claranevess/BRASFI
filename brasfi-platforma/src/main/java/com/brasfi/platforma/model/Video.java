@@ -1,14 +1,16 @@
 package com.brasfi.platforma.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
+import java.util.List;
+
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "videos")
 public class Video {
     @Id
@@ -16,8 +18,23 @@ public class Video {
     private Long id;
 
     private String url;
-    private String titulo;
+    private String title;
     private String categoria;
-    private String usuario;
-    private String comunidade;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User usuario;
+
+    @ElementCollection
+    @CollectionTable(name = "video_comunidades", joinColumns = @JoinColumn(name = "video_id"))
+    @Column(name = "comunidade")
+    private List<String> comunidades;
+
+    public boolean usuarioExiste() {
+        return this.usuario != null && this.usuario.getId() != null;
+    }
+
+    public boolean comunidadeExiste(String comunidade) {
+        return this.comunidades != null && this.comunidades.contains(comunidade);
+    }
 }
