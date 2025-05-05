@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Vídeos</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>Vídeos Cadastrados</h2>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Categoria</th>
+        <th>URL</th>
+        <th>Usuário</th>
+        <th>Comunidade</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="video : ${videos}">
+        <td th:text="${video.id}"></td>
+        <td th:text="${video.titulo}"></td>
+        <td th:text="${video.categoria}"></td>
+        <td>
+            <a th:href="${video.url}" target="_blank" th:text="${video.url}"></a>
+        </td>
+        <td th:text="${video.usuario}"></td>
+        <td th:text="${video.comunidade}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<br/>
+<a th:href="@{/videos/enviar}">Enviar novo vídeo</a>
+</body>
+</html>
