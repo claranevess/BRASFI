@@ -29,6 +29,8 @@
 - **Sofia Tenório** - <a href="mailto:sgt@cesar.school">📧</a> - <a href="https://www.linkedin.com/in/sofia-tenorio2/"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="20"></a>
 
 ### Design
+- **Eduarda Albuquerque** - <a href="mailto:meas@cesar.school">📧</a> - <a href="https://www.linkedin.com/in/mariaedualb/"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="20"></a>
+- **Beatriz Torres** - <a href="mailto:bctsm@cesar.school">📧</a> - <a href="https://www.linkedin.com/in/beatriztorrel/"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="20"></a>
 
 ## Contribuidores
 <a href="https://github.com/claranevess/BRASFI/graphs/contributors">
