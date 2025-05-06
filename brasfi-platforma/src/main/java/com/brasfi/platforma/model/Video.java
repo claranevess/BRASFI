@@ -1,11 +1,9 @@
 package com.brasfi.platforma.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -18,6 +16,19 @@ public class Video {
     private String url;
     private String titulo;
     private String categoria;
-    private String usuario;
-    private String comunidade;
+
+    @ElementCollection
+    private List<String> comunidade; // Comunidade agora é uma lista
+
+    private String usuario; // Tipo de dado do usuário
+
+    // Método para verificar se o usuário existe
+    public String verificarUsuario(String usuario) {
+        return this.usuario != null && this.usuario.equals(usuario) ? "Usuário existe" : "Usuário não encontrado";
+    }
+
+    // Método para verificar se a comunidade existe
+    public String verificarComunidade(String comunidade) {
+        return this.comunidade != null && this.comunidade.contains(comunidade) ? "Comunidade existe" : "Comunidade não encontrada";
+    }
 }
