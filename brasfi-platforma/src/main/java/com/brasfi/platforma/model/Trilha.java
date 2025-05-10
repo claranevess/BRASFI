@@ -20,6 +20,8 @@ public class Trilha {
 
     private String titulo;
 
+    private String descricao;
+
     @ManyToMany
     @JoinTable(
             name = "trilha_aula",

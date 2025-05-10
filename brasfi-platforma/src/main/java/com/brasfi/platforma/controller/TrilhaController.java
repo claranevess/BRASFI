@@ -1,4 +1,33 @@
 package com.brasfi.platforma.controller;
 
+import com.brasfi.platforma.model.Trilha;
+import com.brasfi.platforma.service.TrilhaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+@Controller
+@RequestMapping("/trilhas")
 public class TrilhaController {
+
+    @Autowired
+    private TrilhaService trilhaService;
+
+    // Rota para exibir o formulário de registro
+    @GetMapping("/registrar")
+    public String mostrarRegistroTrilhaForm(Model model) {
+        model.addAttribute("trilha", new Trilha());
+        return "registrarTrilha"; // Retorna a página de registro
+    }
+
+    // Rota para processar o envio do formulário
+    @PostMapping("/registrar")
+    public String registrarTrilha(Trilha trilha) {
+        trilhaService.salvarTrilha(trilha);
+        return "redirect:/";
+    }
 }
