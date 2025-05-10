@@ -3,6 +3,8 @@ package com.brasfi.platforma.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -27,4 +29,8 @@ public class User {
 
     @Embedded
     private Endereco endereco; // atributo composto: cep, estado, cidade, pais e rua
+
+    @ManyToMany(mappedBy = "inscritos")
+    private List<Trilha> trilhasInscritas; //  não é obrigatório, mas é útil caso queira saber em quais trilhas um usuário está inscrito.
+
 }
