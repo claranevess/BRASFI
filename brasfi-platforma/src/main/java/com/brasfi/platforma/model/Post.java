@@ -25,6 +25,10 @@ public class Post {
 
     private LocalDate dataCriacao;
 
+    @ManyToOne
+    @JoinColumn(name = "forum_id")
+    private Forum forum;
+
     // TO-DO: adicionar o atributo de comentarios
 
     // TO-DO: adicionar o atributo de curtidas
