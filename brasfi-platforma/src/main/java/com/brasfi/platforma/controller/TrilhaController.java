@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -28,6 +29,19 @@ public class TrilhaController {
     @PostMapping("/registrar")
     public String registrarTrilha(Trilha trilha) {
         trilhaService.salvarTrilha(trilha);
+        return "redirect:/";
+    }
+
+    @GetMapping("/deletar")
+    public String mostrarConfirmacao(@RequestParam("id") Long id, Model model) {
+        Trilha trilha = trilhaService.buscarPorId(id);
+        model.addAttribute("trilha", trilha);
+        return "deletarTrilha";
+    }
+
+    @PostMapping("/deletar")
+    public String deletarTrilha(Trilha trilha) {
+        trilhaService.deletarTrilha(trilha);
         return "redirect:/";
     }
 }

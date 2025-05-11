@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deletar Trilha</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Deletar <span th:text="*{titulo}"></span></h2>
+    <form th:action="@{/trilhas/deletar}" th:object="${trilha}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        <div class="mb-3">
+            <p>Tem certeza que deseja <b>deletar <span th:text="*{titulo}"></span></b>? Esta ação não pode ser desfeita.</p>
+        </div>
+        <button type="submit" class="btn btn-primary">Sim, deletar</button>
+    </form>
+</div>
+</body>
+</html>

@@ -12,8 +12,19 @@ public class TrilhaService {
     @Autowired
     private TrilhaRepository trilhaRepository;
 
+    public Trilha buscarPorId(Long id) {
+        return trilhaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Trilha não encontrada com ID: " + id));
+    }
+
     public Trilha salvarTrilha(Trilha trilha) {
         return trilhaRepository.save(trilha);
+    }
+
+    public void deletarTrilha(Trilha trilha) {
+        Trilha existente = trilhaRepository.findById(trilha.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Trilha não encontrada"));
+        trilhaRepository.delete(existente);
     }
 
 }
