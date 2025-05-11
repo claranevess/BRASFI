@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED) // Define herança JPA
+@Inheritance(strategy = InheritanceType.JOINED) // define herança JPA
 public class User {
 
     @Id

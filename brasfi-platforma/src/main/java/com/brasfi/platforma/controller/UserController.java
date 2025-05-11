@@ -1,5 +1,8 @@
 package com.brasfi.platforma.controller;
 
+import com.brasfi.platforma.model.Estudante;
+import com.brasfi.platforma.model.Mentor;
+import com.brasfi.platforma.model.TipoUsuario;
 import com.brasfi.platforma.model.User;
 import com.brasfi.platforma.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,14 @@ public class UserController {
     // Rota para processar o envio do formulário
     @PostMapping("/registrar")
     public String registrarUser(User user) {
-        userService.salvarUser(user); // Salva o usuário no banco de dados
+        //userService.salvarUser(user); // Salva o usuário no banco de dados
+        if(user.getTipoUsuario() == TipoUsuario.ESTUDANTE){
+            Estudante estudante = new Estudante(user);
+            userService.salvarUser(estudante);
+        } else if (user.getTipoUsuario() == TipoUsuario.MENTOR){
+            Mentor mentor = new Mentor(user);
+            userService.salvarUser(mentor);
+        }
         return "redirect:/login"; // Redireciona para a página de login após o registro
     }
 }

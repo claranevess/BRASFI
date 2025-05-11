@@ -13,4 +13,9 @@ public class Estudante extends User {
 
     @ManyToMany
     private List<Aula> aulasAssistidas;
+
+    public Estudante(User user) {
+        super(user.getId(), user.getUsername(), user.getEmail(), user.getSenha(), user.getTipoUsuario(), user.getEndereco(), user.getTrilhasInscritas());
+    }
+
 }

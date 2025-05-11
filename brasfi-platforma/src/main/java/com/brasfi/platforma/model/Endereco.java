@@ -11,9 +11,7 @@ A gente usa pq Endereco é um atributo composto de User.*/
 @Data
 @Embeddable
 public class Endereco {
-    private String cep;
-    private String estado;
     private String cidade;
+    private String estado;
     private String pais;
-    private String rua;
 }
