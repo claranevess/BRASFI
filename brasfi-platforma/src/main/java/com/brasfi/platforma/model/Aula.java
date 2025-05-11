@@ -20,7 +20,9 @@ public class Aula {
     private String titulo;
     private String link;
     private String descricao;
-    private String professor; // TO-DO: alterar para tipo Professor
+    @ManyToOne
+    @JoinColumn(name = "mentor_id")
+    private Mentor mentor;
 
     @ManyToMany(mappedBy = "aulas")
     private List<Trilha> trilhas;
