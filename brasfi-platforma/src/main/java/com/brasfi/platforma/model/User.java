@@ -6,10 +6,11 @@ import lombok.*;
 import java.util.List;
 
 @Entity
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED) // Define herança JPA
 public class User {
 
     @Id
@@ -24,13 +25,12 @@ public class User {
 
     private String senha;
 
-    @Enumerated(EnumType.STRING) // garante que o valor seja salvo como texto no db, e não como numero.
-    private TipoUsuario tipoUsuario; //Professor ou Estudante
+    @Enumerated(EnumType.STRING)
+    private TipoUsuario tipoUsuario;
 
     @Embedded
-    private Endereco endereco; // atributo composto: cep, estado, cidade, pais e rua
+    private Endereco endereco;
 
     @ManyToMany(mappedBy = "inscritos")
-    private List<Trilha> trilhasInscritas; //  não é obrigatório, mas é útil caso queira saber em quais trilhas um usuário está inscrito.
-
+    private List<Trilha> trilhasInscritas;
 }
