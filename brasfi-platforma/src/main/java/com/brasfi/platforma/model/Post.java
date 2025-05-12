@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.time.LocalDate;
 
 @Entity
@@ -29,7 +30,11 @@ public class Post {
     @JoinColumn(name = "forum_id")
     private Forum forum;
 
-    // TO-DO: adicionar o atributo de comentarios
+    private String conteudo;
 
-    // TO-DO: adicionar o atributo de curtidas
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Curtida> curtidas;
 }

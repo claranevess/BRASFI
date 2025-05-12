@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Forum {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
