@@ -20,8 +20,6 @@ public class Video {
     @ElementCollection
     private List<String> comunidade; // Comunidade agora é uma lista
 
-    private String usuario; // Tipo de dado do usuário
-
     // Método para verificar se o usuário existe
     public String verificarUsuario(String usuario) {
         return this.usuario != null && this.usuario.equals(usuario) ? "Usuário existe" : "Usuário não encontrado";

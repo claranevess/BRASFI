@@ -1,7 +1,7 @@
 package com.brasfi.platforma.controller;
 
-import com.brasfi.platforma.model.Video;
-import com.brasfi.platforma.service.VideoService;
+import com.brasfi.platforma.model.Aula;
+import com.brasfi.platforma.service.AulaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,26 +11,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/videos")
+@RequestMapping("/aulas")
 @RequiredArgsConstructor
-public class VideoController {
-    private final VideoService videoService;
+public class AulaController {
+    private final AulaService aulaService;
 
     @GetMapping("/enviar")
     public String mostrarFormularioEnvio(Model model) {
-        model.addAttribute("video", new Video());
-        return "enviar-video";
+        model.addAttribute("aula", new Aula());
+        return "enviar-aula";
     }
 
     @PostMapping("/salvar")
-    public String salvarVideo(@ModelAttribute Video video) {
-        videoService.salvarVideo(video);
-        return "redirect:/videos/enviar?sucesso";
+    public String salvarAula(@ModelAttribute Aula aula) {
+        aulaService.salvarAula(aula);
+        return "redirect:/aulas/enviar?sucesso";
     }
 
     @GetMapping("/listar")
-    public String listarVideos(Model model) {
-        model.addAttribute("videos", videoService.listarTodosVideos());
-        return "listar-videos";
+    public String listarAulas(Model model) {
+        model.addAttribute("aulas", aulaService.listarTodosAulas());
+        return "listar-aulas";
     }
 }
