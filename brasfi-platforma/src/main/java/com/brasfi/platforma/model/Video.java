@@ -15,12 +15,13 @@ public class Video {
 
     private String url;
     private String titulo;
-    private String categoria;
+    private String descricao;
+    private String trilha;
 
     @ElementCollection
-    private List<String> comunidade; // Comunidade agora é uma lista
+    private List<String> comunidade;
 
-    private String usuario; // Tipo de dado do usuário
+    private String usuario;
 
     // Método para verificar se o usuário existe
     public String verificarUsuario(String usuario) {
