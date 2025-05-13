@@ -44,4 +44,17 @@ public class TrilhaController {
         trilhaService.deletarTrilha(trilha);
         return "redirect:/";
     }
+
+    @GetMapping("/editar")
+    public String mostrarEditarTrilhaForm(@RequestParam("id") Long id, Model model) {
+        Trilha trilha = trilhaService.buscarPorId(id);
+        model.addAttribute("trilha", trilha);
+        return "editarTrilha";
+    }
+
+    @PostMapping("/editar")
+    public String editarTrilha(Trilha trilha) {
+        trilhaService.atualizarTrilha(trilha);
+        return "redirect:/";
+    }
 }

@@ -25,4 +25,11 @@ public class TrilhaService {
         trilhaRepository.delete(existente);
     }
 
+    public Trilha atualizarTrilha(Trilha trilha) {
+        if (!trilhaRepository.existsById(trilha.getId())) {
+            throw new IllegalArgumentException("Trilha não encontrada para atualização");
+        }
+        return trilhaRepository.save(trilha);
+    }
+
 }
