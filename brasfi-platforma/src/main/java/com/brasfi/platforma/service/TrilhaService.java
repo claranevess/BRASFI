@@ -1,9 +1,7 @@
 package com.brasfi.platforma.service;
 
 import com.brasfi.platforma.model.Trilha;
-import com.brasfi.platforma.model.Video;
 import com.brasfi.platforma.repository.TrilhaRepository;
-import com.brasfi.platforma.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,4 +25,10 @@ public class TrilhaService {
         trilhaRepository.delete(existente);
     }
 
+    public Trilha atualizarTrilha(Trilha trilha) {
+        if (!trilhaRepository.existsById(trilha.getId())) {
+            throw new IllegalArgumentException("Trilha não encontrada para atualização");
+        }
+        return trilhaRepository.save(trilha);
+    }
 }

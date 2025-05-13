@@ -5,11 +5,7 @@ import com.brasfi.platforma.service.TrilhaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/trilhas")
@@ -18,14 +14,12 @@ public class TrilhaController {
     @Autowired
     private TrilhaService trilhaService;
 
-    // Rota para exibir o formulário de registro
     @GetMapping("/registrar")
     public String mostrarRegistroTrilhaForm(Model model) {
         model.addAttribute("trilha", new Trilha());
-        return "registrarTrilha"; // Retorna a página de registro
+        return "registrarTrilha";
     }
 
-    // Rota para processar o envio do formulário
     @PostMapping("/registrar")
     public String registrarTrilha(Trilha trilha) {
         trilhaService.salvarTrilha(trilha);
@@ -42,6 +36,19 @@ public class TrilhaController {
     @PostMapping("/deletar")
     public String deletarTrilha(Trilha trilha) {
         trilhaService.deletarTrilha(trilha);
+        return "redirect:/";
+    }
+
+    @GetMapping("/editar")
+    public String mostrarEditarTrilhaForm(@RequestParam("id") Long id, Model model) {
+        Trilha trilha = trilhaService.buscarPorId(id);
+        model.addAttribute("trilha", trilha);
+        return "editarTrilha";
+    }
+
+    @PostMapping("/editar")
+    public String editarTrilha(Trilha trilha) {
+        trilhaService.atualizarTrilha(trilha);
         return "redirect:/";
     }
 }
