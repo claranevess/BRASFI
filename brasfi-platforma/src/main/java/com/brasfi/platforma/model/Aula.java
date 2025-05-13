@@ -29,4 +29,7 @@ public class Aula {
 
     // TO-DO: adicionar o atributo de comentarios
 
+    @ManyToOne
+    @JoinColumn(name = "grupo_id")
+    private Grupo grupo;
 }
