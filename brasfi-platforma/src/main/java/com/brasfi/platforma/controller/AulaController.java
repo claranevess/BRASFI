@@ -25,12 +25,12 @@ public class AulaController {
     @PostMapping("/salvar")
     public String salvarAula(@ModelAttribute Aula aula) {
         aulaService.salvarAula(aula);
-        return "redirect:/aulas/enviar?sucesso";
-    }
+        return "enviar-aula";
+    }// fazer um popup em js
 
-    @GetMapping("/listar")
+    /*@GetMapping("/listar")
     public String listarAulas(Model model) {
         model.addAttribute("aulas", aulaService.listarTodosAulas());
         return "listar-aulas";
-    }
+    }*/
 }

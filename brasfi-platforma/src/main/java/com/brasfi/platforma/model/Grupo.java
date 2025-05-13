@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,8 +33,8 @@ public class Grupo {
     @Column(name = "admin_id")
     private List<Long> adminsId;
 
-    @OneToMany(mappedBy = "grupo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comentario> mensagens;
+    //@OneToMany(mappedBy = "grupo", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Comentario> mensagens;
 
     public void entrarGrupo(Long usuarioID, User user) {
         if (!membros.contains(user)) {

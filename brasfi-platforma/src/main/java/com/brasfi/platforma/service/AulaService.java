@@ -16,7 +16,7 @@ public class AulaService {
         return aulaRepository.save(aula);
     }
 
-    public List<Aula> listarTodosAulas() {
+    /*public List<Aula> listarTodosAulas() {
         return aulaRepository.findAll();
-    }
+    }*/
 }
