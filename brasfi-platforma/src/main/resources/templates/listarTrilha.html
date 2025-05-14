@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Trilhas de Conhecimento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+
+<div class="flex h-screen">
+    <aside class="w-60 bg-gray-200 p-6 flex flex-col gap-6">
+        <div class="text-xl font-bold">BRASFI conecta</div>
+        <nav class="flex flex-col gap-4">
+            <button class="text-left text-lg font-medium">Dashboard</button>
+            <button class="text-left text-lg font-medium text-blue-600">Trilhas</button>
+            <button class="text-left text-lg font-medium">Grupos</button>
+            <button class="text-left text-lg font-medium">Projetos</button>
+        </nav>
+    </aside>
+
+
+    <main class="flex-1 p-6">
+
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Trilhas de conhecimento</h1>
+            <div class="flex items-center gap-4">
+                <input type="text" placeholder="Pesquisar por trilhas ou aulas" class="border border-gray-300 rounded-full px-4 py-2 w-80"/>
+                <div class="flex items-center gap-2">
+                    <span class="font-semibold">Usuário</span>
+                    <span class="text-sm text-gray-500">Cargo</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="flex gap-4 mb-6">
+            <button class="bg-gray-300 px-4 py-2 rounded-full text-sm">Todos</button>
+            <button class="bg-gray-300 px-4 py-2 rounded-full text-sm">Liderança</button>
+            <button class="bg-gray-300 px-4 py-2 rounded-full text-sm">Finanças</button>
+            <button class="bg-gray-300 px-4 py-2 rounded-full text-sm">Empreendedorismo</button>
+            <button class="bg-gray-300 px-4 py-2 rounded-full text-sm">Saúde</button>
+        </div>
+
+
+        <div class="flex gap-6">
+            <div class="grid grid-cols-3 gap-6 w-3/4">
+
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="h-32 bg-gray-200 rounded mb-4"></div>
+                    <span class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700">Liderança</span>
+                    <h2 class="font-semibold mt-2">Fundamentos de Finanças Sustentáveis</h2>
+                    <p class="text-sm text-gray-600">Descrição do curso, conteúdos, materiais de apoio...</p>
+                    <div class="mt-2 text-yellow-500">★★★★☆ (123)</div>
+                </div>
+
+
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="h-32 bg-gray-200 rounded mb-4"></div>
+                    <span class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700">Finanças</span>
+                    <h2 class="font-semibold mt-2">Nome da trilha mais extenso</h2>
+                    <p class="text-sm text-gray-600">Descrição do curso, conteúdos, materiais de apoio...</p>
+                    <div class="mt-2 text-yellow-500">★★★★☆ (98)</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="h-32 bg-gray-200 rounded mb-4"></div>
+                    <span class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700">Empreendedorismo</span>
+                    <h2 class="font-semibold mt-2">Nome da trilha</h2>
+                    <p class="text-sm text-gray-600">Descrição do curso, conteúdos, materiais de apoio...</p>
+                    <div class="mt-2 text-yellow-500">★★★★☆ (223)</div>
+                </div>
+            </div>
+
+
+            <aside class="w-1/4 bg-white p-4 rounded-lg shadow h-fit">
+                <h3 class="font-semibold mb-4">Sugestões:</h3>
+                <div class="mb-3">
+                    <p class="text-sm text-gray-500">Aula 01: Nome da aula</p>
+                    <p class="text-xs text-gray-400">Nome do curso</p>
+                    <a href="#" class="text-blue-600 text-xs">Acessar ></a>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Aula 02: Por que Sustentabilidade Importa?</p>
+                    <p class="text-xs text-gray-400">Introdução à Finanças Sustentáveis</p>
+                    <a href="#" class="text-blue-600 text-xs">Acessar ></a>
+                </div>
+            </aside>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

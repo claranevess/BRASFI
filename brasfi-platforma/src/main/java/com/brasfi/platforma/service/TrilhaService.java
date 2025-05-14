@@ -5,10 +5,16 @@ import com.brasfi.platforma.repository.TrilhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TrilhaService {
     @Autowired
     private TrilhaRepository trilhaRepository;
+
+    public List<Trilha> listaTrilhas() {
+        return trilhaRepository.findAll();
+    }
 
     public Trilha buscarPorId(Long id) {
         return trilhaRepository.findById(id)

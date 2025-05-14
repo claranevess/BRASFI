@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 
 @Controller
 @RequestMapping("/trilhas")
@@ -57,4 +59,14 @@ public class TrilhaController {
         trilhaService.atualizarTrilha(trilha);
         return "redirect:/";
     }
+
+    @GetMapping("/listar")
+    public String mostrarListaTrilha(Model model) {
+        List<Trilha> trilhas = trilhaService.listaTrilhas();
+        model.addAttribute("trilhas", trilhas);
+        return "listarTrilha";
+    }
+
+
+
 }
