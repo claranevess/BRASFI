@@ -15,7 +15,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/registrar", "/css/**", "/js/**").permitAll() // rotas públicas
+                        .requestMatchers(
+                                "/login",
+                                "/registrar",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/imagens/**",
+                                "/favicon.ico",
+                                "/exemplo.jpg",
+                                "/favicon-brasfi.png"
+                        ).permitAll() // rotas públicas
                         .requestMatchers("/").authenticated() // raiz exige login
                         .anyRequest().authenticated() // tudo o que não foi listado acima também exige login
                 )
