@@ -36,6 +36,7 @@
 
             <!-- Formulário -->
             <form th:action="@{/login}" method="post" class="mt-8 w-full space-y-4">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div>
                     <input type="text" name="username" id="username" placeholder="Email, telefone ou usuário"
                            class="placeholder-[#A1A1A1] placeholder-text-base w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none focus:ring-0 text-black"
