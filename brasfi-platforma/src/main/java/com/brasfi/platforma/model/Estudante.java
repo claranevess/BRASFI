@@ -15,7 +15,15 @@ public class Estudante extends User {
     private List<Aula> aulasAssistidas;
 
     public Estudante(User user) {
-        super(user.getId(), user.getUsername(), user.getEmail(), user.getSenha(), user.getTipoUsuario(), user.getEndereco(), user.getTrilhasInscritas());
+        this.setId(user.getId());
+        this.setUsername(user.getUsername());
+        this.setNome(user.getNome());
+        this.setEmail(user.getEmail());
+        this.setTelefone(user.getTelefone());
+        this.setSenha(user.getSenha());
+        this.setTipoUsuario(user.getTipoUsuario());
+        this.setEndereco(user.getEndereco());
+        this.setTrilhasInscritas(user.getTrilhasInscritas());
     }
 
 }

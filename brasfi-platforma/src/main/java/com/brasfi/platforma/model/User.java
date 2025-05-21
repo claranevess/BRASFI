@@ -1,7 +1,9 @@
 package com.brasfi.platforma.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.hibernate.annotations.processing.Pattern;
 
 import java.util.List;
 
@@ -20,8 +22,15 @@ public class User {
     @Column(unique = true)
     private String username;
 
+    @Column(nullable = false)
+    private String nome;
+
+    @Email
     @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
+    private String telefone; // TO-DO: Adicionar pattern
 
     private String senha;
 

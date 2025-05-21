@@ -1,40 +1,179 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Usuário</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="container mt-5">
-    <h2>Cadastro</h2>
-    <form th:action="@{/registrar}" th:object="${user}" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label">Nome de Usuário</label>
-            <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="Digite o nome de usuário" required>
-        </div>
+<body class="m-0 p-0 bg-[#fafafa]" style="font-family: 'Inter', sans-serif;">
 
-        <div class="mb-3">
-            <label for="email" class="form-label">E-mail</label>
-            <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Digite o e-mail" required>
-        </div>
+<div class="flex flex-col lg:flex-row h-screen bg-[#fafafa] overflow-hidden">
 
-        <div class="mb-3">
-            <label for="senha" class="form-label">Senha</label>
-            <input type="password" id="senha" th:field="*{senha}" class="form-control" placeholder="Digite a senha" required>
-        </div>
+    <!-- Lado esquerdo: Imagem -->
+    <div class="lg:w-1/2 bg-cover bg-center lg:flex hidden items-center justify-center h-screen">
+        <img src="/exemplo.jpg" alt="Imagem decorativa" class="w-full mb-4" />
+    </div>
 
-        <div class="mb-3">
-            <label for="tipoUsuario" class="form-label">Função</label>
-            <select id="tipoUsuario" th:field="*{tipoUsuario}" class="form-control" required>
-                <option value="MENTOR">Mentor</option>
-                <option value="ESTUDANTE">Estudante</option>
-            </select>
-        </div>
+    <!-- Lado direito: Formulário -->
+    <div class="lg:w-2/3 flex flex-col items-center justify-center bg-white h-screen p-6">
+        <div class="w-full max-w-md">
 
-        <button type="submit" class="btn btn-primary">Cadastrar</button>
-    </form>
+            <div class="mt-8 flex flex-col items-start">
+                <img src="/favicon-brasfi.png" alt="Logo" class="mb-8" />
+                <p class="font-normal text-xl text-[#444444] mb-2">Bem-vindo(a)!</p>
+                <h1 class="font-bold text-3xl mb-8">Junte-se a BRASFI Conecta</h1>
+            </div>
+
+            <!-- Formulário -->
+            <form th:action="@{/registrar}" th:object="${user}" method="post" class="mt-8 w-full space-y-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nome completo -->
+                    <div>
+                        <input
+                                type="text"
+                                id="nome"
+                                th:field="*{nome}"
+                                placeholder="Nome completo"
+                                class="placeholder-[#A1A1A1] w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black"
+                                required
+                        />
+                    </div>
+
+                    <!-- Nome de usuário -->
+                    <div>
+                        <input
+                                type="text"
+                                id="username"
+                                th:field="*{username}"
+                                placeholder="Nome de Usuário"
+                                class="placeholder-[#A1A1A1] w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black"
+                                required
+                        />
+                    </div>
+
+                    <!-- E-mail -->
+                    <div>
+                        <input
+                                type="email"
+                                id="email"
+                                th:field="*{email}"
+                                placeholder="E-mail"
+                                class="placeholder-[#A1A1A1] w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black"
+                                required
+                        />
+                    </div>
+
+                    <!-- Telefone -->
+                    <div>
+                        <input
+                                type="text"
+                                id="telefone"
+                                th:field="*{telefone}"
+                                placeholder="Telefone"
+                                class="placeholder-[#A1A1A1] w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black"
+                                required
+                        />
+                    </div>
+
+                    <!-- Senha -->
+                    <div class="relative">
+                        <input
+                                type="password"
+                                id="senha"
+                                th:field="*{senha}"
+                                placeholder="Senha"
+                                class="placeholder-[#A1A1A1] w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black pr-10"
+                                required
+                        />
+                        <img
+                                src="/imagens/eye-slash.svg"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 w-[24px] cursor-pointer"
+                                alt="Mostrar Senha"
+                                id="togglePassword"
+                        />
+                    </div>
+
+                    <!-- Confirmar senha -->
+                    <div class="relative">
+                        <input
+                                type="password"
+                                id="confirmarSenha"
+                                name="confirmarSenha"
+                                placeholder="Confirmar Senha"
+                                class="placeholder-[#A1A1A1] w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black pr-10"
+                                required
+                        />
+                        <img
+                                src="/imagens/eye-slash.svg"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 w-[24px] cursor-pointer"
+                                alt="Mostrar Senha"
+                                onclick="toggleConfirmarSenha()"
+                        />
+                    </div>
+                </div>
+
+                <!-- Tipo de usuário -->
+                <div>
+                    <select
+                            id="tipoUsuario"
+                            th:field="*{tipoUsuario}"
+                            class="w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black bg-white"
+                            required
+                    >
+                        <option value="" disabled selected>Selecione a Função</option>
+                        <option value="MENTOR">Administrador</option>
+                        <option value="ESTUDANTE">Estudante</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <input
+                            type="checkbox"
+                            id="remember"
+                            name="remember"
+                            class="h-4 w-4 text-[#4D5061] border-gray-300 rounded focus:ring-[#4D5061]"
+                            required
+                    />
+                    <label for="remember" class="text-sm font-normal text-[#4B5565]">
+                        Eu concordo com os <a href="/termos" class="underline text-black">Termos de Uso</a> e <a href="/privacidade" class="underline text-black">Política de Privacidade</a>.
+                    </label>
+                </div>
+
+
+                <button
+                        type="submit"
+                        class="w-full px-1 py-2 mt-6 relative inline-flex items-center justify-center font-medium transition duration-300 ease-out bg-[#4D5061] border-2 border-[#4D5061] rounded-[12px] shadow-md hover:bg-[#3f4251] hover:shadow-lg text-white"
+                >
+                    <span>Cadastrar</span>
+                </button>
+
+                <p class="font-normal text-[#4B5565] text-base flex mt-3 items-center justify-center">
+                    Já tem uma conta?
+                    <a href="/login" class="text-black text-base ml-1 font-normal underline">Entre aqui</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    // Script para toggle de senha (igual login)
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordInput = document.querySelector('#senha');
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.src = type === 'password' ? '/imagens/eye-slash.svg' : '/imagens/eye.svg';
+    });
+</script>
+
 </body>
 </html>

@@ -15,12 +15,23 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/registrar", "/css/**", "/js/**").permitAll() // rotas públicas
+                        .requestMatchers(
+                                "/login",
+                                "/registrar",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/imagens/**",
+                                "/favicon.ico",
+                                "/exemplo.jpg",
+                                "/favicon-brasfi.png"
+                        ).permitAll() // rotas públicas
                         .requestMatchers("/").authenticated() // raiz exige login
                         .anyRequest().authenticated() // tudo o que não foi listado acima também exige login
                 )
                 .formLogin(login -> login
                         .loginPage("/login") // especifica a página de login
+                        .defaultSuccessUrl("/", true)
                         .permitAll() // permite que todos acessem a página de login
                 )
                 .logout(logout -> logout
