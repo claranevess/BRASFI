@@ -24,7 +24,7 @@ public class TrilhaController {
     @GetMapping("/registrar")
     public String mostrarRegistroTrilhaForm(Model model) {
         model.addAttribute("trilha", new Trilha());
-        return "registrarTrilha"; // Retorna a página de registro
+        return "trilha/registrarTrilha"; // Retorna a página de registro
     }
 
     // Rota para processar o envio do formulário
@@ -38,7 +38,7 @@ public class TrilhaController {
     public String mostrarConfirmacao(@RequestParam("id") Long id, Model model) {
         Trilha trilha = trilhaService.buscarPorId(id);
         model.addAttribute("trilha", trilha);
-        return "deletarTrilha";
+        return "trilha/deletarTrilha";
     }
 
     @PostMapping("/deletar")
@@ -51,7 +51,7 @@ public class TrilhaController {
     public String mostrarEditarTrilhaForm(@RequestParam("id") Long id, Model model) {
         Trilha trilha = trilhaService.buscarPorId(id);
         model.addAttribute("trilha", trilha);
-        return "editarTrilha";
+        return "trilha/editarTrilha";
     }
 
     @PostMapping("/editar")
@@ -64,7 +64,7 @@ public class TrilhaController {
     public String mostrarListaTrilha(Model model) {
         List<Trilha> trilhas = trilhaService.listaTrilhas();
         model.addAttribute("trilhas", trilhas);
-        return "listarTrilha";
+        return "trilha/listarTrilha";
     }
 
 

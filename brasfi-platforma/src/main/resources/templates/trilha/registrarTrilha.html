@@ -9,7 +9,7 @@
 <body>
 <div class="container mt-5">
     <h2>Registro</h2>
-    <form th:action="@{/trilhas/registrar}" th:object="${trilha}" method="post">
+    <form th:action="@{/registrar}" th:object="${trilha}" method="post">
         <div class="mb-3">
             <label for="titulo" class="form-label">Título</label>
             <input type="text" id="titulo" th:field="*{titulo}" class="form-control" placeholder="Digite o título" required>
