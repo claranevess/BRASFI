@@ -1,11 +1,11 @@
 package com.brasfi.platforma.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -20,6 +20,15 @@ public class Trilha {
 
     private String titulo;
 
+    private String capa;
+
+    @Enumerated(EnumType.STRING)
+    private EixoTematico eixoTematico;
+
+    private Double duracao;
+
+    private String topicosDeAprendizado;
+
     private String descricao;
 
     @ManyToMany
@@ -28,6 +37,8 @@ public class Trilha {
             joinColumns = @JoinColumn(name = "trilha_id"),
             inverseJoinColumns = @JoinColumn(name = "aula_id")
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Aula> aulas;
 
     @ManyToMany
@@ -36,6 +47,8 @@ public class Trilha {
             joinColumns = @JoinColumn(name = "trilha_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> inscritos;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<User> inscritos = new HashSet<>();
 
 }
