@@ -1,25 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Trilha</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Criar Trilha</title>
 </head>
 <body>
-<div class="container mt-5">
-    <h2>Registro</h2>
-    <form th:action="@{/registrar}" th:object="${trilha}" method="post">
-        <div class="mb-3">
-            <label for="titulo" class="form-label">Título</label>
-            <input type="text" id="titulo" th:field="*{titulo}" class="form-control" placeholder="Digite o título" required>
+<div class="max-w-xl mx-auto mt-10 px-4">
+    <h2 class="text-2xl font-semibold mb-6">Criar Nova Trilha</h2>
+
+    <form th:action="@{/trilhas/registrar}" th:object="${trilha}" method="post" enctype="multipart/form-data">
+        <div class="mb-4">
+            <label class="block mb-1">Título</label>
+            <input type="text" th:field="*{titulo}" class="block w-full border border-gray-300 rounded p-2" />
         </div>
-        <div class="mb-3">
-            <label for="descricao" class="form-label">Descrição</label>
-            <input type="text" id="descricao" th:field="*{descricao}" class="form-control" placeholder="Digite a descrição" required>
+
+        <div class="mb-4">
+            <label class="block mb-1">Descrição</label>
+            <input type="text" th:field="*{descricao}" class="block w-full border border-gray-300 rounded p-2" />
         </div>
-        <!-- TO-DO: Adicionar aulas -->
-        <button type="submit" class="btn btn-primary">Registrar</button>
+
+        <div class="mb-4">
+            <label class="block mb-1">Capa</label>
+            <input type="file" name="capaFile" class="block w-full" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block mb-1">Duração</label>
+            <div class="flex gap-4">
+                <select th:field="*{duracaoHoras}" class="border border-gray-300 rounded p-2 w-full">
+                    <option value="0">0 h</option>
+                    <option value="1">1 h</option>
+                    <option value="2">2 h</option>
+                </select>
+                <select th:field="*{duracaoMinutos}" class="border border-gray-300 rounded p-2 w-full">
+                    <option value="0">0 min</option>
+                    <option value="10">10 min</option>
+                    <option value="15">15 min</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block mb-1">Eixo Temático</label>
+            <select th:field="*{eixoTematico}" class="block w-full border border-gray-300 rounded p-2">
+                <option value="FINANCAS">Finanças</option>
+                <option value="EMPREENDEDORISMO">Empreendedorismo</option>
+                <option value="LIDERANCA">Liderança</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block mb-1">Tópicos de Aprendizado</label>
+            <textarea th:field="*{topicosDeAprendizado}" class="block w-full border border-gray-300 rounded p-2" rows="4"></textarea>
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Enviar
+        </button>
     </form>
 </div>
 </body>

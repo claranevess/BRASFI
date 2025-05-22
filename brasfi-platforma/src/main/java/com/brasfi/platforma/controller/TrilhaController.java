@@ -1,15 +1,21 @@
 package com.brasfi.platforma.controller;
 
+import com.brasfi.platforma.dto.TrilhaFormDTO;
+import com.brasfi.platforma.model.EixoTematico;
 import com.brasfi.platforma.model.Trilha;
 import com.brasfi.platforma.service.TrilhaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
+import com.brasfi.platforma.dto.TrilhaFormDTO;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -20,18 +26,46 @@ public class TrilhaController {
     @Autowired
     private TrilhaService trilhaService;
 
-    // Rota para exibir o formulário de registro
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    // Exibe o formulário de registro
     @GetMapping("/registrar")
     public String mostrarRegistroTrilhaForm(Model model) {
-        model.addAttribute("trilha", new Trilha());
-        return "trilha/registrarTrilha"; // Retorna a página de registro
+        model.addAttribute("trilha", new TrilhaFormDTO());
+        return "trilha/registrarTrilha"; // Página do formulário
     }
 
-    // Rota para processar o envio do formulário
+    // Processa o envio do formulário
     @PostMapping("/registrar")
-    public String registrarTrilha(Trilha trilha) {
+    public String registrarTrilha(
+            @ModelAttribute TrilhaFormDTO trilhaFormDTO
+    ) throws IOException {
+        // Converte DTO para entidade
+        Trilha trilha = new Trilha();
+        trilha.setTitulo(trilhaFormDTO.getTitulo());
+        trilha.setDescricao(trilhaFormDTO.getDescricao());
+        trilha.setDuracao(trilhaFormDTO.getDuracaoHoras() + trilhaFormDTO.getDuracaoMinutos() / 60.0);
+        trilha.setTopicosDeAprendizado(trilhaFormDTO.getTopicosDeAprendizado());
+        trilha.setEixoTematico(EixoTematico.valueOf(trilhaFormDTO.getEixoTematico()));
+
+        // Salvar arquivo
+        MultipartFile capaFile = trilhaFormDTO.getCapaFile();
+        if (capaFile != null && !capaFile.isEmpty()) {
+            String nomeArquivo = System.currentTimeMillis() + "_" + capaFile.getOriginalFilename();
+
+            // monta o path absoluto: {uploadDir}/{nomeArquivo}
+            Path pastaUploads = Paths.get(uploadDir).toAbsolutePath().normalize();
+            Files.createDirectories(pastaUploads);
+
+            Path destino = pastaUploads.resolve(nomeArquivo);
+            capaFile.transferTo(destino.toFile());
+
+            trilha.setCapa("/" + uploadDir + "/" + nomeArquivo);
+        }
+
         trilhaService.salvarTrilha(trilha);
-        return "redirect:/";
+        return "redirect:/trilhas/listar";
     }
 
     @GetMapping("/deletar")
