@@ -74,6 +74,16 @@
 
 
 </div>
+<script>
+    // Script para toggle de senha (igual login)
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordInput = document.querySelector('#senha');
 
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.src = type === 'password' ? '/imagens/eye-slash.svg' : '/imagens/eye.svg';
+    });
+</script>
 </body>
 </html>

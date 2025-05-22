@@ -21,7 +21,7 @@ public class UserController {
     @GetMapping("/registrar")
     public String mostrarRegistroForm(Model model) {
         model.addAttribute("user", new User()); // Adiciona um objeto "user" vazio para o formulário
-        return "registrarUser"; // Retorna a página de registro
+        return "user/registrarUser"; // Retorna a página de registro
     }
 
     // Rota para processar o envio do formulário
