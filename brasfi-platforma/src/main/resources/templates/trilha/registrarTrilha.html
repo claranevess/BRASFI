@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pickerjs@1.4.2/dist/picker.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/pickerjs@1.4.2/dist/picker.min.js"></script>
+
     <title>Criar Trilha</title>
 </head>
 <body class="bg-gray-100">
@@ -17,7 +20,7 @@
 
 <!-- modal -->
 <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white w-full max-w-xl mx-auto p-6 rounded-lg shadow-lg relative max-h-[80vh] overflow-y-auto">
+    <div class="bg-white w-full max-w-xl min-w-[980px] mx-auto p-6 rounded-lg shadow-lg relative max-h-[80vh] overflow-y-auto">
 
     <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl font-bold">
             &times;
@@ -26,52 +29,120 @@
         <h2 class="text-2xl font-semibold mb-6">Criar Nova Trilha</h2>
 
         <form th:action="@{/trilhas/registrar}" th:object="${trilha}" method="post" enctype="multipart/form-data">
-            <div class="mb-4">
-                <label class="block mb-1">Título</label>
-                <input type="text" th:field="*{titulo}" class="block w-full border border-gray-300 rounded p-2" />
-            </div>
 
             <div class="mb-4">
-                <label class="block mb-1">Descrição</label>
-                <input type="text" th:field="*{descricao}" class="block w-full border border-gray-300 rounded p-2" />
-            </div>
+                <div class="flex items-center justify-center w-full">
+                    <label for="dropzone-file"
+                           class="relative flex flex-col items-center justify-center w-full h-[180px] max-w-[930px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Clique para fazer upload</span> ou arraste</p>
+                            <p class="text-xs text-gray-500">PNG ou JPG (MAX. 800x400px)</p>
+                        </div>
 
-            <div class="mb-4">
-                <label class="block mb-1">Capa</label>
-                <input type="file" name="capaFile" class="block w-full" />
-            </div>
+                        <!-- Botão no canto inferior direito -->
+                        <button type="button" class="absolute bottom-4 right-4 flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <!-- Moldura da imagem -->
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+                                <!-- Montanhas -->
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21" />
+                                <!-- Sol ajustado entre borda e montanha, mais abaixo -->
+                                <circle cx="9.5" cy="8" r="1.5" fill="currentColor" />
+                            </svg>
 
-            <div class="mb-4">
-                <label class="block mb-1">Duração</label>
-                <div class="flex gap-4">
-                    <select th:field="*{duracaoHoras}" class="border border-gray-300 rounded p-2 w-full">
-                        <option value="0">0 h</option>
-                        <option value="1">1 h</option>
-                        <option value="2">2 h</option>
-                    </select>
-                    <select th:field="*{duracaoMinutos}" class="border border-gray-300 rounded p-2 w-full">
-                        <option value="0">0 min</option>
-                        <option value="10">10 min</option>
-                        <option value="15">15 min</option>
-                    </select>
+                            Upload de Capa
+                        </button>
+
+                        <input id="dropzone-file" name="capaFile" type="file" class="hidden" />
+                    </label>
                 </div>
             </div>
 
             <div class="mb-4">
-                <label class="block mb-1">Eixo Temático</label>
-                <select th:field="*{eixoTematico}" class="block w-full border border-gray-300 rounded p-2">
-                    <option value="FINANCAS">Finanças</option>
-                    <option value="EMPREENDEDORISMO">Empreendedorismo</option>
-                    <option value="LIDERANCA">Liderança</option>
-                </select>
+                <input placeholder="Digite o nome da trilha..." type="text" th:field="*{titulo}" class="w-full border-b-2 border-gray-300 rounded p-2" />
             </div>
 
-            <div class="mb-4">
-                <label class="block mb-1">Tópicos de Aprendizado</label>
-                <textarea th:field="*{topicosDeAprendizado}" class="block w-full border border-gray-300 rounded p-2" rows="4"></textarea>
+            <div class="flex gap-4 min-h-[280px]">
+                <div class="w-1/2">
+                    <div class="mb-4">
+                        <div class="flex items-center gap-4">
+                            <label class="w-60 flex items-center gap-2 text-left cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-tag">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                    <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z" />
+                                </svg>
+                                Eixo Temático
+                            </label>
+                            <select th:field="*{eixoTematico}" class="block w-full border border-gray-300 rounded p-2">
+                                <option value="FINANCAS">Finanças</option>
+                                <option value="EMPREENDEDORISMO">Empreendedorismo</option>
+                                <option value="LIDERANCA">Liderança</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex items-center gap-4">
+                            <label class="w-60 flex items-center gap-2 text-left cursor-pointer select-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-clock">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <circle cx="12" cy="12" r="9" />
+                                    <path d="M12 7v5l3 3" />
+                                </svg>
+                                Duração
+                            </label>
+                            <input type="text" id="timeInput" placeholder="Hora selecionada" readonly
+                                   class="border p-2 rounded w-40 cursor-pointer" />
+
+                            <button id="openPickerBtn" class="ml-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                                Selecionar hora
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="topicosDeAprendizado" class="flex items-center gap-2 cursor-pointer select-none mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-align-left">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M4 6l16 0" />
+                                <path d="M4 12l10 0" />
+                                <path d="M4 18l14 0" />
+                            </svg>
+                            Descrição
+                        </label>
+                        <input type="text" th:field="*{descricao}" class="block w-full border border-gray-300 rounded p-4" />
+                    </div>
+                </div>
+
+                <div class="w-1/2 mb-4 flex flex-col h-full">
+                    <label for="topicosDeAprendizado" class="flex items-center gap-2 cursor-pointer select-none mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-align-left">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M4 6l16 0" />
+                            <path d="M4 12l10 0" />
+                            <path d="M4 18l14 0" />
+                        </svg>
+                        Tópicos de Aprendizado
+                    </label>
+                    <textarea id="topicosDeAprendizado" th:field="*{topicosDeAprendizado}" class="block w-full border border-gray-300 rounded p-2" rows="5"></textarea>
+                </div>
+
             </div>
+
+
+
+
+
+
 
             <!-- TO-DO: adicionar aula -->
+            <input type="text" class="form-control js-time-picker" value="02:56">
+
 
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 Enviar
@@ -104,6 +175,15 @@
             modal.classList.add('hidden');
         }
     });
+
+    new Picker(document.querySelector('.js-time-picker'), {
+      format: 'HH:mm',
+      headers: true,
+      text: {
+        title: 'Pick a time',
+      },
+    });
+
 </script>
 
 </body>
