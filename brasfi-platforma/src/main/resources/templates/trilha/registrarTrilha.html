@@ -6,60 +6,105 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Criar Trilha</title>
 </head>
-<body>
+<body class="bg-gray-100">
+
+<!-- botao para abrir o modal -->
 <div class="max-w-xl mx-auto mt-10 px-4">
-    <h2 class="text-2xl font-semibold mb-6">Criar Nova Trilha</h2>
+    <button id="openModal" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        Criar Nova Trilha
+    </button>
+</div>
 
-    <form th:action="@{/trilhas/registrar}" th:object="${trilha}" method="post" enctype="multipart/form-data">
-        <div class="mb-4">
-            <label class="block mb-1">Título</label>
-            <input type="text" th:field="*{titulo}" class="block w-full border border-gray-300 rounded p-2" />
-        </div>
+<!-- modal -->
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white w-full max-w-xl mx-auto p-6 rounded-lg shadow-lg relative max-h-[80vh] overflow-y-auto">
 
-        <div class="mb-4">
-            <label class="block mb-1">Descrição</label>
-            <input type="text" th:field="*{descricao}" class="block w-full border border-gray-300 rounded p-2" />
-        </div>
+    <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl font-bold">
+            &times;
+        </button>
 
-        <div class="mb-4">
-            <label class="block mb-1">Capa</label>
-            <input type="file" name="capaFile" class="block w-full" />
-        </div>
+        <h2 class="text-2xl font-semibold mb-6">Criar Nova Trilha</h2>
 
-        <div class="mb-4">
-            <label class="block mb-1">Duração</label>
-            <div class="flex gap-4">
-                <select th:field="*{duracaoHoras}" class="border border-gray-300 rounded p-2 w-full">
-                    <option value="0">0 h</option>
-                    <option value="1">1 h</option>
-                    <option value="2">2 h</option>
-                </select>
-                <select th:field="*{duracaoMinutos}" class="border border-gray-300 rounded p-2 w-full">
-                    <option value="0">0 min</option>
-                    <option value="10">10 min</option>
-                    <option value="15">15 min</option>
+        <form th:action="@{/trilhas/registrar}" th:object="${trilha}" method="post" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label class="block mb-1">Título</label>
+                <input type="text" th:field="*{titulo}" class="block w-full border border-gray-300 rounded p-2" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1">Descrição</label>
+                <input type="text" th:field="*{descricao}" class="block w-full border border-gray-300 rounded p-2" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1">Capa</label>
+                <input type="file" name="capaFile" class="block w-full" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1">Duração</label>
+                <div class="flex gap-4">
+                    <select th:field="*{duracaoHoras}" class="border border-gray-300 rounded p-2 w-full">
+                        <option value="0">0 h</option>
+                        <option value="1">1 h</option>
+                        <option value="2">2 h</option>
+                    </select>
+                    <select th:field="*{duracaoMinutos}" class="border border-gray-300 rounded p-2 w-full">
+                        <option value="0">0 min</option>
+                        <option value="10">10 min</option>
+                        <option value="15">15 min</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1">Eixo Temático</label>
+                <select th:field="*{eixoTematico}" class="block w-full border border-gray-300 rounded p-2">
+                    <option value="FINANCAS">Finanças</option>
+                    <option value="EMPREENDEDORISMO">Empreendedorismo</option>
+                    <option value="LIDERANCA">Liderança</option>
                 </select>
             </div>
-        </div>
 
-        <div class="mb-4">
-            <label class="block mb-1">Eixo Temático</label>
-            <select th:field="*{eixoTematico}" class="block w-full border border-gray-300 rounded p-2">
-                <option value="FINANCAS">Finanças</option>
-                <option value="EMPREENDEDORISMO">Empreendedorismo</option>
-                <option value="LIDERANCA">Liderança</option>
-            </select>
-        </div>
+            <div class="mb-4">
+                <label class="block mb-1">Tópicos de Aprendizado</label>
+                <textarea th:field="*{topicosDeAprendizado}" class="block w-full border border-gray-300 rounded p-2" rows="4"></textarea>
+            </div>
 
-        <div class="mb-4">
-            <label class="block mb-1">Tópicos de Aprendizado</label>
-            <textarea th:field="*{topicosDeAprendizado}" class="block w-full border border-gray-300 rounded p-2" rows="4"></textarea>
-        </div>
+            <!-- TO-DO: adicionar aula -->
 
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Enviar
-        </button>
-    </form>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Enviar
+            </button>
+
+        </form>
+    </div>
 </div>
+
+<!-- script para abrir/fechar modal -->
+<script>
+    const modal = document.getElementById('modal');
+    const openBtn = document.getElementById('openModal');
+    const closeBtn = document.getElementById('closeModal');
+
+    openBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    });
+
+    // fechar modal ao clicar fora do conteúdo
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+    });
+</script>
+
 </body>
 </html>
