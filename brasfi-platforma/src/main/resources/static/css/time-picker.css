@@ -1,0 +1,99 @@
+/* Container da coluna (hora/minuto) */
+.column {
+  width: 90px;
+  height: 150px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  position: relative;
+
+  /* Esconde a barra de rolagem */
+  -ms-overflow-style: none; /* IE e Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.column::-webkit-scrollbar {
+  display: none; /* Chrome, Safari e Edge baseados em Chromium */
+}
+
+/* Itens (hora/minuto) */
+.item {
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  scroll-snap-align: center;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 2; /* importante para ficar acima do fundo */
+}
+
+.column .item {
+  color: #111827; /* text-gray-900 */
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.column .item.active {
+  opacity: 1;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* Espaçador para centralizar o scroll */
+.spacer {
+  height: 50px;
+}
+
+/* Destaque fixo arredondado para hora e minuto */
+.time-overlay {
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 4px); /* reduz um pouquinho para dar espaço */
+  height: 50px;
+  background: rgba(200, 200, 200, 0.25);
+  border-radius: 0.75rem;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.time-overlay.hour {
+  left: 0;
+}
+
+.time-overlay.minute {
+  left: calc(50% + 4px); /* move um pouquinho para a direita */
+}
+
+/* Estilo do picker */
+#timepicker {
+  position: absolute;
+  top: 100%;    /* posiciona logo abaixo do botão */
+  left: 0;      /* alinha a esquerda com o botão */
+  margin-top: 0.25rem; /* um pequeno espaçamento */
+  background: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  z-index: 30;
+  justify-content: space-between;
+}
+
+#togglePicker {
+  position: relative;
+  z-index: 40; /* maior que o picker para garantir o clique */
+}
+
+#hour-col,
+#minute-col {
+  width: 50%; /* Cada coluna ocupa metade do espaço do timepicker */
+  box-sizing: border-box; /* para garantir que padding/border não aumentem o tamanho */
+}
+
+/* Esconde o picker */
+.hidden {
+  display: none;
+}

@@ -6,112 +6,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pickerjs@1.4.2/dist/picker.min.css">
     <script src="https://cdn.jsdelivr.net/npm/pickerjs@1.4.2/dist/picker.min.js"></script>
-    <style>
-        /* Container da coluna (hora/minuto) */
-        .column {
-          width: 90px;
-          height: 150px;
-          overflow-y: scroll;
-          scroll-snap-type: y mandatory;
-          position: relative;
-
-          /* Esconde a barra de rolagem */
-          -ms-overflow-style: none; /* IE e Edge */
-          scrollbar-width: none; /* Firefox */
-        }
-
-        .column::-webkit-scrollbar {
-          display: none; /* Chrome, Safari e Edge baseados em Chromium */
-        }
-
-        /* Itens (hora/minuto) */
-        .item {
-          height: 50px;
-          line-height: 50px;
-          text-align: center;
-          scroll-snap-align: center;
-          user-select: none;
-          cursor: pointer;
-          position: relative;
-          z-index: 2; /* importante para ficar acima do fundo */
-        }
-
-        .column .item {
-          color: #111827; /* text-gray-900 */
-          opacity: 0.4;
-          transition: opacity 0.2s ease;
-        }
-
-        .column .item.active {
-          opacity: 1;
-          font-weight: 600;
-          font-size: 1.05rem;
-        }
-
-        /* Espaçador para centralizar o scroll */
-        .spacer {
-          height: 50px;
-        }
-
-        /* Destaque fixo arredondado para hora e minuto */
-        .time-overlay {
-          position: absolute;
-          top: 50%;
-          width: calc(50% - 4px); /* reduz um pouquinho para dar espaço */
-          height: 50px;
-          background: rgba(200, 200, 200, 0.25);
-          border-radius: 0.75rem;
-          backdrop-filter: blur(6px);
-          -webkit-backdrop-filter: blur(6px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-          transform: translateY(-50%);
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        .time-overlay.hour {
-          left: 0;
-        }
-
-        .time-overlay.minute {
-          left: calc(50% + 4px); /* move um pouquinho para a direita */
-        }
-
-
-
-
-
-
-        /* Estilo do picker */
-        #timepicker {
-          position: absolute;
-          top: 100%;    /* posiciona logo abaixo do botão */
-          left: 0;      /* alinha a esquerda com o botão */
-          margin-top: 0.25rem; /* um pequeno espaçamento */
-          background: white;
-          padding: 1rem;
-          border-radius: 1rem;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-          z-index: 30;
-          justify-content: space-between;
-        }
-
-        #togglePicker {
-          position: relative;
-          z-index: 40; /* maior que o picker para garantir o clique */
-        }
-
-        #hour-col,
-        #minute-col {
-          width: 50%; /* Cada coluna ocupa metade do espaço do timepicker */
-          box-sizing: border-box; /* para garantir que padding/border não aumentem o tamanho */
-        }
-
-        /* Esconde o picker */
-        .hidden {
-          display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/time-picker.css">
+    <link rel="stylesheet" href="/static/css/eixo-picker.css">
 
     <title>Criar Trilha</title>
 </head>
@@ -174,7 +70,9 @@
 
             <div class="flex gap-4 min-h-[280px]">
                 <div class="w-1/2">
+
                     <div class="mb-4">
+
                         <div class="flex items-center gap-4">
                             <label class="w-60 flex items-center gap-2 text-left cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-tag">
@@ -184,14 +82,23 @@
                                 </svg>
                                 Eixo Temático
                             </label>
-                            <select th:field="*{eixoTematico}" class="block w-full border border-gray-300 rounded p-2">
-                                <option value="FINANCAS">Finanças</option>
-                                <option value="EMPREENDEDORISMO">Empreendedorismo</option>
-                                <option value="LIDERANCA">Liderança</option>
-                            </select>
+                            <button id="togglePickerEixo" type="button"
+                                    class="flex items-center gap-2 bg-white border border-gray-300 rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left relative">
+                                <span id="buttonTextEixo" class="text-gray-700">Selecionar...</span>
+                                <span class="text-sm">▼</span>
+                                <div id="eixopicker" class="hidden w-[284px] absolute mt-2 bg-white p-4 rounded-xl shadow-lg z-30" onclick="event.stopPropagation()">
+                                    <div class="flex relative">
+                                        <div class="eixo-overlay"></div>
+                                        <div id="eixo-col" class="eixo-coluna">
+                                            <!-- preenchido via JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
                         </div>
-                    </div>
+                        <input type="hidden" id="eixoInput" name="eixoTematico" />
 
+                    </div>
 
 
                     <div class="mb-4 relative z-20" id="duration-container">
@@ -231,12 +138,7 @@
                             <input type="hidden" name="duracao" id="duracaoInput" th:field="*{duracao}" />
                         </div>
 
-
-
                     </div>
-
-
-
 
                     <div class="mb-4">
                         <label for="topicosDeAprendizado" class="flex items-center gap-2 cursor-pointer select-none mb-2">
@@ -279,8 +181,7 @@
     </div>
 </div>
 
-<!-- script para abrir/fechar modal -->
-
+<!-- script -->
 <script>
     const modal = document.getElementById('modal');
     const openBtn = document.getElementById('openModal');
@@ -303,114 +204,9 @@
             modal.classList.add('hidden');
         }
     });
-
-    // Função para preencher colunas de hora e minuto
-    function fillTimeColumns() {
-        const hourCol = document.getElementById('hour-col');
-        const minuteCol = document.getElementById('minute-col');
-
-        for (let i = 0; i <= 23; i++) {
-            const item = document.createElement('div');
-            item.className = 'item';
-            item.innerText = `${i} h`; // Exibe como "1 hr", "2 hr", etc.
-            item.dataset.value = i; // Valor real (útil se precisar enviar ao backend)
-            hourCol.appendChild(item);
-        }
-
-        for (let i = 0; i <= 55; i += 5) {
-            const item = document.createElement('div');
-            item.className = 'item';
-            item.innerText = `${i} min`; // Exibe como "5 min", "10 min", etc.
-            item.dataset.value = i; // Valor real
-            minuteCol.appendChild(item);
-        }
-
-        ['hour-col', 'minute-col'].forEach(id => {
-            const col = document.getElementById(id);
-            const spacerTop = document.createElement('div');
-            spacerTop.className = 'spacer';
-            const spacerBottom = document.createElement('div');
-            spacerBottom.className = 'spacer';
-            col.insertBefore(spacerTop, col.firstChild);
-            col.appendChild(spacerBottom);
-        });
-    }
-
-    function getSelectedTime() {
-        const hourCol = document.getElementById('hour-col');
-        const minuteCol = document.getElementById('minute-col');
-
-        const hourIndex = Math.round(hourCol.scrollTop / 50);
-        const minuteIndex = Math.round(minuteCol.scrollTop / 50);
-
-        const hourEl = hourCol.children[hourIndex + 1]; // +1 por causa do spacer
-        const minuteEl = minuteCol.children[minuteIndex + 1];
-
-        const hour = hourEl?.dataset?.value ?? 0;
-        const minute = minuteEl?.dataset?.value ?? 0;
-
-        return `${hour}h ${minute}min`;
-    }
-
-
-    function updateActiveItem(col, index) {
-        const items = col.querySelectorAll('.item');
-        items.forEach((item, i) => {
-            if (i === index) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        });
-    }
-
-
-
-    // Mostra/esconde o seletor
-    document.getElementById('togglePicker').addEventListener('click', function (e) {
-        e.stopPropagation();
-        document.getElementById('timepicker').classList.toggle('hidden');
-    });
-
-    // Fecha ao clicar fora
-    document.addEventListener('click', function () {
-        const picker = document.getElementById('timepicker');
-        if (!picker.classList.contains('hidden')) {
-            picker.classList.add('hidden');
-        }
-    });
-
-    // Impede propagação ao clicar dentro
-    document.getElementById('timepicker').addEventListener('click', function (e) {
-        e.stopPropagation();
-    });
-
-    // Atualiza o valor ao parar de rolar
-    ['hour-col', 'minute-col'].forEach(id => {
-        document.getElementById(id).addEventListener('scroll', () => {
-            clearTimeout(window._scrollTimeout);
-            window._scrollTimeout = setTimeout(() => {
-                const selectedTime = getSelectedTime();
-                document.getElementById('buttonText').innerText = selectedTime;
-                document.getElementById('duracaoInput').value = selectedTime;
-
-                // marca item central como ativo
-                const hourCol = document.getElementById('hour-col');
-                const minuteCol = document.getElementById('minute-col');
-                const hourIndex = Math.round(hourCol.scrollTop / 50);
-                const minuteIndex = Math.round(minuteCol.scrollTop / 50);
-
-                updateActiveItem(hourCol, hourIndex);
-                updateActiveItem(minuteCol, minuteIndex);
-            }, 100);
-        });
-    });
-
-
-    // Inicialização
-    fillTimeColumns();
 </script>
-
+<script src="/static/js/time-picker.js"></script>
+<script src="/static/js/eixo-picker.js"></script>
 
 </body>
 </html>
