@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Grupos</title>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<h1>Grupos Cadastrados</h1>
+
+<a th:href="@{/grupo/criar_grupo}">Criar Novo Grupo</a>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Membros</th>
+        <th>Administradores</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="grupo : ${grupos}">
+        <td th:text="${grupo.id}">1</td>
+        <td th:text="${grupo.nome}">Nome do Grupo</td>
+        <td th:text="${grupo.descricao}">Descrição do grupo</td>
+        <td>
+            <ul>
+                <li th:each="membro : ${grupo.membros}" th:text="${membro.nome}">Nome Membro</li>
+                <li th:if="${#lists.isEmpty(grupo.membros)}">Nenhum membro</li>
+            </ul>
+        </td>
+        <td>
+            <ul>
+                <li th:each="adminId : ${grupo.adminsId}" th:text="${adminId}">ID Admin</li>
+                <li th:if="${#lists.isEmpty(grupo.adminsId)}">Nenhum administrador</li>
+            </ul>
+        </td>
+        <td>
+            <!-- Botão para entrar no grupo (exemplo, você deve ajustar usuárioId dinamicamente) -->
+            <form th:action="@{'/grupo/entrar/' + ${grupo.id}}" method="post" style="display:inline;">
+                <input type="hidden" name="usuarioId" value="1" />
+                <button type="submit">Entrar</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
