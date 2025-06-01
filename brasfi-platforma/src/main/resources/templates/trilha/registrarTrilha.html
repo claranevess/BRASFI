@@ -72,9 +72,9 @@
                 <div class="w-1/2">
 
                     <div class="mb-4">
-
-                        <div class="flex items-center gap-4">
-                            <label class="w-60 flex items-center gap-2 text-left cursor-pointer">
+                        <div class="flex gap-4 items-start">
+                            <!-- Label à esquerda, fixo -->
+                            <label class="w-60 flex items-center gap-2 text-left cursor-pointer pt-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-tag">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                     <path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
@@ -82,20 +82,30 @@
                                 </svg>
                                 Eixo Temático
                             </label>
-                            <button id="togglePickerEixo" type="button"
-                                    class="flex items-center gap-2 bg-white border border-gray-300 rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left relative">
-                                <span id="buttonTextEixo" class="text-gray-700">Selecionar...</span>
-                                <span class="text-sm">▼</span>
-                                <div id="eixopicker" class="hidden w-[284px] absolute mt-2 bg-white p-4 rounded-xl shadow-lg z-30" onclick="event.stopPropagation()">
-                                    <div class="flex relative">
+
+                            <!-- Botão + picker, com position relative -->
+                            <div class="relative">
+                                <!-- Botão -->
+                                <button id="togglePickerEixo" type="button"
+                                        class="flex items-center gap-2 bg-white border border-gray-300 rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left w-full">
+                                    <span id="buttonTextEixo" class="text-gray-700">Selecionar...</span>
+                                    <span class="text-sm">▼</span>
+                                </button>
+
+                                <!-- Picker flutuante -->
+                                <div id="eixopicker"
+                                     class="hidden absolute left-0 w-full bg-white p-4 rounded-xl shadow-lg z-30 mt-2"
+                                     onclick="event.stopPropagation()">
+                                    <div class="flex gap-3 relative">
                                         <div class="eixo-overlay"></div>
                                         <div id="eixo-col" class="eixo-coluna">
                                             <!-- preenchido via JS -->
                                         </div>
                                     </div>
                                 </div>
-                            </button>
+                            </div>
                         </div>
+
                         <input type="hidden" id="eixoInput" name="eixoTematico" />
 
                     </div>
