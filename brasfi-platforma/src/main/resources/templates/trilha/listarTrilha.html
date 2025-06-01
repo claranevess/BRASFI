@@ -64,8 +64,13 @@
                             </button>
                             <!-- Menu suspenso -->
                             <div class="absolute right-0 mt-1 bg-white border border-gray-200 rounded shadow-md hidden group-hover:block z-10">
-                                <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Editar</button>
-                                <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">Deletar</button>
+                                <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Editar
+                                </button>
+                                <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+                                        onclick="abrirModal('modal-trilha-[[${trilha.id}]]')">
+                                    Deletar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -89,8 +94,13 @@
                             </button>
                             <!-- Menu suspenso -->
                             <div class="absolute right-0 mt-1 bg-white border border-gray-200 rounded shadow-md hidden group-hover:block z-10">
-                                <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Editar</button>
-                                <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">Deletar</button>
+                                <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Editar
+                                </button>
+                                <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+                                        onclick="abrirModal('modal-trilha-[[${trilha.id}]]')">
+                                    Deletar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -112,14 +122,61 @@
                                 </button>
                                 <!-- Menu suspenso -->
                                 <div class="absolute right-0 mt-1 bg-white border border-gray-200 rounded shadow-md hidden group-hover:block z-10">
-                                    <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Editar</button>
-                                    <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">Deletar</button>
+                                    <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Editar
+                                    </button>
+                                    <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+                                            onclick="abrirModal('modal-trilha-[[${trilha.id}]]')">
+                                        Deletar
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <p class="text-sm text-gray-600">Descrição do curso, conteúdos, materiais de apoio...</p>
                         <div class="mt-2 text-yellow-500">★★★★☆ (223)</div>
                     </div>
+
+                <!-- Modal de Confirmação -->
+                <div id="modal-trilha-[[${trilha.id}]]"
+                     class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
+
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">Atenção!</h2>
+
+                        <p class="text-gray-700 mb-6">
+                            Você está deletando a trilha
+                            <strong th:text="|“${trilha.nome}”|">“”</strong>.
+                            Deseja completar a ação? Não poderá ser desfeita.
+                        </p>
+
+                        <!-- Botões -->
+                        <div class="flex justify-center gap-4">
+                            <button onclick="fecharModal('modal-trilha-[[${trilha.id}]]')"
+                                    class="px-5 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded hover:bg-gray-200">
+                                Cancelar
+                            </button>
+
+                            <form th:action="@{/trilhas/{id}/deletar(id=${trilha.id})}" method="post">
+                                <input type="hidden" name="_method" value="delete"/>
+                                <button type="submit"
+                                        class="px-5 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded hover:bg-gray-200">
+                                    Sim, quero deletar.
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scripts para abrir e fechar modal -->
+                <script>
+                    function abrirModal(id) {
+                        document.getElementById(id).classList.remove('hidden');
+                    }
+
+                    function fecharModal(id) {
+                        document.getElementById(id).classList.add('hidden');
+                    }
+                </script>
 
 
             </div>
