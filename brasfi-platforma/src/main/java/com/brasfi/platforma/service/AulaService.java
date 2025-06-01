@@ -15,8 +15,4 @@ public class AulaService {
     public Aula salvarAula(Aula aula) {
         return aulaRepository.save(aula);
     }
-
-    /*public List<Aula> listarTodosAulas() {
-        return aulaRepository.findAll();
-    }*/
 }

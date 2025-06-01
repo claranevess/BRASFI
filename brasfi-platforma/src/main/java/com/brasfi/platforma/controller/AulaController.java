@@ -23,14 +23,10 @@ public class AulaController {
     }
 
     @PostMapping("/salvar")
-    public String salvarAula(@ModelAttribute Aula aula) {
+    public String salvarAula(@ModelAttribute("aula") Aula aula, Model model) {
         aulaService.salvarAula(aula);
+        model.addAttribute("mensagem", "Aula enviada com sucesso!");
+        model.addAttribute("aula", new Aula()); // limpa o formulário
         return "enviar-aula";
-    }// fazer um popup em js
-
-    /*@GetMapping("/listar")
-    public String listarAulas(Model model) {
-        model.addAttribute("aulas", aulaService.listarTodosAulas());
-        return "listar-aulas";
-    }*/
+    }
 }
