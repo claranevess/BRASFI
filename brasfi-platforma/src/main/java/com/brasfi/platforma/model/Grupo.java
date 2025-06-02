@@ -20,6 +20,9 @@ public class Grupo {
 
     private String nome;
 
+    @Column(length = 500)  // opcional, define tamanho max do texto na DB
+    private String descricao;
+
     @ManyToMany
     @JoinTable(
             name = "grupo_membros",
