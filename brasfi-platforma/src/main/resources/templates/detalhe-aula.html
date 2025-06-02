@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhe da Aula</title>
+</head>
+<body>
+<h1 th:text="${aula.titulo}">Título da Aula</h1>
+<p th:text="${aula.descricao}">Descrição da aula</p>
+
+<h2>Assista ao vídeo:</h2>
+<div>
+    <iframe
+            width="560"
+            height="315"
+            th:src="'https://www.youtube.com/embed/' + ${videoCode}"
+            frameborder="0"
+            allowfullscreen>
+    </iframe>
+</div>
+</body>
+</html>

@@ -15,4 +15,13 @@ public class AulaService {
     public Aula salvarAula(Aula aula) {
         return aulaRepository.save(aula);
     }
+
+    public Aula buscarPorId(Long id) {
+        return aulaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Aula não encontrada com ID: " + id));
+    }
+
+    public List<Aula> listarTodas() {
+        return aulaRepository.findAll();
+    }
 }
