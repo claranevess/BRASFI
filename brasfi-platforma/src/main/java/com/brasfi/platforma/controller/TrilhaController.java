@@ -101,6 +101,14 @@ public class TrilhaController {
         return "trilha/listarTrilha";
     }
 
-
-
+    @GetMapping("/{id}")
+    public String mostrarDetalhesTrilha(@PathVariable Long id, Model model) {
+        Trilha trilha = trilhaService.buscarPorId(id);
+        if (trilha == null) {
+            return "erro/404";
+        }
+        model.addAttribute("trilha", trilha);
+        model.addAttribute("aulas", trilha.getAulas());
+        return "detalheTrilha";
+    }
 }

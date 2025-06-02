@@ -1,11 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Detalhes da trilha de conhecimento</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Trilhas de Conhecimento</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
 
-</body>
+<div class="flex h-screen">
+    <aside class="w-60 bg-gray-200 p-6 flex flex-col gap-6">
+        <div class="text-xl font-bold">BRASFI conecta</div>
+        <nav class="flex flex-col gap-4">
+            <button class="text-left text-lg font-medium">Dashboard</button>
+            <button class="text-left text-lg font-medium text-blue-600">Trilhas</button>
+            <button class="text-left text-lg font-medium">Grupos</button>
+            <button class="text-left text-lg font-medium">Projetos</button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-6 overflow-y-auto">
+        <div class="flex gap-4 mb-6">
+            <button class="bg-gray-500 hover:bg-gray-500/70 px-4 py-1 rounded-[0.625rem] text-sm text-white">← Todas as trilhas</button>
+        </div>
+
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Fundamentos de finanças <br>sustentáveis</br></h1>
+            <div class="flex items-center gap-4">
+                <input type="text" placeholder="Pesquisar por trilhas ou aulas" class="border border-gray-300 rounded-full px-4 py-2 w-80"/>
+                <div class="flex items-center gap-2">
+                    <span class="font-semibold">Usuário</span>
+                    <span class="text-sm text-gray-500">Cargo</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-gray-600 mb-8 max-w-2xl">
+            (Descrição) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold mb-4">Aulas</h2>
+            <div class="flex items-center gap-2 mb-6">
+                <span class="bg-gray-300 text-white text-xs px-3 py-1 rounded-full">● 26 totais</span>
+                <span class="bg-gray-600 text-white text-xs px-3 py-1 rounded-full">✓ 2 concluídas</span>
+            </div>
+
+            <div class="relative border-l-2 border-gray-300 pl-6 space-y-6">
+                <div class="relative">
+                    <div class="absolute -left-4 top-2 w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center">
+                        <span class="text-white text-xs">✓</span>
+                    </div>
+                    <div class="bg-gray-100 rounded-lg p-4 shadow">
+                        <h3 class="font-semibold text-lg">O que são Finanças Sustentáveis?</h3>
+                        <p class="text-sm text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                        <div class="text-right mt-2 text-sm text-gray-500 flex items-center justify-end gap-1">
+                            <a href="#" class="hover:underline">Acessar</a>
+                            <span>↗</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute -left-4 top-2 w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center">
+                        <span class="text-white text-xs">✓</span>
+                    </div>
+                    <div class="bg-gray-100 rounded-lg p-4 shadow">
+                        <h3 class="font-semibold text-lg">ESG na Prática</h3>
+                        <p class="text-sm text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                        <div class="text-right mt-2 text-sm text-gray-500 flex items-center justify-end gap-1">
+                            <a href="#" class="hover:underline">Acessar</a>
+                            <span>↗</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute -left-4 top-2 w-6 h-6 rounded-full bg-gray-300"></div>
+                    <div class="bg-gray-100 rounded-lg p-4 shadow">
+                        <h3 class="font-semibold text-lg">Investimento Consciente</h3>
+                        <p class="text-sm text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                        <div class="text-right mt-2 text-sm text-gray-500 flex items-center justify-end gap-1">
+                            <a href="#" class="hover:underline">Acessar</a>
+                            <span>↗</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute -left-4 top-2 w-6 h-6 rounded-full bg-gray-300"></div>
+                    <div class="bg-gray-100 rounded-lg p-4 shadow">
+                        <h3 class="font-semibold text-lg">Educação Financeira</h3>
+                        <p class="text-sm text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                        <div class="text-right mt-2 text-sm text-gray-500 flex items-center justify-end gap-1">
+                            <a href="#" class="hover:underline">Acessar</a>
+                            <span>↗</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+  </div>
+ </body>
 </html>
