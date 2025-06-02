@@ -65,6 +65,7 @@ public class TrilhaController {
         }
 
         trilhaService.salvarTrilha(trilha);
+        System.out.println("Trilha salva com ID: " + trilha.getId());
         return "redirect:/trilhas/listar";
     }
 
@@ -109,6 +110,6 @@ public class TrilhaController {
         }
         model.addAttribute("trilha", trilha);
         model.addAttribute("aulas", trilha.getAulas());
-        return "detalheTrilha";
+        return "trilha/detalheTrilha";
     }
 }
