@@ -97,9 +97,19 @@ public class TrilhaController {
     @GetMapping("/editar")
     public String mostrarEditarTrilhaForm(@RequestParam("id") Long id, Model model) {
         Trilha trilha = trilhaService.buscarPorId(id);
+
+        // Converte double para "hh:mm" para popular o time picker
+        double duracao = trilha.getDuracao(); // pega o valor primitivo
+        int horas = (int) duracao;
+        int minutos = (int) Math.round((duracao - horas) * 60);
+        String duracaoStr = String.format("%02d:%02d", horas, minutos);
+
         model.addAttribute("trilha", trilha);
+        model.addAttribute("duracaoInput", duracaoStr); // envia pra preencher o input hidden
+
         return "trilha/editarTrilha";
     }
+
 
     @PostMapping("/editar")
     public String editarTrilha(
