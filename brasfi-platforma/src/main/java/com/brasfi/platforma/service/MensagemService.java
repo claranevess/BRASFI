@@ -14,7 +14,7 @@ public class MensagemService {
     @Autowired
     private MensagemRepository mensagemRepository;
 
-    public Mensagem enviarMensagem(User user, Grupo grupo, Aula aula, String texto) {
+    public Mensagem enviarMensagem(User user, Grupo grupo, String texto) {
         Mensagem mensagem = new Mensagem();
         mensagem.setUser(user);
         mensagem.setGrupo(grupo);
@@ -28,3 +28,4 @@ public class MensagemService {
         return mensagemRepository.findByGrupoOrderByDataCriacaoAsc(grupo);
     }
 }
+

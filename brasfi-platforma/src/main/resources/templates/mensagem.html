@@ -71,9 +71,11 @@
 <!-- JavaScript -->
 <script>
     const apiUrl = 'http://localhost:8080/mensagens';
+    const userId = 1;   // fixo por enquanto
+    const grupoId = 1;  // fixo por enquanto
 
     async function carregarMensagens() {
-        const res = await fetch(apiUrl);
+        const res = await fetch(`${apiUrl}/grupo/${grupoId}`);
         const mensagens = await res.json();
         const messageList = document.getElementById('messageList');
         messageList.innerHTML = '';
@@ -82,10 +84,8 @@
             const div = document.createElement('div');
             div.className = 'message';
             div.innerHTML = `
-                <div class="font-semibold mb-1">${mensagem.user.nome}:</div>
-                <div class="bg-gray-100 px-4 py-2 rounded-lg inline-block max-w-[70%]">
-                    ${mensagem.texto}
-                </div>
+                <div class="name">${mensagem.user?.nome || 'Usuário'}:</div>
+                <div class="text">${mensagem.texto}</div>
             `;
             messageList.appendChild(div);
         });
@@ -95,10 +95,10 @@
         e.preventDefault();
         const texto = document.getElementById('messageInput').value;
 
-        await fetch(apiUrl, {
+        await fetch(`${apiUrl}/enviar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ texto, user: { id: 1 }, grupo: { id: 1 } })
+            body: JSON.stringify({ texto, userId, grupoId })
         });
 
         document.getElementById('messageInput').value = '';
