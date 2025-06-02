@@ -96,19 +96,6 @@
             display: inline-block;
             max-width: 70%;
         }
-        .actions {
-            margin-top: 5px;
-        }
-        .actions button {
-            background: none;
-            border: none;
-            color: #3b82f6;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        .actions button:hover {
-            text-decoration: underline;
-        }
         .input-area {
             display: flex;
             gap: 10px;
@@ -180,10 +167,6 @@
             div.innerHTML = `
                 <div class="name">${mensagem.user.nome}:</div>
                 <div class="text">${mensagem.texto}</div>
-                <div class="actions">
-                    <button onclick="editarMensagem(${mensagem.id}, '${mensagem.texto.replace(/'/g, "\\'")}')">Editar</button>
-                    <button onclick="excluirMensagem(${mensagem.id})">Excluir</button>
-                </div>
             `;
             messageList.appendChild(div);
         });
@@ -202,25 +185,6 @@
         document.getElementById('messageInput').value = '';
         carregarMensagens();
     });
-
-    async function editarMensagem(id, textoAtual) {
-        const novoTexto = prompt('Edite sua mensagem:', textoAtual);
-        if (novoTexto) {
-            await fetch(`${apiUrl}/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ texto: novoTexto })
-            });
-            carregarMensagens();
-        }
-    }
-
-    async function excluirMensagem(id) {
-        if (confirm('Tem certeza que deseja excluir esta mensagem?')) {
-            await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
-            carregarMensagens();
-        }
-    }
 
     carregarMensagens();
 </script>
