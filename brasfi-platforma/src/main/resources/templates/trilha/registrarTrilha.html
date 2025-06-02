@@ -4,15 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pickerjs@1.4.2/dist/picker.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/pickerjs@1.4.2/dist/picker.min.js"></script>
-    <link rel="stylesheet" href="/static/css/time-picker.css">
-    <link rel="stylesheet" href="/static/css/eixo-picker.css">
+    <!--para rodar no live preview-->
+    <!--    <link rel="stylesheet" href="/static/css/time-picker.css">-->
+    <!--    <link rel="stylesheet" href="/static/css/eixo-picker.css">-->
+    <link rel="stylesheet" th:href="@{/css/time-picker.css}" />
+    <link rel="stylesheet" th:href="@{/css/eixo-picker.css}" />
 
     <title>Criar Trilha</title>
 </head>
 <body class="bg-gray-100">
-
 <!-- botao para abrir o modal -->
 <div class="max-w-xl mx-auto mt-10 px-4">
     <button id="openModal" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
@@ -106,8 +106,7 @@
                             </div>
                         </div>
 
-                        <input type="hidden" id="eixoInput" name="eixoTematico" />
-
+                        <input type="hidden" id="eixoInput" name="eixoTematico" th:field="*{eixoTematico}"/>
                     </div>
 
 
@@ -125,33 +124,38 @@
                                 Duração
                             </label>
 
+                            <!-- Botão -->
                             <button id="togglePicker" type="button"
                                     class="flex items-center gap-2 bg-white border border-gray-300 rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left">
                                 <span id="buttonText" class="text-gray-700">Selecionar...</span>
                                 <span class="text-sm">▼</span>
-
-                                <div id="timepicker" class="hidden w-[284px] absolute mt-2 bg-white p-4 rounded-xl shadow-lg z-30" onclick="event.stopPropagation()">
-                                    <div class="flex gap-3 relative">
-                                        <div class="time-overlay hour"></div>
-                                        <div class="time-overlay minute"></div>
-
-                                        <div id="hour-col" class="column snap-y snap-mandatory">
-                                            <!-- Horas preenchidas via JS -->
-                                        </div>
-                                        <div id="minute-col" class="column snap-y snap-mandatory">
-                                            <!-- Minutos preenchidos via JS -->
-                                        </div>
-                                    </div>
-                                </div>
                             </button>
 
-                            <input type="hidden" name="duracao" id="duracaoInput" th:field="*{duracao}" />
-                        </div>
+                            <!-- Timepicker FORA do botão -->
+                            <div id="timepicker"
+                                 class="hidden w-[284px] absolute mt-2 bg-white p-4 rounded-xl shadow-lg z-30"
+                                 onclick="event.stopPropagation()">
+                                <div class="flex gap-3 relative">
+                                    <div class="time-overlay hour"></div>
+                                    <div class="time-overlay minute"></div>
 
+                                    <div id="hour-col" class="column snap-y snap-mandatory">
+                                        <!-- Horas preenchidas via JS -->
+                                    </div>
+                                    <div id="minute-col" class="column snap-y snap-mandatory">
+                                        <!-- Minutos preenchidos via JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div th:if="${duracao != null}">
+                            <input type="hidden" id="duracaoInput" name="duracaoInput" th:field="*{duracao}"/>
+                        </div>
                     </div>
 
                     <div class="mb-4">
-                        <label for="topicosDeAprendizado" class="flex items-center gap-2 cursor-pointer select-none mb-2">
+                        <label for="descricao" class="flex items-center gap-2 cursor-pointer select-none mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-align-left">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                 <path d="M4 6l16 0" />
@@ -160,8 +164,9 @@
                             </svg>
                             Descrição
                         </label>
-                        <input type="text" th:field="*{descricao}" class="block w-full border border-gray-300 rounded p-4" />
+                        <input type="text" id="descricao" th:field="*{descricao}" class="block w-full border border-gray-300 rounded p-4" />
                     </div>
+
                 </div>
 
                 <div class="w-1/2 mb-4 flex flex-col h-full">
@@ -181,8 +186,6 @@
 
             <!-- TO-DO: adicionar aula -->
 
-
-
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 Enviar
             </button>
@@ -197,6 +200,7 @@
     const openBtn = document.getElementById('openModal');
     const closeBtn = document.getElementById('closeModal');
 
+    if (openBtn && closeBtn && modal) {
     openBtn.addEventListener('click', () => {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -207,16 +211,19 @@
         modal.classList.add('hidden');
     });
 
-    // fechar modal ao clicar fora do conteúdo
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.remove('flex');
             modal.classList.add('hidden');
         }
     });
+   }
 </script>
-<script src="/static/js/time-picker.js"></script>
-<script src="/static/js/eixo-picker.js"></script>
 
+<!--para rodar no live preview-->
+<!--<script src="/static/js/time-picker.js"></script>-->
+<!--<script src="/static/js/eixo-picker.js"></script>-->
+<script th:src="@{/js/eixo-picker.js}"></script>
+<script th:src="@{/js/time-picker.js}"></script>
 </body>
 </html>
