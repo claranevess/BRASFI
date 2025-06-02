@@ -1,26 +1,290 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!--para rodar no live preview-->
+    <!--    <link rel="stylesheet" href="/static/css/time-picker.css">-->
+    <!--    <link rel="stylesheet" href="/static/css/eixo-picker.css">-->
+    <link rel="stylesheet" th:href="@{/css/time-picker.css}" />
+    <link rel="stylesheet" th:href="@{/css/eixo-picker.css}" />
+
     <title>Editar Trilha</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
 </head>
-<body>
-<div class="container mt-5">
-    <h2>Editar Trilha</h2>
-    <form th:action="@{/trilhas/editar}" th:object="${trilha}" method="post">
-        <input type="hidden" th:field="*{id}" />
-        <div class="mb-3">
-            <label for="titulo" class="form-label">Título</label>
-            <input type="text" id="titulo" th:field="*{titulo}" class="form-control" required />
-        </div>
-        <div class="mb-3">
-            <label for="descricao" class="form-label">Descrição</label>
-            <textarea id="descricao" th:field="*{descricao}" class="form-control" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-    </form>
+<body class="bg-gray-100">
+<!-- botao para abrir o modal -->
+<div class="max-w-xl mx-auto mt-10 px-4">
+    <button id="openModal" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        Editar Trilha
+    </button>
 </div>
+
+<!-- modal -->
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white w-full max-w-xl min-w-[980px] mx-auto p-6 rounded-lg shadow-lg relative max-h-[80vh] overflow-y-auto">
+
+        <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl font-bold">
+            &times;
+        </button>
+
+        <h2 class="text-2xl font-semibold mb-6">Criar Nova Trilha</h2>
+
+        <form th:action="@{/trilhas/editar}" th:object="${trilha}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}" />
+
+
+            <div class="mb-4">
+                <div class="flex items-center justify-center w-full">
+                    <label for="dropzone-file"
+                           class="relative flex flex-col items-center justify-center w-full h-[180px] max-w-[930px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Clique para fazer upload</span> ou arraste</p>
+                            <p class="text-xs text-gray-500">PNG ou JPG (MAX. 800x400px)</p>
+                        </div>
+
+                        <!-- Botão no canto inferior direito -->
+                        <button type="button" class="absolute bottom-4 right-4 flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <!-- Moldura da imagem -->
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+                                <!-- Montanhas -->
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21" />
+                                <!-- Sol ajustado entre borda e montanha, mais abaixo -->
+                                <circle cx="9.5" cy="8" r="1.5" fill="currentColor" />
+                            </svg>
+
+                            Upload de Capa
+                        </button>
+
+                        <input id="dropzone-file" name="capaFile" type="file" class="hidden" />
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <input placeholder="Digite o nome da trilha..." type="text" th:field="*{titulo}" class="w-full border-b-2 border-gray-300 rounded p-2" />
+            </div>
+
+            <div class="flex gap-4 min-h-[280px]">
+                <div class="w-1/2">
+
+                    <div class="mb-4">
+                        <div class="flex gap-4 items-start">
+                            <!-- Label à esquerda, fixo -->
+                            <label class="w-60 flex items-center gap-2 text-left cursor-pointer pt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-tag">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                    <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z" />
+                                </svg>
+                                Eixo Temático
+                            </label>
+
+                            <!-- Botão + picker, com position relative -->
+                            <div class="relative">
+                                <!-- Botão -->
+                                <button id="togglePickerEixo" type="button"
+                                        class="flex items-center gap-2 bg-white border border-gray-300 rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left w-full">
+                                    <span id="buttonTextEixo" class="text-gray-700">Selecionar...</span>
+                                    <span class="text-sm">▼</span>
+                                </button>
+
+                                <!-- Picker flutuante -->
+                                <div id="eixopicker"
+                                     class="hidden absolute left-0 w-full bg-white p-4 rounded-xl shadow-lg z-30 mt-2"
+                                     onclick="event.stopPropagation()">
+                                    <div class="flex gap-3 relative">
+                                        <div class="eixo-overlay"></div>
+                                        <div id="eixo-col" class="eixo-coluna">
+                                            <!-- preenchido via JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="eixoInput" name="eixoTematico" th:field="*{eixoTematico}"/>
+                    </div>
+
+
+                    <div class="mb-4 relative z-20" id="duration-container">
+                        <div class="flex items-center gap-4">
+                            <label class="w-60 flex items-center gap-2 text-left cursor-pointer select-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+                                     class="icon icon-tabler icon-tabler-clock">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <circle cx="12" cy="12" r="9" />
+                                    <path d="M12 7v5l3 3" />
+                                </svg>
+                                Duração
+                            </label>
+
+                            <!-- Botão -->
+                            <button id="togglePicker" type="button"
+                                    class="flex items-center gap-2 bg-white border border-gray-300 rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left">
+                                <span id="buttonText" class="text-gray-700">Selecionar...</span>
+                                <span class="text-sm">▼</span>
+                            </button>
+
+                            <!-- Timepicker FORA do botão -->
+                            <div id="timepicker"
+                                 class="hidden w-[284px] absolute mt-2 bg-white p-4 rounded-xl shadow-lg z-30"
+                                 onclick="event.stopPropagation()">
+                                <div class="flex gap-3 relative">
+                                    <div class="time-overlay hour"></div>
+                                    <div class="time-overlay minute"></div>
+
+                                    <div id="hour-col" class="column snap-y snap-mandatory">
+                                        <!-- Horas preenchidas via JS -->
+                                    </div>
+                                    <div id="minute-col" class="column snap-y snap-mandatory">
+                                        <!-- Minutos preenchidos via JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input type="hidden" id="duracaoInput" name="duracaoInput" th:value="${duracaoInput}" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="descricao" class="flex items-center gap-2 cursor-pointer select-none mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-align-left">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M4 6l16 0" />
+                                <path d="M4 12l10 0" />
+                                <path d="M4 18l14 0" />
+                            </svg>
+                            Descrição
+                        </label>
+                        <input type="text" id="descricao" th:field="*{descricao}" class="block w-full border border-gray-300 rounded p-4" />
+                    </div>
+
+                </div>
+
+                <div class="w-1/2 mb-4 flex flex-col h-full">
+                    <label for="topicosDeAprendizado" class="flex items-center gap-2 cursor-pointer select-none mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-align-left">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M4 6l16 0" />
+                            <path d="M4 12l10 0" />
+                            <path d="M4 18l14 0" />
+                        </svg>
+                        Tópicos de Aprendizado
+                    </label>
+                    <textarea id="topicosDeAprendizado" th:field="*{topicosDeAprendizado}" class="block w-full border border-gray-300 rounded p-2" rows="5"></textarea>
+                </div>
+
+            </div>
+
+            <!-- TO-DO: adicionar aula -->
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Enviar
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<!-- script -->
+<script>
+    const modal = document.getElementById('modal');
+    const openBtn = document.getElementById('openModal');
+    const closeBtn = document.getElementById('closeModal');
+
+    if (openBtn && closeBtn && modal) {
+        openBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            const atividade = {
+                titulo: "Exemplo de título",
+                descricao: "Exemplo de descrição",
+                eixo: "EMPREENDEDORISMO",
+                duracao: "01:30"
+            };
+
+            // Preencher Eixo Temático
+            setSelectedEixo(atividade.eixo);
+
+            // Preencher Duração
+            const [horas, minutos] = atividade.duracao.split(':').map(Number);
+            setSelectedTime(horas, minutos);
+
+            // Se quiser preencher inputs de texto também
+            document.getElementById('tituloInput').value = atividade.titulo;
+            document.getElementById('descricaoInput').value = atividade.descricao;
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        });
+    }
+
+
+    function setSelectedEixo(valorEnum) {
+        const eixoCol = document.getElementById('eixo-col');
+        const eixo = Object.keys(eixoMapping).find(k => eixoMapping[k] === valorEnum);
+
+        if (!eixo) return;
+
+        const index = eixosTematicos.indexOf(eixo);
+        eixoCol.scrollTop = index * 50;
+
+        document.getElementById('buttonTextEixo').innerText = eixo;
+        document.getElementById('eixoInput').value = valorEnum;
+        updateActiveEixo(index);
+    }
+
+    function setSelectedTime(horas, minutos) {
+        const hourCol = document.getElementById('hour-col');
+        const minuteCol = document.getElementById('minute-col');
+
+        hourCol.scrollTop = horas * 50;
+        minuteCol.scrollTop = (minutos / 5) * 50;
+
+        const horaStr = String(horas).padStart(2, '0');
+        const minutoStr = String(minutos).padStart(2, '0');
+        const tempo = `${horaStr}:${minutoStr}`;
+
+        document.getElementById('buttonText').innerText = tempo;
+        document.getElementById('duracaoInput').value = tempo;
+
+        updateActiveItem(hourCol, horas);
+        updateActiveItem(minuteCol, minutos / 5);
+    }
+
+    // Preencher Eixo Temático
+    setSelectedEixo(atividade.eixo); // Ex: "EMPREENDEDORISMO"
+
+    // Preencher Duração
+    const [horas, minutos] = atividade.duracao.split(':').map(Number);
+    setSelectedTime(horas, minutos);
+</script>
+<script th:src="@{/js/eixo-picker.js}"></script>
+<script th:src="@{/js/time-picker.js}"></script>
+
+
+
+<!--para rodar no live preview-->
+<!--<script src="/static/js/time-picker.js"></script>-->
+<!--<script src="/static/js/eixo-picker.js"></script>-->
+
 </body>
 </html>
