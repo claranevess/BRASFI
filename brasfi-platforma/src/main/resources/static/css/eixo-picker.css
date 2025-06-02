@@ -1,0 +1,57 @@
+/* Coluna única */
+.eixo-coluna {
+  width: 100%;
+  height: 150px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  position: relative;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.eixo-coluna::-webkit-scrollbar {
+  display: none;
+}
+
+/* Itens */
+.eixo-item {
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  scroll-snap-align: center;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  color: #111827;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.eixo-item.active {
+  opacity: 1;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* Espaçador para centralizar */
+.eixo-spacer {
+  height: 50px;
+}
+
+/* Overlay de seleção */
+.eixo-overlay {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: rgba(200, 200, 200, 0.25);
+  border-radius: 0.75rem;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}

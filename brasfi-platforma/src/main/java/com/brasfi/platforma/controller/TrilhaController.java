@@ -1,7 +1,5 @@
 package com.brasfi.platforma.controller;
 
-import com.brasfi.platforma.dto.TrilhaFormDTO;
-import com.brasfi.platforma.model.EixoTematico;
 import com.brasfi.platforma.model.Trilha;
 import com.brasfi.platforma.service.TrilhaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
-import com.brasfi.platforma.dto.TrilhaFormDTO;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,32 +26,28 @@ public class TrilhaController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    // Exibe o formulário de registro
+    // Exibe o formulário
     @GetMapping("/registrar")
     public String mostrarRegistroTrilhaForm(Model model) {
-        model.addAttribute("trilha", new TrilhaFormDTO());
-        return "trilha/registrarTrilha"; // Página do formulário
+        model.addAttribute("trilha", new Trilha());
+        return "trilha/registrarTrilha";
     }
 
-    // Processa o envio do formulário
+    // Processa o envio
     @PostMapping("/registrar")
     public String registrarTrilha(
-            @ModelAttribute TrilhaFormDTO trilhaFormDTO
+            @ModelAttribute Trilha trilha,
+            @RequestParam("duracaoInput") String duracaoStr,
+            @RequestParam("capaFile") MultipartFile capaFile
     ) throws IOException {
-        // Converte DTO para entidade
-        Trilha trilha = new Trilha();
-        trilha.setTitulo(trilhaFormDTO.getTitulo());
-        trilha.setDescricao(trilhaFormDTO.getDescricao());
-        trilha.setDuracao(trilhaFormDTO.getDuracaoHoras() + trilhaFormDTO.getDuracaoMinutos() / 60.0);
-        trilha.setTopicosDeAprendizado(trilhaFormDTO.getTopicosDeAprendizado());
-        trilha.setEixoTematico(EixoTematico.valueOf(trilhaFormDTO.getEixoTematico()));
+        // Converte "01:30" para double 1.5
+        double duracao = parseDuracao(duracaoStr);
+        trilha.setDuracao(duracao);
 
-        // Salvar arquivo
-        MultipartFile capaFile = trilhaFormDTO.getCapaFile();
+        // Salva arquivo
         if (capaFile != null && !capaFile.isEmpty()) {
             String nomeArquivo = System.currentTimeMillis() + "_" + capaFile.getOriginalFilename();
 
-            // monta o path absoluto: {uploadDir}/{nomeArquivo}
             Path pastaUploads = Paths.get(uploadDir).toAbsolutePath().normalize();
             Files.createDirectories(pastaUploads);
 
@@ -67,6 +60,26 @@ public class TrilhaController {
         trilhaService.salvarTrilha(trilha);
         return "redirect:/trilhas/listar";
     }
+
+    // Ajustado para interpretar "hh:mm"
+    private double parseDuracao(String duracaoStr) {
+        if (duracaoStr == null || duracaoStr.isEmpty()) {
+            throw new IllegalArgumentException("O campo de duração está vazio ou nulo.");
+        }
+        try {
+            String[] partes = duracaoStr.split(":");
+            if (partes.length != 2) {
+                throw new IllegalArgumentException("Formato inválido para duração. Use hh:mm.");
+            }
+            int horas = Integer.parseInt(partes[0]);
+            int minutos = Integer.parseInt(partes[1]);
+
+            return horas + minutos / 60.0;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Não foi possível converter duração para número: " + duracaoStr, e);
+        }
+    }
+
 
     @GetMapping("/deletar")
     public String mostrarConfirmacao(@RequestParam("id") Long id, Model model) {
