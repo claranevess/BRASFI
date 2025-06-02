@@ -38,8 +38,14 @@
                     <!-- Links de Apoio -->
                     <div class="mb-4">
                         <label class="block text-sm text-gray-600 mb-1">Links</label>
-                        <input type="url" name="linkApoio" placeholder="www.exemplo.com"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        <div id="links-container">
+                            <input type="url" name="linkApoio" placeholder="www.exemplo.com"
+                                   class="w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <button type="button" onclick="adicionarCampoLink()"
+                                class="text-blue-600 hover:underline text-sm mt-1">+ Adicionar outro link</button>
                     </div>
 
                     <!-- Upload de Documentos -->
@@ -68,3 +74,14 @@
 
 </body>
 </html>
+<script>
+    function adicionarCampoLink() {
+        const container = document.getElementById("links-container");
+        const input = document.createElement("input");
+        input.type = "url";
+        input.name = "linkApoio";
+        input.placeholder = "www.exemplo.com";
+        input.className = "w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
+        container.appendChild(input);
+    }
+</script>

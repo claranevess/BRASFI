@@ -32,4 +32,8 @@ public class Aula {
     @ManyToOne
     @JoinColumn(name = "grupo_id")
     private Grupo grupo;
+
+    @OneToMany(mappedBy = "aula", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Material> materiais;
+
 }

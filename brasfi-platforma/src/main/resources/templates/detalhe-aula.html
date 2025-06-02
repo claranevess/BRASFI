@@ -2,20 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Detalhe da Aula</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<h1 th:text="${aula.titulo}">Título da Aula</h1>
-<p th:text="${aula.descricao}">Descrição da aula</p>
+<body class="bg-gray-100 p-8">
 
-<h2>Assista ao vídeo:</h2>
-<div>
-    <iframe
-            width="560"
-            height="315"
-            th:src="'https://www.youtube.com/embed/' + ${videoCode}"
-            frameborder="0"
-            allowfullscreen>
-    </iframe>
+<div class="max-w-4xl mx-auto bg-white rounded shadow p-6">
+    <h1 class="text-3xl font-bold mb-4" th:text="${aula.titulo}">Título da Aula</h1>
+    <p class="text-gray-700 mb-6" th:text="${aula.descricao}">Descrição da aula</p>
+
+    <h2 class="text-xl font-semibold mb-2">Assista ao vídeo:</h2>
+    <div class="mb-6">
+        <iframe width="560" height="315"
+                th:src="'https://www.youtube.com/embed/' + ${videoCode}"
+                frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <!-- Materiais de Apoio -->
+    <div class="mt-8" th:if="${aula.materiais != null and !aula.materiais.isEmpty()}">
+        <h2 class="text-xl font-semibold mb-4">Materiais de Apoio</h2>
+
+        <ul class="list-disc list-inside space-y-2">
+            <!-- Laço para cada material -->
+            <li th:each="material : ${aula.materiais}">
+                <!-- Se tiver link de apoio -->
+                <div th:if="${material.linkApoio != null}">
+                    <a th:href="${material.linkApoio}" target="_blank" class="text-blue-600 hover:underline" th:text="${material.linkApoio}">Link de apoio</a>
+                </div>
+
+                <!-- Se tiver arquivo (PDF ou outro) -->
+                <div th:if="${material.caminhoArquivo != null}">
+                    <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank" class="text-green-600 hover:underline" th:text="${material.nomeOriginal}">Arquivo</a>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
+
 </body>
 </html>
