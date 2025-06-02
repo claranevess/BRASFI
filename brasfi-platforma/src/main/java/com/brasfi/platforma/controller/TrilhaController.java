@@ -102,9 +102,34 @@ public class TrilhaController {
     }
 
     @PostMapping("/editar")
-    public String editarTrilha(Trilha trilha) {
+    public String editarTrilha(
+            @ModelAttribute Trilha trilha,
+            @RequestParam("duracaoInput") String duracaoStr,
+            @RequestParam("capaFile") MultipartFile capaFile
+    ) throws IOException {
+        // Converte "hh:mm" para double
+        double duracao = parseDuracao(duracaoStr);
+        trilha.setDuracao(duracao);
+
+        // Se uma nova imagem for enviada, substitui
+        if (capaFile != null && !capaFile.isEmpty()) {
+            String nomeArquivo = System.currentTimeMillis() + "_" + capaFile.getOriginalFilename();
+
+            Path pastaUploads = Paths.get(uploadDir).toAbsolutePath().normalize();
+            Files.createDirectories(pastaUploads);
+
+            Path destino = pastaUploads.resolve(nomeArquivo);
+            capaFile.transferTo(destino.toFile());
+
+            trilha.setCapa("/" + uploadDir + "/" + nomeArquivo);
+        } else {
+            // Preserva a capa existente se não houver nova imagem
+            Trilha trilhaExistente = trilhaService.buscarPorId(trilha.getId());
+            trilha.setCapa(trilhaExistente.getCapa());
+        }
+
         trilhaService.atualizarTrilha(trilha);
-        return "redirect:/";
+        return "redirect:/trilhas/listar";
     }
 
     @GetMapping("/listar")
