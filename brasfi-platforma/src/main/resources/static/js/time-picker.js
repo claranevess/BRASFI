@@ -42,10 +42,11 @@ function getSelectedTime() {
     const hourEl = hourCol.children[hourIndex + 1]; // +1 por causa do spacer
     const minuteEl = minuteCol.children[minuteIndex + 1];
 
-    const hour = hourEl?.dataset?.value ?? 0;
-    const minute = minuteEl?.dataset?.value ?? 0;
+    const hour = String(hourEl?.dataset?.value ?? 0).padStart(2, '0');
+    const minute = String(minuteEl?.dataset?.value ?? 0).padStart(2, '0');
 
-    return `${hour}h ${minute}min`;
+    return `${hour}:${minute}`;
+
 }
 
 

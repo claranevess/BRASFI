@@ -2,17 +2,23 @@
 const eixosTematicos = [
   "Finanças",
   "Empreendedorismo",
-  "Liderança",
+  "Liderança"
 ];
+
+const eixoMapping = {
+  "Finanças": "FINANCAS",
+  "Empreendedorismo": "EMPREENDEDORISMO",
+  "Liderança": "LIDERANCA"
+};
 
 function fillEixoColumn() {
     const eixoCol = document.getElementById('eixo-col');
 
-    eixosTematicos.forEach((eixo, index) => {
+    eixosTematicos.forEach((eixo) => {
         const item = document.createElement('div');
         item.className = 'eixo-item';
-        item.innerText = eixo;
-        item.dataset.value = eixo;
+        item.innerText = eixo;  // nome aparece aqui
+        item.dataset.value = eixo;  // para pegar depois
         eixoCol.appendChild(item);
     });
 
@@ -61,14 +67,18 @@ document.getElementById('eixopicker').addEventListener('click', function (e) {
 document.getElementById('eixo-col').addEventListener('scroll', () => {
     clearTimeout(window._eixoScrollTimeout);
     window._eixoScrollTimeout = setTimeout(() => {
-        const selected = getSelectedEixo();
+        const selected = getSelectedEixo(); // ex: "Empreendedorismo"
         document.getElementById('buttonTextEixo').innerText = selected;
-        document.getElementById('eixoInput').value = selected;
+
+        // converte para o formato do enum
+        const enumValue = eixoMapping[selected] || "";
+        document.getElementById('eixoInput').value = enumValue;
 
         const eixoCol = document.getElementById('eixo-col');
         const eixoIndex = Math.round(eixoCol.scrollTop / 50);
         updateActiveEixo(eixoIndex);
     }, 100);
 });
+
 
 fillEixoColumn();
