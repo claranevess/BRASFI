@@ -31,6 +31,8 @@
         <h2 class="text-2xl font-semibold mb-6">Criar Nova Trilha</h2>
 
         <form th:action="@{/trilhas/editar}" th:object="${trilha}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}" />
+
 
             <div class="mb-4">
                 <div class="flex items-center justify-center w-full">
@@ -149,7 +151,7 @@
                             </div>
 
                         </div>
-                        <input type="hidden" id="duracaoInput" name="duracaoInput" value="" />
+                        <input type="hidden" id="duracaoInput" name="duracaoInput" th:value="${duracaoInput}" />
                     </div>
 
                     <div class="mb-4">
@@ -199,41 +201,90 @@
     const closeBtn = document.getElementById('closeModal');
 
     if (openBtn && closeBtn && modal) {
-    openBtn.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    });
+        openBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
 
-    closeBtn.addEventListener('click', () => {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-    });
+            const atividade = {
+                titulo: "Exemplo de título",
+                descricao: "Exemplo de descrição",
+                eixo: "EMPREENDEDORISMO",
+                duracao: "01:30"
+            };
 
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
+            // Preencher Eixo Temático
+            setSelectedEixo(atividade.eixo);
+
+            // Preencher Duração
+            const [horas, minutos] = atividade.duracao.split(':').map(Number);
+            setSelectedTime(horas, minutos);
+
+            // Se quiser preencher inputs de texto também
+            document.getElementById('tituloInput').value = atividade.titulo;
+            document.getElementById('descricaoInput').value = atividade.descricao;
+        });
+
+        closeBtn.addEventListener('click', () => {
             modal.classList.remove('flex');
             modal.classList.add('hidden');
-        }
-    });
-   }
+        });
 
-    // Preenche o botão do eixo temático com valor atual (se houver)
-    const eixoValor = /*[[${trilha.eixoTematico}]]*/ '';
-    if (eixoValor) {
-        document.getElementById("buttonTextEixo").textContent = eixoValor;
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        });
     }
 
-    // Preenche o botão de duração com valor atual (se houver)
-    const duracaoValor = /*[[${duracaoInput}]]*/ '';
-    if (duracaoValor) {
-        document.getElementById("buttonText").textContent = duracaoValor;
+
+    function setSelectedEixo(valorEnum) {
+        const eixoCol = document.getElementById('eixo-col');
+        const eixo = Object.keys(eixoMapping).find(k => eixoMapping[k] === valorEnum);
+
+        if (!eixo) return;
+
+        const index = eixosTematicos.indexOf(eixo);
+        eixoCol.scrollTop = index * 50;
+
+        document.getElementById('buttonTextEixo').innerText = eixo;
+        document.getElementById('eixoInput').value = valorEnum;
+        updateActiveEixo(index);
     }
+
+    function setSelectedTime(horas, minutos) {
+        const hourCol = document.getElementById('hour-col');
+        const minuteCol = document.getElementById('minute-col');
+
+        hourCol.scrollTop = horas * 50;
+        minuteCol.scrollTop = (minutos / 5) * 50;
+
+        const horaStr = String(horas).padStart(2, '0');
+        const minutoStr = String(minutos).padStart(2, '0');
+        const tempo = `${horaStr}:${minutoStr}`;
+
+        document.getElementById('buttonText').innerText = tempo;
+        document.getElementById('duracaoInput').value = tempo;
+
+        updateActiveItem(hourCol, horas);
+        updateActiveItem(minuteCol, minutos / 5);
+    }
+
+    // Preencher Eixo Temático
+    setSelectedEixo(atividade.eixo); // Ex: "EMPREENDEDORISMO"
+
+    // Preencher Duração
+    const [horas, minutos] = atividade.duracao.split(':').map(Number);
+    setSelectedTime(horas, minutos);
 </script>
+<script th:src="@{/js/eixo-picker.js}"></script>
+<script th:src="@{/js/time-picker.js}"></script>
+
+
 
 <!--para rodar no live preview-->
 <!--<script src="/static/js/time-picker.js"></script>-->
 <!--<script src="/static/js/eixo-picker.js"></script>-->
-<script th:src="@{/js/eixo-picker.js}"></script>
-<script th:src="@{/js/time-picker.js}"></script>
+
 </body>
 </html>
