@@ -4,154 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRASFi Conecta - Grupo</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f9fafb;
-            color: #111827;
-        }
-        .sidebar {
-            width: 220px;
-            background-color: #fff;
-            height: 100vh;
-            padding: 20px;
-            border-right: 1px solid #e5e7eb;
-            position: fixed;
-        }
-        .sidebar h2 {
-            font-size: 18px;
-            margin-bottom: 40px;
-        }
-        .sidebar ul {
-            list-style: none;
-        }
-        .sidebar ul li {
-            padding: 10px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .sidebar ul li:hover, .sidebar ul .active {
-            background-color: #f3f4f6;
-        }
-        .sidebar ul li span {
-            flex: 1;
-        }
-
-        .main {
-            margin-left: 240px;
-            padding: 20px;
-        }
-        .header {
-            background-color: #fff;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #e5e7eb;
-        }
-        .header h1 {
-            font-size: 24px;
-        }
-        .group-path {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .chat {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            height: calc(100vh - 160px);
-            display: flex;
-            flex-direction: column;
-        }
-        .messages {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-        .message {
-            margin-bottom: 15px;
-        }
-        .message .name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .message .text {
-            background-color: #f3f4f6;
-            padding: 10px;
-            border-radius: 8px;
-            display: inline-block;
-            max-width: 70%;
-        }
-        .input-area {
-            display: flex;
-            gap: 10px;
-        }
-        .input-area input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-        }
-        .input-area button {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .input-area button:hover {
-            background: #2563eb;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="sidebar">
-    <h2>BRASFi <br>conecta</h2>
-    <ul>
-        <li><span>📋 Dashboard</span></li>
-        <li><span>🎯 Trilhas</span></li>
-        <li class="active"><span>💬 Grupos</span></li>
-        <li><span>📁 Projetos</span></li>
+<body class="bg-gray-50 text-gray-900">
+
+<!-- Sidebar -->
+<div class="w-56 bg-white h-screen p-5 border-r fixed">
+    <h2 class="text-lg font-semibold mb-10">BRASFi <br> <span class="text-sm font-normal">conecta</span></h2>
+    <ul class="space-y-3">
+        <li class="flex items-center gap-3 hover:bg-gray-100 p-2 rounded-lg cursor-pointer">
+            <span>📋</span> <span>Dashboard</span>
+        </li>
+        <li class="flex items-center gap-3 hover:bg-gray-100 p-2 rounded-lg cursor-pointer">
+            <span>🎯</span> <span>Trilhas</span>
+        </li>
+        <li class="flex items-center gap-3 bg-gray-100 p-2 rounded-lg cursor-pointer font-medium">
+            <span>💬</span> <span>Grupos</span>
+        </li>
+        <li class="flex items-center gap-3 hover:bg-gray-100 p-2 rounded-lg cursor-pointer">
+            <span>📁</span> <span>Projetos</span>
+        </li>
     </ul>
 </div>
 
-<div class="main">
-    <div class="header">
+<!-- Main Content -->
+<div class="ml-60 p-6">
+
+    <!-- Header -->
+    <div class="bg-white border p-4 rounded-lg mb-6 flex justify-between items-center">
         <div>
-            <div class="group-path">Meus Grupos > #Canal Principal BRASFI</div>
-            <h1>#Canal Principal BRASFI</h1>
+            <div class="text-sm text-gray-500">Meus Grupos > <span class="font-semibold">#Canal Principal BRASFI</span></div>
+            <h1 class="text-2xl font-bold">#Canal Principal BRASFI</h1>
         </div>
-        <div>
-            <span>🔔 ⚙️ 👤 Usuário</span>
+        <div class="flex items-center gap-4 text-lg">
+            🔔 ⚙️ 👤 <span class="text-sm">Usuário</span>
         </div>
     </div>
 
-    <div class="chat">
-        <div class="messages" id="messageList">
-            <!-- Mensagens renderizadas aqui -->
+    <!-- Chat Box -->
+    <div class="bg-white border rounded-lg h-[calc(100vh-180px)] flex flex-col">
+
+        <!-- Messages -->
+        <div id="messageList" class="flex-1 p-4 overflow-y-auto space-y-4">
+            <!-- Mensagens aparecem aqui -->
         </div>
-        <form class="input-area" id="messageForm">
-            <input type="text" id="messageInput" placeholder="Digite sua mensagem..." required>
-            <button type="submit">Enviar</button>
+
+        <!-- Input -->
+        <form id="messageForm" class="p-4 border-t flex gap-2">
+            <input
+                    id="messageInput"
+                    type="text"
+                    placeholder="Digite sua mensagem..."
+                    required
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+            >
+                Enviar
+            </button>
         </form>
     </div>
 </div>
 
+<!-- JavaScript -->
 <script>
     const apiUrl = 'http://localhost:8080/mensagens';
 
@@ -165,8 +82,10 @@
             const div = document.createElement('div');
             div.className = 'message';
             div.innerHTML = `
-                <div class="name">${mensagem.user.nome}:</div>
-                <div class="text">${mensagem.texto}</div>
+                <div class="font-semibold mb-1">${mensagem.user.nome}:</div>
+                <div class="bg-gray-100 px-4 py-2 rounded-lg inline-block max-w-[70%]">
+                    ${mensagem.texto}
+                </div>
             `;
             messageList.appendChild(div);
         });
