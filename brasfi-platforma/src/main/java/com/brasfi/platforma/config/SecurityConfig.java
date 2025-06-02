@@ -2,6 +2,7 @@ package com.brasfi.platforma.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -24,35 +25,41 @@ public class SecurityConfig {
                                 "/imagens/**",
                                 "/favicon.ico",
                                 "/exemplo.jpg",
-                                "/favicon-brasfi.png"
-                        ).permitAll() // rotas públicas
-                        .requestMatchers("/").authenticated() // raiz exige login
-                        .anyRequest().authenticated() // tudo o que não foi listado acima também exige login
+                                "/favicon-brasfi.png",
+                                "/h2-console/**",
+                                "/aulas/*/concluir" // permite PATCH para concluir aula
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
-                        .loginPage("/login") // especifica a página de login
+                        .loginPage("/login")
                         .defaultSuccessUrl("/", true)
-                        .permitAll() // permite que todos acessem a página de login
+                        .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")                     // URL chamada para logout
-                        .logoutSuccessUrl("/login?logout")        // para onde redirecionar após logout
-                        .invalidateHttpSession(true)              // invalida a sessão
-                        .deleteCookies("JSESSIONID")              // limpa o cookie de sessão
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**") // CSRF desabilitado para h2-console
+                        .ignoringRequestMatchers(
+                                "/h2-console/**",
+                                "/aulas/*/concluir" // desabilita CSRF apenas para esse endpoint PATCH
+                        )
                 )
                 .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable) // permite iframe para h2-console
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                 );
 
         return http.build();
     }
 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); //  encriptar senhas
     }
+
 }

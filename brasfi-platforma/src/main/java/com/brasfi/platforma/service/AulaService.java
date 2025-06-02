@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,4 +25,15 @@ public class AulaService {
     public List<Aula> listarTodas() {
         return aulaRepository.findAll();
     }
+    public boolean marcarComoConcluida(Long id) {
+        Optional<Aula> optionalAula = aulaRepository.findById(id);
+        if (optionalAula.isPresent()) {
+            Aula aula = optionalAula.get();
+            aula.setConcluida(true);
+            aulaRepository.save(aula);
+            return true;
+        }
+        return false;
+    }
+
 }

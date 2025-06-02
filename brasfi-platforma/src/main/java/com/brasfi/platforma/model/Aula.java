@@ -20,6 +20,10 @@ public class Aula {
     private String titulo;
     private String link;
     private String descricao;
+
+    @Column(name = "concluida")
+    private boolean concluida = false;
+
     @ManyToOne
     @JoinColumn(name = "mentor_id")
     private Mentor mentor;

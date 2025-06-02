@@ -6,6 +6,8 @@ import com.brasfi.platforma.repository.MaterialRepository;
 import com.brasfi.platforma.service.AulaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -119,5 +121,16 @@ public class AulaController {
         model.addAttribute("aula", aula);
         model.addAttribute("videoCode", videoCode);
         return "detalhe-aula";
+    }
+
+    @PatchMapping("/{id}/concluir")
+    @ResponseBody
+    public ResponseEntity<String> concluirAula(@PathVariable Long id) {
+        boolean sucesso = aulaService.marcarComoConcluida(id);
+        if (sucesso) {
+            return ResponseEntity.ok("Aula concluída com sucesso.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aula não encontrada.");
+        }
     }
 }
