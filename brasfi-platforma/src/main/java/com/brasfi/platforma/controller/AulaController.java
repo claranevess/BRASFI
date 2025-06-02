@@ -31,50 +31,37 @@ public class AulaController {
     }
 
     @PostMapping("/salvar")
-    public String salvarAula(
-            @ModelAttribute("aula") Aula aula,
-            @RequestParam(value = "documentos", required = false) MultipartFile[] documentos,
-            @RequestParam(value = "linkApoio", required = false) String[] linksApoio,
-            Model model
-    ) {
-        // 1. Salvar a aula
+    public String salvarAula(@ModelAttribute Aula aula,
+                             @RequestParam("documentos") MultipartFile[] documentos,
+                             @RequestParam(value = "linkApoio", required = false) String[] linksApoio,
+                             Model model) {
+
         Aula aulaSalva = aulaService.salvarAula(aula);
 
-        // 2. Salvar cada link de apoio (se existirem)
-        if (linksApoio != null) {
-            for (String link : linksApoio) {
-                if (link != null && !link.isEmpty()) {
-                    Material linkMaterial = new Material();
-                    linkMaterial.setLinkApoio(link);
-                    linkMaterial.setAula(aulaSalva);
-                    materialRepository.save(linkMaterial);
-                }
-            }
-        }
-
-        // 3. Salvar documentos (se houver)
+        // Salva arquivos
         if (documentos != null) {
+            System.out.println(">>> Total de arquivos recebidos: " + documentos.length);
             for (MultipartFile arquivo : documentos) {
                 if (arquivo != null && !arquivo.isEmpty()) {
                     try {
                         String nomeOriginal = arquivo.getOriginalFilename();
-                        String nomeUnico = System.currentTimeMillis() + "_" + nomeOriginal;
-
-                        // Caminho absoluto para a pasta 'uploads'
-                        File pastaUploads = new File("uploads");
+                        String caminhoPasta = "uploads/";
+                        File pastaUploads = new File(caminhoPasta);
                         if (!pastaUploads.exists()) {
                             pastaUploads.mkdirs();
                         }
 
-                        File destino = new File(pastaUploads, nomeUnico);
-                        arquivo.transferTo(destino);
+                        String caminhoCompleto = caminhoPasta + nomeOriginal;
+                        arquivo.transferTo(new File(caminhoCompleto));
 
-                        // Salva info no banco
                         Material material = new Material();
                         material.setNomeOriginal(nomeOriginal);
-                        material.setCaminhoArquivo(nomeUnico); // usado na URL
+                        material.setCaminhoArquivo(nomeOriginal); // apenas nome, pois /uploads/ já é servido
                         material.setAula(aulaSalva);
+
                         materialRepository.save(material);
+                        System.out.println(">>> Arquivo salvo: " + nomeOriginal);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                         model.addAttribute("mensagem", "Erro ao salvar o arquivo: " + arquivo.getOriginalFilename());
@@ -83,10 +70,21 @@ public class AulaController {
             }
         }
 
+        // Salva links
+        if (linksApoio != null) {
+            for (String link : linksApoio) {
+                if (link != null && !link.isBlank()) {
+                    Material material = new Material();
+                    material.setLinkApoio(link);
+                    material.setAula(aulaSalva);
+                    materialRepository.save(material);
+                    System.out.println(">>> Link salvo: " + link);
+                }
+            }
+        }
 
-        model.addAttribute("mensagem", "Aula enviada com sucesso!");
-        model.addAttribute("aula", new Aula()); // limpa o formulário
-        return "enviar-aula";
+        model.addAttribute("mensagem", "Aula salva com sucesso!");
+        return "redirect:/aulas/detalhe/" + aulaSalva.getId();
     }
 
 

@@ -5,38 +5,91 @@
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-8">
+<body class="bg-gray-100 font-sans">
 
-<div class="max-w-4xl mx-auto bg-white rounded shadow p-6">
-    <h1 class="text-3xl font-bold mb-4" th:text="${aula.titulo}">Título da Aula</h1>
-    <p class="text-gray-700 mb-6" th:text="${aula.descricao}">Descrição da aula</p>
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md p-6 space-y-4">
+        <div class="mb-6">
+            <img src="/path/to/logo.png" alt="BRASFI Conecta" class="h-8" />
+        </div>
+        <nav class="space-y-2">
+            <a href="#" class="block text-gray-700 font-semibold bg-gray-100 px-4 py-2 rounded">Trilhas</a>
+            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Dashboard</a>
+            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Grupos</a>
+            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Projetos</a>
+        </nav>
+    </aside>
 
-    <h2 class="text-xl font-semibold mb-2">Assista ao vídeo:</h2>
-    <div class="mb-6">
-        <iframe width="560" height="315"
-                th:src="'https://www.youtube.com/embed/' + ${videoCode}"
-                frameborder="0" allowfullscreen></iframe>
-    </div>
+    <!-- Main content -->
+    <main class="flex-1 p-8">
+        <!-- Breadcrumb + Header -->
+        <div class="flex justify-between items-center mb-6">
+            <nav class="text-sm text-gray-600 space-x-1">
+                <span>Trilhas</span> >
+                <span>Fundamentos de Finanças Sustentáveis</span> >
+                <span class="font-semibold text-black">O que são Finanças Sustentáveis?</span>
+            </nav>
+            <div class="flex items-center space-x-2">
+                <div class="text-sm text-gray-600">Usuário</div>
+                <img src="/path/to/user-icon.svg" class="w-6 h-6" alt="Ícone do usuário" />
+            </div>
+        </div>
 
-    <!-- Materiais de Apoio -->
-    <div class="mt-8" th:if="${aula.materiais != null and !aula.materiais.isEmpty()}">
-        <h2 class="text-xl font-semibold mb-4">Materiais de Apoio</h2>
-
-        <ul class="list-disc list-inside space-y-2">
-            <!-- Laço para cada material -->
-            <li th:each="material : ${aula.materiais}">
-                <!-- Se tiver link de apoio -->
-                <div th:if="${material.linkApoio != null}">
-                    <a th:href="${material.linkApoio}" target="_blank" class="text-blue-600 hover:underline" th:text="${material.linkApoio}">Link de apoio</a>
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Vídeo e Descrição -->
+            <div class="flex-1">
+                <div class="aspect-video bg-gray-200 rounded mb-6 overflow-hidden">
+                    <iframe class="w-full h-full"
+                            th:src="'https://www.youtube.com/embed/' + ${videoCode}"
+                            frameborder="0" allowfullscreen></iframe>
                 </div>
 
-                <!-- Se tiver arquivo (PDF ou outro) -->
-                <div th:if="${material.caminhoArquivo != null}">
-                    <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank" class="text-green-600 hover:underline" th:text="${material.nomeOriginal}">Arquivo</a>
+                <h1 class="text-2xl font-bold mb-2" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h1>
+                <p class="text-gray-700 mb-4" th:text="${aula.descricao}">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+                </p>
+
+                <div class="flex items-center space-x-4 mb-6">
+                    <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-blue-600">
+                        <span>👍</span><span>Gostei</span>
+                    </button>
+                    <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-red-600">
+                        <span>👎</span><span>Não gostei</span>
+                    </button>
+                    <label class="flex items-center text-sm text-gray-700 space-x-2">
+                        <input type="checkbox" class="form-checkbox" />
+                        <span>Aula concluída?</span>
+                    </label>
                 </div>
-            </li>
-        </ul>
-    </div>
+            </div>
+
+            <!-- Materiais Disponíveis -->
+            <aside class="w-full lg:w-72 bg-gray-100 rounded-lg p-4 space-y-4">
+                <h2 class="text-lg font-semibold">Materiais disponíveis</h2>
+
+                <ul class="space-y-2 list-none">
+                    <li th:each="material : ${aula.materiais}">
+                        <!-- Link -->
+                        <div th:if="${material.linkApoio != null}">
+                            <a th:href="${material.linkApoio}" target="_blank"
+                               class="block text-blue-600 hover:underline text-sm">
+                                🔗 <span th:text="${material.linkApoio}">Link</span>
+                            </a>
+                        </div>
+
+                        <!-- Arquivo -->
+                        <div th:if="${material.caminhoArquivo != null}">
+                            <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank"
+                               class="block text-green-600 hover:underline text-sm">
+                                📄 <span th:text="${material.nomeOriginal}">PDF Slide Apresentação</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </aside>
+        </div>
+    </main>
 </div>
 
 </body>
