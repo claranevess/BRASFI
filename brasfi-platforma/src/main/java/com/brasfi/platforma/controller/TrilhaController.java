@@ -37,10 +37,10 @@ public class TrilhaController {
     @PostMapping("/registrar")
     public String registrarTrilha(
             @ModelAttribute Trilha trilha,
-            @RequestParam("duracaoInput") String duracaoStr, // ex: "1h 30min"
+            @RequestParam("duracaoInput") String duracaoStr,
             @RequestParam("capaFile") MultipartFile capaFile
     ) throws IOException {
-        // Converte "1h 30min" em double: 1.5
+        // Converte "01:30" para double 1.5
         double duracao = parseDuracao(duracaoStr);
         trilha.setDuracao(duracao);
 
@@ -61,23 +61,23 @@ public class TrilhaController {
         return "redirect:/trilhas/listar";
     }
 
-    // Auxiliar para converter string "1h 30min" -> double 1.5
+    // Ajustado para interpretar "hh:mm"
     private double parseDuracao(String duracaoStr) {
-        int horas = 0;
-        int minutos = 0;
-
-        if (duracaoStr != null && !duracaoStr.isEmpty()) {
-            String[] partes = duracaoStr.split(" ");
-            for (String parte : partes) {
-                if (parte.endsWith("h")) {
-                    horas = Integer.parseInt(parte.replace("h", ""));
-                } else if (parte.endsWith("min")) {
-                    minutos = Integer.parseInt(parte.replace("min", ""));
-                }
-            }
+        if (duracaoStr == null || duracaoStr.isEmpty()) {
+            throw new IllegalArgumentException("O campo de duração está vazio ou nulo.");
         }
+        try {
+            String[] partes = duracaoStr.split(":");
+            if (partes.length != 2) {
+                throw new IllegalArgumentException("Formato inválido para duração. Use hh:mm.");
+            }
+            int horas = Integer.parseInt(partes[0]);
+            int minutos = Integer.parseInt(partes[1]);
 
-        return horas + minutos / 60.0;
+            return horas + minutos / 60.0;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Não foi possível converter duração para número: " + duracaoStr, e);
+        }
     }
 
 
