@@ -27,8 +27,4 @@ public class Mensagem {
 
     private LocalDate dataCriacao;
     private String texto;
-
-    @ManyToOne
-    @JoinColumn(name = "aulas_id")
-    private Aula aula;
 }
