@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRASFi Conecta - Grupo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        .sidebar {
+            width: 220px;
+            background-color: #fff;
+            height: 100vh;
+            padding: 20px;
+            border-right: 1px solid #e5e7eb;
+            position: fixed;
+        }
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar ul li {
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .sidebar ul li:hover, .sidebar ul .active {
+            background-color: #f3f4f6;
+        }
+        .sidebar ul li span {
+            flex: 1;
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 20px;
+        }
+        .header {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e5e7eb;
+        }
+        .header h1 {
+            font-size: 24px;
+        }
+        .group-path {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .chat {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            height: calc(100vh - 160px);
+            display: flex;
+            flex-direction: column;
+        }
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 15px;
+        }
+        .message .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .message .text {
+            background-color: #f3f4f6;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            max-width: 70%;
+        }
+        .actions {
+            margin-top: 5px;
+        }
+        .actions button {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .actions button:hover {
+            text-decoration: underline;
+        }
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+        }
+        .input-area button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .input-area button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>BRASFi <br>conecta</h2>
+    <ul>
+        <li><span>📋 Dashboard</span></li>
+        <li><span>🎯 Trilhas</span></li>
+        <li class="active"><span>💬 Grupos</span></li>
+        <li><span>📁 Projetos</span></li>
+    </ul>
+</div>
+
+<div class="main">
+    <div class="header">
+        <div>
+            <div class="group-path">Meus Grupos > #Canal Principal BRASFI</div>
+            <h1>#Canal Principal BRASFI</h1>
+        </div>
+        <div>
+            <span>🔔 ⚙️ 👤 Usuário</span>
+        </div>
+    </div>
+
+    <div class="chat">
+        <div class="messages" id="messageList">
+            <!-- Mensagens renderizadas aqui -->
+        </div>
+        <form class="input-area" id="messageForm">
+            <input type="text" id="messageInput" placeholder="Digite sua mensagem..." required>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const apiUrl = 'http://localhost:8080/mensagens';
+
+    async function carregarMensagens() {
+        const res = await fetch(apiUrl);
+        const mensagens = await res.json();
+        const messageList = document.getElementById('messageList');
+        messageList.innerHTML = '';
+
+        mensagens.forEach(mensagem => {
+            const div = document.createElement('div');
+            div.className = 'message';
+            div.innerHTML = `
+                <div class="name">${mensagem.user.nome}:</div>
+                <div class="text">${mensagem.texto}</div>
+                <div class="actions">
+                    <button onclick="editarMensagem(${mensagem.id}, '${mensagem.texto.replace(/'/g, "\\'")}')">Editar</button>
+                    <button onclick="excluirMensagem(${mensagem.id})">Excluir</button>
+                </div>
+            `;
+            messageList.appendChild(div);
+        });
+    }
+
+    document.getElementById('messageForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const texto = document.getElementById('messageInput').value;
+
+        await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ texto, user: { id: 1 }, grupo: { id: 1 } })
+        });
+
+        document.getElementById('messageInput').value = '';
+        carregarMensagens();
+    });
+
+    async function editarMensagem(id, textoAtual) {
+        const novoTexto = prompt('Edite sua mensagem:', textoAtual);
+        if (novoTexto) {
+            await fetch(`${apiUrl}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ texto: novoTexto })
+            });
+            carregarMensagens();
+        }
+    }
+
+    async function excluirMensagem(id) {
+        if (confirm('Tem certeza que deseja excluir esta mensagem?')) {
+            await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+            carregarMensagens();
+        }
+    }
+
+    carregarMensagens();
+</script>
+</body>
+</html>
