@@ -3,49 +3,221 @@
 <head>
     <title>Lista de Grupos</title>
     <meta charset="UTF-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom styles not easily done with pure Tailwind or for specific overrides */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .avatar-group > img {
+            margin-left: -8px; /* Overlap avatars */
+            border: 2px solid white; /* Border for avatars */
+        }
+        /* Ensure the first avatar doesn't have negative margin-left */
+        .avatar-group > img:first-child {
+            margin-left: 0;
+        }
+
+        /* Adjust button active state for tabs */
+        .tab-button.active {
+            border-bottom: 2px solid #007bff; /* Custom blue for active tab */
+            color: #007bff;
+        }
+
+        /* Custom color palette for Tailwind to match the screenshot */
+        :root {
+            --color-brasfi-blue: #007bff; /* Example, adjust to exact blue from logo */
+            --color-gray-bg: #f8f8f8;
+            --color-medium-gray: #777;
+            --color-dark-gray: #333;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brasfi-blue': '#007bff', /* Adjust this to your exact blue */
+                        'light-bg': '#f8f8f8', /* This is the background for individual cards (light gray) */
+                        'soft-gray': '#f0f2f5', /* Kept for other uses if needed, but not body background */
+                        'medium-gray-text': '#777',
+                        'dark-text': '#333',
+                        'sidebar-bg': '#ffffff',
+                        'card-bg': '#ffffff', /* Not used for cards, but for potential white sections */
+                        'tab-inactive': '#999',
+                        'tab-active': '#007bff',
+                        'button-hover': '#e0e0e0',
+                        'button-primary': '#007bff',
+                        'button-primary-hover': '#0056b3',
+                        'input-border': '#ddd',
+                        'shadow-light': 'rgba(0,0,0,0.05)'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-<h1>Grupos Cadastrados</h1>
+<body class="flex min-h-screen bg-white">
 
-<a th:href="@{/grupo/criar_grupo}">Criar Novo Grupo</a>
+<div class="w-64 bg-sidebar-bg p-6 shadow-md flex flex-col justify-between">
+    <div>
+        <div class="flex items-center mb-8">
+            <img src="https://via.placeholder.com/40x40?text=Logo" alt="BRASFI Conecta Logo" class="h-10 w-10 mr-3">
+            <h2 class="text-xl font-semibold text-dark-text">BRASFI conecta</h2>
+        </div>
+        <nav>
+            <ul>
+                <li class="mb-2">
+                    <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
+                        <i class="fas fa-th-large mr-3 text-lg"></i> Dashboard
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
+                        <i class="fas fa-route mr-3 text-lg"></i> Trilhas
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="#" class="flex items-center p-3 rounded-lg bg-gray-100 text-brasfi-blue font-semibold transition duration-200">
+                        <i class="fas fa-users mr-3 text-lg"></i> Grupos
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
+                        <i class="fas fa-project-diagram mr-3 text-lg"></i> Projetos
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="border-t border-gray-200 pt-4">
+        <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-red-100 hover:text-red-600 transition duration-200">
+            <i class="fas fa-sign-out-alt mr-3 text-lg"></i> Sair
+        </a>
+    </div>
+</div>
 
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Descrição</th>
-        <th>Membros</th>
-        <th>Administradores</th>
-        <th>Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="grupo : ${grupos}">
-        <td th:text="${grupo.id}">1</td>
-        <td th:text="${grupo.nome}">Nome do Grupo</td>
-        <td th:text="${grupo.descricao}">Descrição do grupo</td>
-        <td>
-            <ul>
-                <li th:each="membro : ${grupo.membros}" th:text="${membro.nome}">Nome Membro</li>
-                <li th:if="${#lists.isEmpty(grupo.membros)}">Nenhum membro</li>
-            </ul>
-        </td>
-        <td>
-            <ul>
-                <li th:each="adminId : ${grupo.adminsId}" th:text="${adminId}">ID Admin</li>
-                <li th:if="${#lists.isEmpty(grupo.adminsId)}">Nenhum administrador</li>
-            </ul>
-        </td>
-        <td>
-            <!-- Botão para entrar no grupo (exemplo, você deve ajustar usuárioId dinamicamente) -->
-            <form th:action="@{'/grupo/entrar/' + ${grupo.id}}" method="post" style="display:inline;">
-                <input type="hidden" name="usuarioId" value="1" />
-                <button type="submit">Entrar</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="flex-1 flex flex-col p-8">
+    <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm mb-8">
+        <div class="relative flex-1 mr-4">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" placeholder="Pesquise na plataforma..." class="w-full pl-12 pr-4 py-3 rounded-lg border border-input-border focus:outline-none focus:ring-1 focus:ring-brasfi-blue">
+        </div>
+        <div class="flex items-center space-x-6">
+            <button class="text-gray-500 hover:text-brasfi-blue transition duration-200">
+                <i class="fas fa-cog text-xl"></i>
+            </button>
+            <button class="text-gray-500 hover:text-brasfi-blue transition duration-200">
+                <i class="fas fa-bell text-xl"></i>
+            </button>
+            <div class="flex items-center ml-4 pl-4 border-l border-gray-200">
+                <img src="https://via.placeholder.com/40x40?text=JD" alt="User Profile" class="w-10 h-10 rounded-full mr-2 object-cover">
+                <div>
+                    <span class="font-semibold text-dark-text">Usuário</span>
+                    <small class="block text-medium-gray-text text-sm">Cargo</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h1 class="text-3xl font-bold text-dark-text mb-6">Grupos</h1>
+
+    <div class="flex flex-1 gap-8">
+        <div class="flex-1 flex flex-col">
+            <h2 class="text-2xl font-semibold text-dark-text mb-6">Meus Grupos</h2>
+
+            <div class="flex border-b border-gray-200 mb-6 pb-2">
+                <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
+                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Fixados</button>
+                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Não lidos</button>
+                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
+            </div>
+
+            <div class="space-y-4">
+                <div th:each="grupo : ${myGroups}" class="bg-light-bg p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-brasfi-blue mb-1">
+                                <span th:text="'#' + ${grupo.nome}">#Nome do Grupo</span>
+                            </h3>
+                            <p th:text="${grupo.descricao}" class="text-sm text-medium-gray-text">Descrição do grupo</p>
+                        </div>
+                        <div class="flex items-center ml-4">
+                            <div class="flex -space-x-2 avatar-group">
+                                <img src="https://via.placeholder.com/28x28?text=A" alt="Avatar" class="w-7 h-7 rounded-full border-2 border-white object-cover">
+                                <img src="https://via.placeholder.com/28x28?text=B" alt="Avatar" class="w-7 h-7 rounded-full border-2 border-white object-cover">
+                                <img src="https://via.placeholder.com/28x28?text=C" alt="Avatar" class="w-7 h-7 rounded-full border-2 border-white object-cover">
+                                <span th:if="${!#lists.isEmpty(grupo.membros)}" class="text-xs font-medium text-gray-600 pl-2">
+                                        <span th:text="'+' + ${grupo.membros.size()}"></span>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center text-sm mt-3">
+                            <span class="text-gray-600">
+                                <strong>Usuário 123456:</strong> Pode ser! Podemos tentar mais tarde.
+                            </span>
+                        <span class="text-gray-500 text-xs font-semibold bg-gray-200 px-3 py-1 rounded-full"
+                              th:text="${#lists.size(grupo.membros)} + ' membros'">
+                                99 membros
+                            </span>
+                    </div>
+                    <div class="mt-4 flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300 transition duration-200">
+                            <i class="fas fa-bookmark mr-1"></i> Fixar
+                        </button>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(myGroups)}" class="text-center text-gray-500 py-8">
+                    Você ainda não faz parte de nenhum grupo.
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col">
+            <h2 class="text-2xl font-semibold text-dark-text mb-6">Navegue a BRASFI: <br>Explore novos grupos</h2>
+
+            <div class="relative flex items-center mb-6">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" placeholder="Pesquisa por Grupos..." class="w-full pl-12 pr-4 py-3 rounded-lg border border-input-border focus:outline-none focus:ring-1 focus:ring-brasfi-blue">
+                <button class="ml-3 px-5 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-200">
+                    <i class="fas fa-filter mr-2"></i>Filtrar
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div th:each="grupo : ${exploreGroups}" class="bg-light-bg p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-semibold text-dark-text">
+                            <span th:text="'#' + ${grupo.nome}">#Nome do Grupo</span>
+                        </h3>
+                        <div class="flex items-center ml-4">
+                            <div class="flex -space-x-2 avatar-group">
+                                <img src="https://via.placeholder.com/28x28?text=X" alt="Avatar" class="w-7 h-7 rounded-full border-2 border-white object-cover">
+                                <img src="https://via.placeholder.com/28x28?text=Y" alt="Avatar" class="w-7 h-7 rounded-full border-2 border-white object-cover">
+                                <img src="https://via.placeholder.com/28x28?text=Z" alt="Avatar" class="w-7 h-7 rounded-full border-2 border-white object-cover">
+                                <span th:if="${!#lists.isEmpty(grupo.membros)}" class="text-xs font-medium text-gray-600 pl-2">
+                                        <span th:text="'+' + ${grupo.membros.size()}"></span>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                    <p th:text="${grupo.descricao}" class="text-sm text-medium-gray-text mb-4">Grupo de discussão e formação de líderes para o amanhã - técnicas, estudos e geração de impacto.</p>
+                    <form th:action="@{'/grupo/entrar/' + ${grupo.id}}" method="post" style="display:inline;">
+                        <button type="submit" class="px-5 py-2 bg-brasfi-blue text-white rounded-lg hover:bg-button-primary-hover transition duration-200 text-sm">
+                            Solicitar acesso
+                        </button>
+                    </form>
+                </div>
+                <div th:if="${#lists.isEmpty(exploreGroups)}" class="text-center text-gray-500 py-8">
+                    Não há novos grupos para explorar no momento.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
