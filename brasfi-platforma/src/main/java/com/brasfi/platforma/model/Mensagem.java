@@ -26,5 +26,5 @@ public class Mensagem {
     private Grupo grupo;
 
     private LocalDate dataCriacao;
-    private String texto;
+    private String message;
 }
