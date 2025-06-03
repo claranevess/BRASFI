@@ -207,79 +207,59 @@
 </div>
 
 <script>
-    let stompClient = null;
+    const socket = new SockJS('http://localhost:8080/conect'); // ← use o host e porta do Spring Boot
+    const Client = Stomp.over(socket);
 
-    function connect() {
-        const socket = new SockJS('http://localhost:8080/chat');
-        stompClient = Stomp.over(socket);
+    function sendMessage(e) {
+        e.preventDefault();
+        const messageInput = document.getElementById("message").value;
+        const username = document.getElementById("user").value;
 
-        stompClient.connect({}, function(frame) {
-            setConnected(true);
-            console.log('Connected: ' + frame);
+        const message = {
+            user: username,
+            msg: messageInput
+        };
 
-            stompClient.subscribe('/topic/chat', function(message) {
-                const content = JSON.parse(message.body).content;
-                updateLiveChat(content);
-            });
-        }, function(error) {
-            console.error('Error: ' + error);
-        });
+        Client.send("/chat/chatMessage", {}, JSON.stringify(message));
+
+        document.getElementById("message").value = "";
     }
 
-    function setConnected(connected) {
-        $("#connect").prop("disabled", connected);
-        $("#disconnect").prop("disabled", !connected);
-        $("#conversation").toggle(connected);
+    function displayMessage(message, name) {
+        const chatMessages = document.getElementById("livechat");
+        const messageElement = document.createElement("tr");
+
+        messageElement.innerHTML = `<td><strong>${name}</strong>: ${message}</td>`;
+        chatMessages.appendChild(messageElement);
+    }
+
+    function connect() {
+        Client.connect({}, function (frame) {
+            console.log('Conectado: ' + frame);
+            document.getElementById("connect").disabled = true;
+            document.getElementById("disconnect").disabled = false;
+
+            Client.subscribe('/canal', function (message) {
+                const chatMessage = JSON.parse(message.body);
+                displayMessage(chatMessage.msg, chatMessage.user);
+            });
+        });
     }
 
     function disconnect() {
-        if (stompClient !== null) {
-            stompClient.disconnect();
+        if (Client !== null) {
+            Client.disconnect(() => {
+                console.log("Desconectado");
+            });
         }
-        setConnected(false);
-        console.log("Disconnected");
+        document.getElementById("connect").disabled = false;
+        document.getElementById("disconnect").disabled = true;
     }
 
-    function sendMessage() {
-        const user = $("#user").val();
-        const message = $("#message").val();
-
-        if (user && message) {
-            stompClient.send("/brasfi/newMensagem", {},
-                JSON.stringify({'user': user, 'message': message})
-            );
-            $("#message").val("");
-        }
-    }
-
-    function updateLiveChat(message) {
-        $("#livechat").append(
-            `<tr>
-                <td class="message-container">
-                    <div class="message-text">${message}</div>
-                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
-                </td>
-            </tr>`
-        );
-    }
-
-    $(function() {
-        $("form").on('submit', function(e) {
-            e.preventDefault();
-        });
-
-        $("#connect").click(function() {
-            connect();
-        });
-
-        $("#disconnect").click(function() {
-            disconnect();
-        });
-
-        $("#send").click(function() {
-            sendMessage();
-        });
-    });
+    document.getElementById("connect").addEventListener("click", connect);
+    document.getElementById("disconnect").addEventListener("click", disconnect);
+    document.getElementById("send").addEventListener("click", sendMessage);
 </script>
+
 </body>
 </html>
