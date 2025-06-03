@@ -20,6 +20,10 @@ public class Aula {
     private String titulo;
     private String link;
     private String descricao;
+
+    @Column(name = "concluida")
+    private boolean concluida = false;
+
     @ManyToOne
     @JoinColumn(name = "administrador_id")
     private Administrador administrador;
@@ -32,4 +36,8 @@ public class Aula {
     @ManyToOne
     @JoinColumn(name = "grupo_id")
     private Grupo grupo;
+
+    @OneToMany(mappedBy = "aula", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Material> materiais;
+
 }

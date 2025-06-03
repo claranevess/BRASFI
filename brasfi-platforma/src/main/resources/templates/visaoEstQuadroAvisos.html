@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Criar Comunicado</title>
+    <script type="module">
+        import { setup } from 'https://cdn.skypack.dev/twind/shim'
+        setup()
+    </script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+
+<div class="bg-white rounded-lg shadow-xl w-full max-w-xl p-6">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Criar comunicados</h2>
+    <p class="text-gray-600 mb-6">
+        Preencha os espaços abaixo para <span class="font-bold text-gray-800">criar um novo comunicado:</span>
+    </p>
+
+    <form class="space-y-4">
+
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Título*</label>
+            <input type="text" placeholder="Digite o título"
+                   class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Descrição</label>
+            <input type="text" placeholder="Digite a descrição"
+                   class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+        </div>
+
+
+        <div class="grid grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Data</label>
+                <input type="date"
+                       class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Horário</label>
+                <input type="time"
+                       class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Duração</label>
+                <input type="text" placeholder="00h:00m"
+                       class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+            </div>
+
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Adicionar link</label>
+            <input type="text" placeholder="https://"
+                   class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+        </div>
+
+
+        <div class="flex justify-end gap-3 pt-4">
+            <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Salvar</button>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>

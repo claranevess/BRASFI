@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhe da Aula</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md p-6 space-y-4">
+        <div class="mb-6">
+            <img src="/path/to/logo.png" alt="BRASFI Conecta" class="h-8" />
+        </div>
+        <nav class="space-y-2">
+            <a href="#" class="block text-gray-700 font-semibold bg-gray-100 px-4 py-2 rounded">Trilhas</a>
+            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Dashboard</a>
+            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Grupos</a>
+            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Projetos</a>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="flex-1 p-8">
+        <input type="hidden" id="aulaId" th:value="${aula.id}">
+        <!-- Breadcrumb + Header -->
+        <div class="flex justify-between items-center mb-6">
+            <nav class="text-sm text-gray-600 space-x-1">
+                <span>Trilhas</span> >
+                <span>Fundamentos de Finanças Sustentáveis</span> >
+                <span class="font-semibold text-black" th:text="${aula.titulo}">Nome da Aula</span>
+            </nav>
+            <div class="flex items-center space-x-2">
+                <div class="text-sm text-gray-600">Usuário</div>
+                <img src="/path/to/user-icon.svg" class="w-6 h-6" alt="Ícone do usuário" />
+            </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Vídeo e Descrição -->
+            <div class="flex-1">
+                <div class="aspect-video bg-gray-200 rounded mb-6 overflow-hidden">
+                    <iframe class="w-full h-full"
+                            th:src="'https://www.youtube.com/embed/' + ${videoCode}"
+                            frameborder="0" allowfullscreen></iframe>
+                </div>
+
+                <h1 class="text-2xl font-bold mb-2" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h1>
+                <p class="text-gray-700 mb-4" th:text="${aula.descricao}">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+                </p>
+
+                <div class="flex items-center space-x-4 mb-6">
+                    <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-blue-600">
+                        <span>👍</span><span>Gostei</span>
+                    </button>
+                    <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-red-600">
+                        <span>👎</span><span>Não gostei</span>
+                    </button>
+                    <div class="flex items-center text-sm text-gray-700 space-x-2">
+                        <input type="checkbox" id="aulaConcluida" class="accent-green-600" onchange="marcarComoConcluida()" />
+                        <label for="aulaConcluida" class="text-sm">Aula concluída?</label>
+                    </div>
+                    <div id="modalConcluida" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+                        <div class="bg-white rounded-lg shadow-lg p-6 text-center w-full max-w-md">
+                            <div class="flex justify-center mb-4">
+                                <div class="bg-gray-700 text-white rounded-full p-3">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <h2 class="text-xl font-bold mb-2">Muito bem!</h2>
+                            <p class="text-gray-600 mb-4">Você marcou esta aula como concluída. Gostaria de avaliá-la? Sua opinião é muito importante!</p>
+                            <div class="flex justify-center gap-4">
+                                <button class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Gostei</button>
+                                <button class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Não gostei</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Materiais Disponíveis -->
+            <aside class="w-full lg:w-72 bg-gray-100 rounded-lg p-4 space-y-4">
+                <h2 class="text-lg font-semibold">Materiais disponíveis</h2>
+
+                <ul class="space-y-2 list-none">
+                    <li th:each="material : ${aula.materiais}">
+                        <!-- Link -->
+                        <div th:if="${material.linkApoio != null}">
+                            <a th:href="${material.linkApoio}" target="_blank"
+                               class="block text-blue-600 hover:underline text-sm">
+                                🔗 <span th:text="${material.linkApoio}">Link</span>
+                            </a>
+                        </div>
+
+                        <!-- Arquivo -->
+                        <div th:if="${material.caminhoArquivo != null}">
+                            <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank"
+                               class="block text-green-600 hover:underline text-sm">
+                                📄 <span th:text="${material.nomeOriginal}">PDF Slide Apresentação</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </aside>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
+<script>
+    function marcarComoConcluida() {
+        const aulaId = document.getElementById('aulaId').value;
+        const checkbox = document.getElementById('aulaConcluida');
+
+        if (checkbox.checked) {
+            fetch(`/aulas/${aulaId}/concluir`, {
+                method: 'PATCH'
+            }).then(response => {
+                if (response.ok) {
+                    document.getElementById('modalConcluida').classList.remove('hidden');
+                } else {
+                    alert('Erro ao concluir aula');
+                }
+            });
+        }
+    }
+
+    // Fecha o modal quando o usuário clica em "Gostei" ou "Não gostei"
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('#modalConcluida button').forEach(button => {
+            button.addEventListener('click', function () {
+                document.getElementById('modalConcluida').classList.add('hidden');
+            });
+        });
+    });
+</script>
+
