@@ -1,4 +1,46 @@
+// src/main/resources/static/js/time-picker.js
+function initializeTimePicker() {
+    fillTimeColumns();
+    // Mostra/esconde o seletor
+    document.getElementById('togglePicker').addEventListener('click', function (e) {
+        e.stopPropagation();
+        document.getElementById('timepicker').classList.toggle('hidden');
+    });
 
+    // Fecha ao clicar fora
+    document.addEventListener('click', function () {
+        const picker = document.getElementById('timepicker');
+        if (!picker.classList.contains('hidden')) {
+            picker.classList.add('hidden');
+        }
+    });
+
+    // Impede propagação ao clicar dentro
+    document.getElementById('timepicker').addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    // Atualiza o valor ao parar de rolar
+    ['hour-col', 'minute-col'].forEach(id => {
+        document.getElementById(id).addEventListener('scroll', () => {
+            clearTimeout(window._scrollTimeout);
+            window._scrollTimeout = setTimeout(() => {
+                const selectedTime = getSelectedTime();
+                document.getElementById('buttonText').innerText = selectedTime;
+                document.getElementById('duracaoInput').value = selectedTime;
+
+                // marca item central como ativo
+                const hourCol = document.getElementById('hour-col');
+                const minuteCol = document.getElementById('minute-col');
+                const hourIndex = Math.round(hourCol.scrollTop / 50);
+                const minuteIndex = Math.round(minuteCol.scrollTop / 50);
+
+                updateActiveItem(hourCol, hourIndex);
+                updateActiveItem(minuteCol, minuteIndex);
+            }, 100);
+        });
+    });
+}
 
 // Função para preencher colunas de hora e minuto
 function fillTimeColumns() {
@@ -61,48 +103,3 @@ function updateActiveItem(col, index) {
     });
 }
 
-
-
-// Mostra/esconde o seletor
-document.getElementById('togglePicker').addEventListener('click', function (e) {
-    e.stopPropagation();
-    document.getElementById('timepicker').classList.toggle('hidden');
-});
-
-// Fecha ao clicar fora
-document.addEventListener('click', function () {
-    const picker = document.getElementById('timepicker');
-    if (!picker.classList.contains('hidden')) {
-        picker.classList.add('hidden');
-    }
-});
-
-// Impede propagação ao clicar dentro
-document.getElementById('timepicker').addEventListener('click', function (e) {
-    e.stopPropagation();
-});
-
-// Atualiza o valor ao parar de rolar
-['hour-col', 'minute-col'].forEach(id => {
-    document.getElementById(id).addEventListener('scroll', () => {
-        clearTimeout(window._scrollTimeout);
-        window._scrollTimeout = setTimeout(() => {
-            const selectedTime = getSelectedTime();
-            document.getElementById('buttonText').innerText = selectedTime;
-            document.getElementById('duracaoInput').value = selectedTime;
-
-            // marca item central como ativo
-            const hourCol = document.getElementById('hour-col');
-            const minuteCol = document.getElementById('minute-col');
-            const hourIndex = Math.round(hourCol.scrollTop / 50);
-            const minuteIndex = Math.round(minuteCol.scrollTop / 50);
-
-            updateActiveItem(hourCol, hourIndex);
-            updateActiveItem(minuteCol, minuteIndex);
-        }, 100);
-    });
-});
-
-
-// Inicialização
-fillTimeColumns();
