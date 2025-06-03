@@ -1,265 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Build & Run</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-<body>
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! WebSocket relies on Javascript being enabled. Please enable Javascript and reload this page!</h2></noscript>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Canal Principal BRASFI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
 
-<style>
-    body {
-        background-color: #171831;
-        color: white;
-        font-family: 'Arial', sans-serif;
-    }
+<div class="flex h-screen">
 
-    #main-content {
-        margin-top: 50px;
-        background-color: #1f2044;
-        border-radius: 12px;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-    }
-
-    h2 {
-        color: #6968d4;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .form-inline {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-    }
-
-    .form-control {
-        border-radius: 25px;
-        padding: 10px 20px;
-        width: 100%;
-        max-width: 300px;
-        border: 1px solid #6968d4;
-        background-color: transparent;
-        color: white;
-    }
-
-    .form-control::placeholder {
-        color: #c2c2c2;
-    }
-
-    .btn {
-        border-radius: 25px;
-        padding: 10px 20px;
-        font-size: 16px;
-        border: none;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-connect {
-        background-color: #28a745;
-        color: white;
-    }
-
-    .btn-connect:hover {
-        background-color: #218838;
-    }
-
-    .btn-disconnect {
-        background-color: #dc3545;
-        color: white;
-    }
-
-    .btn-disconnect:hover {
-        background-color: #c82333;
-    }
-
-    .btn-primary {
-        background-color: #6968d4;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background-color: #5756b8;
-    }
-
-    .btn:disabled {
-        background-color: #bdbdbd;
-    }
-
-    #message-input {
-        margin-top: 20px;
-    }
-
-    #message-input input {
-        border-radius: 25px;
-        padding: 10px 20px;
-        width: calc(100% - 120px);
-        margin-right: 10px;
-    }
-
-    #message-input button {
-        border-radius: 25px;
-        padding: 10px 30px;
-    }
-
-    #conversation {
-        border-radius: 12px;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        margin-top: 20px;
-    }
-
-    #conversation th {
-        background-color: #6968d4;
-        color: white;
-        text-align: center;
-    }
-
-    #conversation td {
-        background-color: #2f3055;
-        color: white;
-        padding: 10px;
-    }
-
-    #conversation tr:nth-child(even) {
-        background-color: #3a3b66;
-    }
-
-    #conversation tr:hover {
-        background-color: #44456e;
-    }
-
-    #livechat {
-        font-size: 16px;
-    }
-
-    .message-container {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .message-text {
-        font-size: 16px;
-        color: white;
-    }
-
-    .message-time {
-        font-size: 12px;
-        color: #c2c2c2;
-        margin-top: 5px;
-        text-align: right;
-    }
-</style>
-
-<div id="main-content" class="container">
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <h2 style="font-weight: bold; color: #ffffff;">Build & Run</h2>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col justify-between">
+        <div>
+            <div class="flex items-center justify-center p-6">
+                <img src="logo.png" alt="Logo BRASFI" class="h-10">
+                <span class="ml-2 font-semibold text-lg text-gray-700">conecta</span>
+            </div>
+            <nav class="px-6 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <span class="material-icons mr-3">dashboard</span> Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <span class="material-icons mr-3">school</span> Trilhas
+                </a>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg bg-green-100 text-green-700 font-semibold">
+                    <span class="material-icons mr-3">group</span> Grupos
+                </a>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <span class="material-icons mr-3">folder</span> Projetos
+                </a>
+            </nav>
         </div>
-    </div>
+        <div class="p-6">
+            <a href="#" class="flex items-center px-4 py-2 rounded-lg text-red-600 hover:bg-red-50">
+                <span class="material-icons mr-3">logout</span> Sair
+            </a>
+        </div>
+    </aside>
 
-    <div class="row">
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="user">Username:</label>
-                    <input type="text" id="user" class="form-control" placeholder="Enter your username">
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 flex flex-col p-6 overflow-hidden">
+        <!-- Cabeçalho -->
+        <header class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-3xl font-bold">Grupos</h1>
+                <p class="text-sm text-gray-500">Meus Grupos > <span class="text-green-600 font-semibold">#Canal Principal BRASFI</span></p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M15 17h5l-1.405-1.405M4 4l16 16" stroke-width="2"/>
+                    </svg>
+                </button>
+                <div class="flex items-center gap-2">
+                    <div class="text-sm">
+                        <p class="font-semibold">Usuário</p>
+                        <p class="text-xs text-gray-400">Admin</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="message">Message:</label>
-                    <input type="text" id="message" class="form-control" placeholder="Type your message...">
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <div class="flex flex-1 gap-6 overflow-hidden">
+            <!-- Chat -->
+            <section class="flex-1 bg-white rounded-xl shadow p-6 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-green-700">#Canal Principal BRASFI</h2>
+                    <div class="flex items-center">
+                        <img src="avatar1.png" class="w-6 h-6 rounded-full border-2 border-white -ml-2" />
+                        <img src="avatar2.png" class="w-6 h-6 rounded-full border-2 border-white -ml-2" />
+                        <img src="avatar3.png" class="w-6 h-6 rounded-full border-2 border-white -ml-2" />
+                        <span class="ml-2 text-sm text-gray-500">+99</span>
+                    </div>
                 </div>
-            </form>
-        </div>
-        <div class="col-md-6 text-right">
-            <button id="connect" class="btn btn-connect">Connect</button>
-            <button id="disconnect" class="btn btn-disconnect" disabled="disabled">Disconnect</button>
-        </div>
-    </div>
 
-    <div class="row" id="message-input">
-        <div class="col-md-12">
-            <form class="form-inline">
-                <button id="send" class="btn btn-primary" type="submit">Send</button>
-            </form>
-        </div>
-    </div>
+                <!-- Lista de mensagens -->
+                <div class="flex flex-col gap-2 flex-1 overflow-y-auto pr-2">
+                    <div class="bg-gray-100 p-4 rounded-lg relative">
+                        <p class="font-semibold text-sm">Usuário 932898:</p>
+                        <p id="msg-1-text">Gostaria de me comunicar diretamente com mentores. Podem me ajudar?</p>
+                        <div class="absolute bottom-2 right-2 text-xs text-gray-500 space-x-2">
+                            <button onclick="openEditModal('msg-1-text')" class="hover:underline">Editar</button>
+                            <button onclick="openDeleteModal('msg-1-text')" class="hover:underline">Deletar</button>
+                        </div>
+                    </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Live Chat</th>
-                </tr>
-                </thead>
-                <tbody id="livechat">
-                <!-- Messages will be dynamically appended here -->
-                </tbody>
-            </table>
+                    <div class="bg-gray-100 p-4 rounded-lg relative">
+                        <p class="font-semibold text-sm">Usuário 734890:</p>
+                        <p>Olá, tudo bem? Para se comunicar diretamente com mentores sobre a trilha que você está estudando, você pode participar dos grupos específicos da sua trilha.</p>
+                        <div class="absolute bottom-2 right-2 text-xs text-gray-500 space-x-2">
+                            <button onclick="openEditModal('msg-2-text')" class="hover:underline">Editar</button>
+                            <button onclick="openDeleteModal('msg-2-text')" class="hover:underline">Deletar</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-100 p-4 rounded-lg relative">
+                        <p class="font-semibold text-sm">Usuário 932898:</p>
+                        <p>Pode ser! Posso tentar mais tarde. Muito obrigada pela sua ajuda!</p>
+                        <div class="absolute bottom-2 right-2 text-xs text-gray-500 space-x-2">
+                            <button onclick="openEditModal('msg-3-text')" class="hover:underline">Editar</button>
+                            <button onclick="openDeleteModal('msg-3-text')" class="hover:underline">Deletar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caixa de mensagem -->
+                <div class="mt-4 flex items-center gap-2">
+                    <input type="text" class="flex-1 border rounded-lg p-2 text-sm" placeholder="Digite sua mensagem..." />
+                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg">Enviar</button>
+                </div>
+            </section>
+
+            <!-- Mensagens fixadas -->
+            <aside class="w-80 bg-white rounded-xl shadow p-6 flex flex-col overflow-y-auto">
+                <h3 class="text-lg font-bold mb-4">Mensagens fixadas</h3>
+
+                <div class="bg-gray-100 p-3 rounded-lg mb-4">
+                    <p class="text-sm font-semibold">Usuário 538892:</p>
+                    <p class="text-sm">Cronograma de eventos para a segunda semana de Maio.</p>
+                    <button class="mt-1 text-green-700 text-sm underline">📎 CronogramaBRASFI-SegundaSemanaMaio</button>
+                </div>
+
+                <div class="bg-gray-100 p-3 rounded-lg mb-4">
+                    <p class="text-sm font-semibold">Usuário 734890:</p>
+                    <p class="text-sm">Webinar sobre investimento sustentável!</p>
+                    <button class="mt-1 text-green-700 text-sm underline">📎 WebinarMAIO-InvestimentoSustentável</button>
+                </div>
+
+                <div class="bg-gray-100 p-3 rounded-lg">
+                    <p class="text-sm font-semibold">Usuário 734890:</p>
+                    <p class="text-sm">Reforçando que os mentores acompanham dúvidas pela trilha.</p>
+                </div>
+            </aside>
         </div>
-    </div>
+    </main>
 </div>
 
-<script>
-    const socket = new SockJS('http://localhost:8080/conect'); // ← use o host e porta do Spring Boot
-    const Client = Stomp.over(socket);
-
-    function sendMessage(e) {
-        e.preventDefault();
-        const messageInput = document.getElementById("message").value;
-        const username = document.getElementById("user").value;
-
-        const message = {
-            user: username,
-            msg: messageInput
-        };
-
-        Client.send("/chat/chatMessage", {}, JSON.stringify(message));
-
-        document.getElementById("message").value = "";
-    }
-
-    function displayMessage(message, name) {
-        const chatMessages = document.getElementById("livechat");
-        const messageElement = document.createElement("tr");
-
-        messageElement.innerHTML = `<td><strong>${name}</strong>: ${message}</td>`;
-        chatMessages.appendChild(messageElement);
-    }
-
-    function connect() {
-        Client.connect({}, function (frame) {
-            console.log('Conectado: ' + frame);
-            document.getElementById("connect").disabled = true;
-            document.getElementById("disconnect").disabled = false;
-
-            Client.subscribe('/canal', function (message) {
-                const chatMessage = JSON.parse(message.body);
-                displayMessage(chatMessage.msg, chatMessage.user);
-            });
-        });
-    }
-
-    function disconnect() {
-        if (Client !== null) {
-            Client.disconnect(() => {
-                console.log("Desconectado");
-            });
-        }
-        document.getElementById("connect").disabled = false;
-        document.getElementById("disconnect").disabled = true;
-    }
-
-    document.getElementById("connect").addEventListener("click", connect);
-    document.getElementById("disconnect").addEventListener("click", disconnect);
-    document.getElementById("send").addEventListener("click", sendMessage);
-</script>
-
+<!-- Material Icons CDN -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </body>
 </html>
