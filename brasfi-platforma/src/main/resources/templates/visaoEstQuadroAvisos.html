@@ -2,69 +2,146 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <title>Criar Comunicado</title>
-    <script type="module">
-        import { setup } from 'https://cdn.skypack.dev/twind/shim'
-        setup()
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel BRASFI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 font-sans">
+
+<div class="flex min-h-screen">
+
+    <!-- Barra Lateral -->
+    <aside class="w-20 bg-white border-r flex flex-col items-center py-6 space-y-8">
+        <span class="material-icons text-gray-600 text-3xl">home</span>
+        <span class="material-icons text-gray-600 text-3xl">school</span>
+        <span class="material-icons text-gray-600 text-3xl">bar_chart</span>
+    </aside>
 
 
-<div class="bg-white rounded-lg shadow-xl w-full max-w-xl p-6">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Criar comunicados</h2>
-    <p class="text-gray-600 mb-6">
-        Preencha os espaços abaixo para <span class="font-bold text-gray-800">criar um novo comunicado:</span>
-    </p>
-
-    <form class="space-y-4">
+    <main class="flex-1 p-6 space-y-6">
 
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Título*</label>
-            <input type="text" placeholder="Digite o título"
-                   class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Descrição</label>
-            <input type="text" placeholder="Digite a descrição"
-                   class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
-        </div>
-
-
-        <div class="grid grid-cols-3 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Data</label>
-                <input type="date"
-                       class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+        <div class="flex justify-between items-center">
+            <input type="text" placeholder="Pesquisar na BRASFI Conecta"
+                   class="w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" />
+            <div class="flex items-center space-x-4">
+                <span class="material-icons text-gray-600 text-2xl cursor-pointer">notifications</span>
+                <span class="material-icons text-gray-600 text-2xl cursor-pointer">help_outline</span>
+                <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm font-semibold">U</div>
             </div>
+        </div>
+
+
+        <div class="bg-white p-6 rounded shadow flex justify-between items-center">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Horário</label>
-                <input type="time"
-                       class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+                <h1 class="text-2xl font-semibold">Olá, [Nome]!</h1>
+                <p class="text-sm text-gray-600 mt-1">
+                    Seu esforço está fazendo a diferença, continue se dedicando!<br>
+                    Cada passo te aproxima ainda mais dos seus sonhos.
+                </p>
+                <button class="mt-2 px-4 py-1 text-sm bg-blue-500 text-white rounded">Explorar trilhas</button>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Duração</label>
-                <input type="text" placeholder="00h:00m"
-                       class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+            <div class="w-40 h-24 bg-gray-200 rounded"></div>
+        </div>
+
+
+        <div class="grid grid-cols-3 gap-6">
+
+
+            <div class="col-span-2 space-y-4">
+                <h2 class="text-lg font-medium">Em andamento</h2>
+
+                <div class="bg-white p-4 rounded shadow space-y-2">
+                    <h3 class="font-semibold">Economia Sustentável</h3>
+                    <p class="text-sm text-gray-600">Aula 01: Introdução à Economia Sustentável</p>
+                    <div class="w-full bg-gray-200 rounded h-2">
+                        <div class="bg-green-500 h-2 rounded" style="width: 50%"></div>
+                    </div>
+                    <p class="text-xs text-gray-500">Progresso: 50%</p>
+                </div>
+
+                <div class="bg-white p-4 rounded shadow space-y-2">
+                    <h3 class="font-semibold">Economia Sustentável</h3>
+                    <p class="text-sm text-gray-600">Aula 01: Introdução à Economia Sustentável</p>
+                    <div class="w-full bg-gray-200 rounded h-2">
+                        <div class="bg-green-500 h-2 rounded" style="width: 50%"></div>
+                    </div>
+                    <p class="text-xs text-gray-500">Progresso: 50%</p>
+                </div>
+
+                <a href="#" class="text-blue-500 text-sm">Ver mais...</a>
             </div>
 
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Adicionar link</label>
-            <input type="text" placeholder="https://"
-                   class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+
+            <div class="space-y-4">
+
+
+                <div class="bg-white p-4 rounded shadow">
+                    <h2 class="font-medium mb-2">Maio 2025</h2>
+                    <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-600">
+                        <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sab</div>
+                        <div>18</div><div>19</div><div>20</div><div>21</div><div class="font-bold text-blue-600">22</div><div>23</div><div>24</div>
+                    </div>
+                </div>
+
+
+                <!--Comunicados com rolagem(peguei do gpt)-->
+                <div class="bg-white p-4 rounded shadow">
+                    <h2 class="font-medium mb-2">Comunicados</h2>
+                    <div class="space-y-3 max-h-40 overflow-y-auto pr-2">
+                        <div>
+                            <p class="text-sm font-semibold">22 de maio, 2025 - 18h - 20h</p>
+                            <p class="text-xs text-gray-600">BRASFI: Conferência</p>
+                            <p class="text-blue-500 text-xs">Ao vivo no YouTube às 18h</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold">19 de maio, 2025 - 18h - 20h</p>
+                            <p class="text-xs text-gray-600">BRASFI: Conferência</p>
+                            <p class="text-blue-500 text-xs">Ao vivo no YouTube às 18h</p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-semibold">18 de maio, 2025 - 17h - 19h</p>
+                            <p class="text-xs text-gray-600">Evento extra</p>
+                            <p class="text-blue-500 text-xs">Detalhes do evento</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold">17 de maio, 2025 - 16h - 18h</p>
+                            <p class="text-xs text-gray-600">Workshop</p>
+                            <p class="text-blue-500 text-xs">Link do evento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
-        <div class="flex justify-end gap-3 pt-4">
-            <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Cancelar</button>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Salvar</button>
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="font-medium mb-4">Progresso</h2>
+            <p class="text-sm text-gray-500 mb-2">Quadro de evolução de quantidade de aulas concluídas</p>
+            <div class="flex space-x-4 items-end h-24">
+                <div class="w-6 bg-blue-500 h-12"></div>
+                <div class="w-6 bg-blue-500 h-16"></div>
+                <div class="w-6 bg-blue-300 h-8"></div>
+                <div class="w-6 bg-blue-300 h-10"></div>
+                <div class="w-6 bg-blue-200 h-6"></div>
+            </div>
         </div>
 
-    </form>
+
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="font-medium">Sugestões para você</h2>
+            <div class="mt-2 flex items-center space-x-4">
+                <div class="w-20 h-20 bg-gray-300 rounded"></div>
+                <div>
+                    <p class="font-semibold">Nome da trilha</p>
+                    <p class="text-sm text-gray-500">Breve descrição da trilha sugerida</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
 </div>
 
 </body>
