@@ -1,10 +1,12 @@
 package com.brasfi.platforma.controller;
 
+import com.brasfi.platforma.dto.MemberDto;
 import com.brasfi.platforma.model.Grupo;
 import com.brasfi.platforma.repository.GrupoRepository;
 import com.brasfi.platforma.service.GrupoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.brasfi.platforma.model.TipoUsuario;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -16,6 +18,8 @@ import com.brasfi.platforma.service.UserService; // Importe o UserService
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/grupo")
@@ -113,5 +117,21 @@ public class GrupoController {
             return "redirect:/login?error=notLoggedIn";
         }
         return "redirect:/grupo/listar";
+    }
+
+    @GetMapping("/{id}/membros")
+    @ResponseBody // This tells Spring to return data directly, not a view name
+    public ResponseEntity<List<MemberDto>> getGroupMembers(@PathVariable("id") Long grupoId) {
+        Optional<Grupo> optionalGrupo = grupoRepository.findById(grupoId);
+        if (optionalGrupo.isPresent()) {
+            Grupo grupo = optionalGrupo.get();
+            // Convert User entities to MemberDto for controlled exposure
+            List<MemberDto> members = grupo.getMembros().stream()
+                    .map(MemberDto::new) // Uses the DTO constructor
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(members);
+        } else {
+            return ResponseEntity.notFound().build(); // Return 404 if group not found
+        }
     }
 }
