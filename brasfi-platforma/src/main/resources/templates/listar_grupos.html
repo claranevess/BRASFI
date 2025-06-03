@@ -129,13 +129,19 @@
         <div class="flex-1 flex flex-col">
             <h2 class="text-2xl font-semibold text-dark-text mb-6">Meus Grupos</h2>
 
-            <div class="flex border-b border-gray-200 mb-6 pb-2">
-                <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
-                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Fixados</button>
-                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Não lidos</button>
-                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
-            </div>
+            <div class="flex justify-between items-center mb-6 pb-2">
+                <div class="flex border-b border-gray-200 pb-2"> <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
+                    <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Fixados</button>
+                    <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Não lidos</button>
+                    <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
+                </div>
 
+                <div th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'MENTOR'}">
+                    <a th:href="@{/grupo/criar_grupo}" class="flex items-center px-5 py-2 bg-brasfi-blue text-white rounded-lg hover:bg-button-primary-hover transition duration-200">
+                        <i class="fas fa-plus mr-2"></i> Novo Grupo
+                    </a>
+                </div>
+            </div>
             <div class="space-y-4">
                 <div th:each="grupo : ${myGroups}" class="group-card bg-light-bg p-4 rounded-lg border border-gray-200 shadow-sm relative" th:data-group-id="${grupo.id}">
                     <div class="flex justify-between items-start mb-2">
@@ -259,7 +265,6 @@
 </div>
 
 <script>
-    // --- Dropdown Menu Logic ---
     document.addEventListener('DOMContentLoaded', () => {
         const kebabMenuBtns = document.querySelectorAll('.kebab-menu-btn');
 
@@ -268,19 +273,16 @@
                 event.stopPropagation(); // Prevent document click from closing it immediately
                 const dropdown = button.nextElementSibling; // The dropdown menu div
 
-                // Close any other open dropdowns
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
                     if (menu !== dropdown) {
                         menu.classList.add('hidden');
                     }
                 });
 
-                // Toggle the clicked dropdown
                 dropdown.classList.toggle('hidden');
             });
         });
 
-        // Close dropdowns when clicking outside
         document.addEventListener('click', (event) => {
             document.querySelectorAll('.dropdown-menu').forEach(menu => {
                 if (!menu.contains(event.target) && !menu.previousElementSibling.contains(event.target)) {
@@ -289,24 +291,23 @@
             });
         });
 
-        // --- Modal Logic ---
         const membersModal = document.getElementById('membersModal');
         const membersList = document.getElementById('membersList');
         const modalGroupNameSpan = document.getElementById('modalGroupName');
 
         document.querySelectorAll('.group-info-btn').forEach(button => {
             button.addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent default link behavior
-                event.stopPropagation(); // Stop propagation to prevent closing dropdown immediately
+                event.preventDefault();
+                event.stopPropagation();
 
                 const groupId = event.target.dataset.groupId;
                 const groupCard = event.target.closest('.group-card');
-                const groupName = groupCard.querySelector('h3 span').textContent.replace('#', ''); // Get group name from the card
+                const groupName = groupCard.querySelector('h3 span').textContent.replace('#', '');
 
-                modalGroupNameSpan.textContent = groupName; // Set group name in modal title
+                modalGroupNameSpan.textContent = groupName;
 
-                fetchMembersForGroup(groupId); // Fetch and display members
-                closeAllDropdowns(); // Close dropdown after clicking "Informações"
+                fetchMembersForGroup(groupId);
+                closeAllDropdowns();
                 openModal();
             });
         });
@@ -318,7 +319,6 @@
 
     function closeModal() {
         document.getElementById('membersModal').classList.add('hidden');
-        // Clear members list when closing
         document.getElementById('membersList').innerHTML = '';
     }
 
@@ -352,7 +352,6 @@
                             <span class="text-gray-700 font-medium">${member.nome}</span>
                             <span class="text-gray-500 text-sm">${member.email ? member.email : ''}</span>
                         `;
-                    // You can add member.email if your DTO includes it and you want to display it
                     membersListElement.appendChild(listItem);
                 });
             }
