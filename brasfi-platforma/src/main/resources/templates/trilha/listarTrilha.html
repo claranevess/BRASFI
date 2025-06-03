@@ -51,7 +51,7 @@
                     <div th:style="'background-image: url(' + ${trilha.capa ?: 'https://via.placeholder.com/150'} + ')'"
                          class="h-32 bg-gray-200 rounded mb-4 bg-cover bg-center"></div>
 
-                    <span th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.toString() : 'N/A'}"
+                    <span th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.displayValue : 'N/A'}"
                           class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700"></span>
 
                     <div class="flex justify-between items-center mt-2">

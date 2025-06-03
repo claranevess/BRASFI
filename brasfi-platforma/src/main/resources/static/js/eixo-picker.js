@@ -37,13 +37,15 @@ function initializeEixoPicker() {
 const eixosTematicos = [
   "Finanças",
   "Empreendedorismo",
-  "Liderança"
+  "Liderança",
+  "Saúde"
 ];
 
 const eixoMapping = {
   "Finanças": "FINANCAS",
   "Empreendedorismo": "EMPREENDEDORISMO",
-  "Liderança": "LIDERANCA"
+  "Liderança": "LIDERANCA",
+  "Saúde": "SAUDE"
 };
 
 function fillEixoColumn() {

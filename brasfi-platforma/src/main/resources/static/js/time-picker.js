@@ -1,6 +1,7 @@
 // src/main/resources/static/js/time-picker.js
 function initializeTimePicker() {
     fillTimeColumns();
+
     // Mostra/esconde o seletor
     document.getElementById('togglePicker').addEventListener('click', function (e) {
         e.stopPropagation();
