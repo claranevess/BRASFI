@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Canal Principal BRASFI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<div class="flex h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col justify-between">
+        <div>
+            <div class="flex items-center justify-center p-6">
+                <img src="logo.png" alt="Logo BRASFI" class="h-10">
+                <span class="ml-2 font-semibold text-lg text-gray-700">conecta</span>
+            </div>
+            <nav class="px-6 py-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <span class="material-icons mr-3">dashboard</span> Dashboard
+                </a>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <span class="material-icons mr-3">school</span> Trilhas
+                </a>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg bg-green-100 text-green-700 font-semibold">
+                    <span class="material-icons mr-3">group</span> Grupos
+                </a>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <span class="material-icons mr-3">folder</span> Projetos
+                </a>
+            </nav>
+        </div>
+        <div class="p-6">
+            <a href="#" class="flex items-center px-4 py-2 rounded-lg text-red-600 hover:bg-red-50">
+                <span class="material-icons mr-3">logout</span> Sair
+            </a>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 flex flex-col p-6 overflow-hidden">
+        <!-- Cabeçalho -->
+        <header class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-3xl font-bold">Grupos</h1>
+                <p class="text-sm text-gray-500">Meus Grupos > <span class="text-green-600 font-semibold">#Canal Principal BRASFI</span></p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M15 17h5l-1.405-1.405M4 4l16 16" stroke-width="2"/>
+                    </svg>
+                </button>
+                <div class="flex items-center gap-2">
+                    <div class="text-sm">
+                        <p class="font-semibold">Usuário</p>
+                        <p class="text-xs text-gray-400">Admin</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <div class="flex flex-1 gap-6 overflow-hidden">
+            <!-- Chat -->
+            <section class="flex-1 bg-white rounded-xl shadow p-6 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-green-700">#Canal Principal BRASFI</h2>
+                    <div class="flex items-center">
+                        <img src="avatar1.png" class="w-6 h-6 rounded-full border-2 border-white -ml-2" />
+                        <img src="avatar2.png" class="w-6 h-6 rounded-full border-2 border-white -ml-2" />
+                        <img src="avatar3.png" class="w-6 h-6 rounded-full border-2 border-white -ml-2" />
+                        <span class="ml-2 text-sm text-gray-500">+99</span>
+                    </div>
+                </div>
+
+                <!-- Lista de mensagens -->
+                <div class="flex flex-col gap-2 flex-1 overflow-y-auto pr-2">
+                    <div class="bg-gray-100 p-4 rounded-lg relative">
+                        <p class="font-semibold text-sm">Jéssica Silva:</p>
+                        <p id="msg-1-text">Gostaria de me comunicar diretamente com mentores. Podem me ajudar?</p>
+                        <div class="absolute bottom-2 right-2 text-xs text-gray-500 space-x-2">
+                            <button onclick="openEditModal('msg-1-text')" class="hover:underline">Editar</button>
+                            <button onclick="openDeleteModal('msg-1-text')" class="hover:underline">Deletar</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-100 p-4 rounded-lg relative">
+                        <p class="font-semibold text-sm">Roberto Fragoso:</p>
+                        <p>Olá, tudo bem? Para se comunicar diretamente com mentores sobre a trilha que você está estudando, você pode participar dos grupos específicos da sua trilha.</p>
+                        <div class="absolute bottom-2 right-2 text-xs text-gray-500 space-x-2">
+                            <button onclick="openEditModal('msg-2-text')" class="hover:underline">Editar</button>
+                            <button onclick="openDeleteModal('msg-2-text')" class="hover:underline">Deletar</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-100 p-4 rounded-lg relative">
+                        <p class="font-semibold text-sm">Jéssica Silva:</p>
+                        <p>Pode ser! Posso tentar mais tarde. Muito obrigada pela sua ajuda!</p>
+                        <div class="absolute bottom-2 right-2 text-xs text-gray-500 space-x-2">
+                            <button onclick="openEditModal('msg-3-text')" class="hover:underline">Editar</button>
+                            <button onclick="openDeleteModal('msg-3-text')" class="hover:underline">Deletar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caixa de mensagem -->
+                <div class="mt-4 flex items-center gap-2">
+                    <input type="text" class="flex-1 border rounded-lg p-2 text-sm" placeholder="Digite sua mensagem..." />
+                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg">Enviar</button>
+                </div>
+            </section>
+
+            <!-- Mensagens fixadas -->
+            <aside class="w-80 bg-white rounded-xl shadow p-6 flex flex-col overflow-y-auto">
+                <h3 class="text-lg font-bold mb-4">Mensagens fixadas</h3>
+
+                <div class="bg-gray-100 p-3 rounded-lg mb-4">
+                    <p class="text-sm font-semibold">Renata Ribeiro:</p>
+                    <p class="text-sm">Cronograma de eventos para a segunda semana de Maio.</p>
+                    <button class="mt-1 text-green-700 text-sm underline">📎 CronogramaBRASFI-SegundaSemanaMaio</button>
+                </div>
+
+                <div class="bg-gray-100 p-3 rounded-lg mb-4">
+                    <p class="text-sm font-semibold">Anthony Costa:</p>
+                    <p class="text-sm">Webinar sobre investimento sustentável!</p>
+                    <button class="mt-1 text-green-700 text-sm underline">📎 WebinarMAIO-InvestimentoSustentável</button>
+                </div>
+
+                <div class="bg-gray-100 p-3 rounded-lg">
+                    <p class="text-sm font-semibold">Anthony Costa:</p>
+                    <p class="text-sm">Reforçando que os mentores acompanham dúvidas pela trilha.</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+</div>
+
+<!-- Modal Tailwind - Confirmar Deleção -->
+<div id="modalDeletar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 text-center">
+        <h2 class="text-lg font-semibold text-red-600 mb-4">Atenção!</h2>
+        <p class="text-gray-700 mb-6">
+            Você está deletando uma mensagem sua nesse grupo.<br>
+            Deseja completar a ação?
+        </p>
+        <div class="flex justify-center gap-4">
+            <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                Cancelar
+            </button>
+            <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                Sim, quero deletar.
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteTargetId = null;
+
+    function openDeleteModal(messageId) {
+        deleteTargetId = messageId;
+        document.getElementById('modalDeletar').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('modalDeletar').classList.add('hidden');
+        deleteTargetId = null;
+    }
+
+    function confirmDelete() {
+        if (deleteTargetId) {
+            const messageElement = document.getElementById(deleteTargetId).closest('.bg-gray-100');
+            if (messageElement) {
+                messageElement.remove();
+            }
+        }
+        closeDeleteModal();
+    }
+</script>
+
+<!-- Material Icons CDN -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</body>
+</html>
