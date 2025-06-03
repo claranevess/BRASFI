@@ -18,7 +18,7 @@ public class MensagemService {
         Mensagem mensagem = new Mensagem();
         mensagem.setUser(user);
         mensagem.setGrupo(grupo);
-        mensagem.setTexto(texto);
+        mensagem.setMessage(texto);
         mensagem.setDataCriacao(LocalDate.now());
 
         return mensagemRepository.save(mensagem);

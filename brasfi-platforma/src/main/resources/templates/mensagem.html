@@ -1,263 +1,285 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRASFi Conecta - Grupo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Adiciona um scrollbar mais sutil se necessário */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1; /* neutral-300 */
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background-color: #f1f5f9; /* neutral-100 */
-        }
-        /* Para Firefox */
-        body {
-            scrollbar-width: thin;
-            scrollbar-color: #cbd5e1 #f1f5f9;
-        }
-    </style>
-</head>
-<body class="bg-neutral-100 text-neutral-800 flex">
+    <title>Build & Run</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+<body>
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! WebSocket relies on Javascript being enabled. Please enable Javascript and reload this page!</h2></noscript>
 
-<div class="w-60 bg-white h-screen p-5 border-r border-neutral-200 fixed top-0 left-0 flex flex-col">
-    <div class="mb-12 pt-2">
-        <span class="text-2xl font-bold text-neutral-800">BRASFi</span><br>
-        <span class="text-sm font-medium text-neutral-500 -mt-2 block">conecta</span>
+<style>
+    body {
+        background-color: #171831;
+        color: white;
+        font-family: 'Arial', sans-serif;
+    }
+
+    #main-content {
+        margin-top: 50px;
+        background-color: #1f2044;
+        border-radius: 12px;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+    }
+
+    h2 {
+        color: #6968d4;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-inline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    .form-control {
+        border-radius: 25px;
+        padding: 10px 20px;
+        width: 100%;
+        max-width: 300px;
+        border: 1px solid #6968d4;
+        background-color: transparent;
+        color: white;
+    }
+
+    .form-control::placeholder {
+        color: #c2c2c2;
+    }
+
+    .btn {
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-connect {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-connect:hover {
+        background-color: #218838;
+    }
+
+    .btn-disconnect {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-disconnect:hover {
+        background-color: #c82333;
+    }
+
+    .btn-primary {
+        background-color: #6968d4;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #5756b8;
+    }
+
+    .btn:disabled {
+        background-color: #bdbdbd;
+    }
+
+    #message-input {
+        margin-top: 20px;
+    }
+
+    #message-input input {
+        border-radius: 25px;
+        padding: 10px 20px;
+        width: calc(100% - 120px);
+        margin-right: 10px;
+    }
+
+    #message-input button {
+        border-radius: 25px;
+        padding: 10px 30px;
+    }
+
+    #conversation {
+        border-radius: 12px;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-top: 20px;
+    }
+
+    #conversation th {
+        background-color: #6968d4;
+        color: white;
+        text-align: center;
+    }
+
+    #conversation td {
+        background-color: #2f3055;
+        color: white;
+        padding: 10px;
+    }
+
+    #conversation tr:nth-child(even) {
+        background-color: #3a3b66;
+    }
+
+    #conversation tr:hover {
+        background-color: #44456e;
+    }
+
+    #livechat {
+        font-size: 16px;
+    }
+
+    .message-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message-text {
+        font-size: 16px;
+        color: white;
+    }
+
+    .message-time {
+        font-size: 12px;
+        color: #c2c2c2;
+        margin-top: 5px;
+        text-align: right;
+    }
+</style>
+
+<div id="main-content" class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h2 style="font-weight: bold; color: #ffffff;">Build & Run</h2>
+        </div>
     </div>
 
-    <ul class="space-y-2">
-        <li>
-            <a href="#" class="flex items-center gap-3 hover:bg-neutral-100 p-3 rounded-lg text-neutral-700 hover:text-blue-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25A2.25 2.25 0 0113.5 8.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-                </svg>
-                <span class="font-medium">Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-3 hover:bg-neutral-100 p-3 rounded-lg text-neutral-700 hover:text-blue-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
-                </svg>
-                <span class="font-medium">Trilhas</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-3 bg-blue-50 p-3 rounded-lg text-blue-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path fill-rule="evenodd" d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.352 0 9.75-3.507 9.75-7.875s-4.398-7.875-9.75-7.875c-.93 0-1.839.14-2.695.404.091-.06.181-.12.271-.181A6.751 6.751 0 0012 4.5a6.75 6.75 0 00-6.75 6.75c0 1.61.475 3.103 1.286 4.342-.198.052-.397.11-.593.171a6.747 6.747 0 00-1.142 6.881zM12 3C7.03 3 3 6.507 3 10.875c0 2.443 1.053 4.648 2.764 6.094A8.212 8.212 0 014.507 20.2a8.23 8.23 0 01-.504-2.403 7.402 7.402 0 00-.328-1.635A7.443 7.443 0 002.25 10.875a8.25 8.25 0 018.25-8.25A8.25 8.25 0 0118.75 10.5c0 2.111-.714 4.008-2.012 5.524a6.786 6.786 0 00-2.162.427 6.72 6.72 0 00-1.848.213A8.202 8.202 0 0112 18.375a8.194 8.194 0 01-3.118-.636 7.446 7.446 0 00-1.434-.383 7.49 7.49 0 00-1.047.147A5.223 5.223 0 016 19.5a5.203 5.203 0 01-1.196.056A5.25 5.25 0 013 10.875C3 7.283 7.03 4.5 12 4.5s9 2.783 9 6.375S16.97 17.25 12 17.25c-.822 0-1.622-.099-2.378-.285-.124.244-.26.48-.407.708a5.222 5.222 0 01-4.411 2.529z" clip-rule="evenodd" />
-                </svg>
-                <span class="font-semibold">Grupos</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-3 hover:bg-neutral-100 p-3 rounded-lg text-neutral-700 hover:text-blue-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.073a2.25 2.25 0 01-2.25 2.25h-13.5a2.25 2.25 0 01-2.25-2.25V6.323a2.25 2.25 0 012.25-2.25h4.063m5.437 0h4.063a2.25 2.25 0 012.25 2.25v4.073M16.5 11.25V6.323" />
-                </svg>
-                <span class="font-medium">Projetos</span>
-            </a>
-        </li>
-    </ul>
-</div>
-
-<div class="ml-60 flex-1 flex flex-col h-screen">
-
-    <div class="bg-white p-4 border-b border-neutral-200 flex justify-between items-center sticky top-0 z-10">
-        <div>
-            <div class="text-xs text-neutral-500">Meus Grupos > <span class="font-medium text-neutral-600">#Canal Principal BRASFI</span></div>
-            <h1 class="text-xl font-bold text-neutral-800 mt-1">#Canal Principal BRASFI</h1>
-        </div>
-        <div class="flex items-center gap-5 text-neutral-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-6 h-6 cursor-pointer hover:text-blue-600">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-            </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-6 h-6 cursor-pointer hover:text-blue-600">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-1.007 1.057-1.228a48.854 48.854 0 0111.186 0c.497.221.967.686 1.057 1.228.09.542-.01 1.087-.34 1.536a48.488 48.488 0 01-3.36.942m-5.434 0a48.548 48.548 0 01-3.36.942m-2.133-.942c-.33-.449-.43-1.002-.34-1.536a48.49 48.49 0 013.36-.942m-5.434 0a48.548 48.548 0 013.36-.942m14.212 11.052a48.548 48.548 0 01-3.36.942m5.434 0c.33.449.43 1.002.34 1.536a48.49 48.49 0 01-3.36.942m-5.434 0a48.548 48.548 0 01-3.36.942m2.133.942c.33.449.43 1.002.34 1.536a48.49 48.49 0 01-3.36.942M3.936 9.466a48.49 48.49 0 013.36.942m-5.434 0a48.548 48.548 0 013.36.942m2.133.942c.33-.449.43-1.002.34-1.536a48.49 48.49 0 01-3.36-.942m14.212 11.052c-.33-.449-.43-1.002-.34-1.536a48.49 48.49 0 013.36.942m-5.434 0c.33.449.43 1.002.34 1.536a48.49 48.49 0 01-3.36.942M3.936 14.534c.33.449.43 1.002.34 1.536a48.49 48.49 0 01-3.36.942m5.434 0a48.548 48.548 0 01-3.36.942m2.133.942c-.33.449-.43-1.002-.34-1.536a48.49 48.49 0 013.36-.942" />
-            </svg>
-            <div class="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-8 h-8 text-neutral-500">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <div>
-                    <div class="text-sm font-medium text-neutral-700">Usuário</div>
-                    <div class="text-xs text-neutral-500">Cargo</div>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="user">Username:</label>
+                    <input type="text" id="user" class="form-control" placeholder="Enter your username">
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex-1 p-6 flex flex-col">
-        <div class="bg-white border border-neutral-200 rounded-lg shadow-sm flex-1 flex flex-col overflow-hidden">
-            <div class="p-4 border-b border-neutral-200 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <h2 class="text-lg font-semibold text-neutral-800">#Canal Principal BRASFI</h2>
-                    <div class="flex items-center -space-x-2">
-                        <img class="w-6 h-6 rounded-full border-2 border-white object-cover" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User 1">
-                        <img class="w-6 h-6 rounded-full border-2 border-white object-cover" src="https://randomuser.me/api/portraits/women/44.jpg" alt="User 2">
-                        <img class="w-6 h-6 rounded-full border-2 border-white object-cover" src="https://randomuser.me/api/portraits/men/36.jpg" alt="User 3">
-                        <div class="w-6 h-6 rounded-full border-2 border-white bg-neutral-200 text-neutral-600 text-xs flex items-center justify-center font-semibold">
-                            +99
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <input type="text" id="message" class="form-control" placeholder="Type your message...">
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-6 h-6 text-neutral-500 cursor-pointer hover:text-blue-600">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-                </svg>
-            </div>
-
-            <div id="messageList" class="flex-1 p-6 space-y-5 overflow-y-auto">
-            </div>
-
-            <form id="messageForm" class="p-4 border-t border-neutral-200 bg-white flex items-center gap-3">
-                <input
-                        id="messageInput"
-                        type="text"
-                        placeholder="Digite sua mensagem..."
-                        required
-                        class="flex-1 px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
-                >
-                <button type="button" class="p-2 text-neutral-500 hover:text-blue-600 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81a.75.75 0 00-1.06-1.061z" />
-                    </svg>
-                </button>
-                <button
-                        type="submit"
-                        class="p-2 text-blue-600 hover:text-blue-700 transition-colors"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="w-6 h-6 transform -rotate-[0deg] "> <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                    </svg>
-                </button>
             </form>
+        </div>
+        <div class="col-md-6 text-right">
+            <button id="connect" class="btn btn-connect">Connect</button>
+            <button id="disconnect" class="btn btn-disconnect" disabled="disabled">Disconnect</button>
+        </div>
+    </div>
+
+    <div class="row" id="message-input">
+        <div class="col-md-12">
+            <form class="form-inline">
+                <button id="send" class="btn btn-primary" type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Live Chat</th>
+                </tr>
+                </thead>
+                <tbody id="livechat">
+                <!-- Messages will be dynamically appended here -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <script>
-    const apiUrl = 'http://localhost:8080/mensagens'; // Mantenha ou ajuste sua URL da API
-    const currentUserId = 932898; // ID do usuário atual, para diferenciar "Você". Ajuste conforme necessário.
-    const grupoId = 1;  // Fixo por enquanto, como no seu código original
+    let stompClient = null;
 
-    // Função para gerar um avatar placeholder simples (primeira letra do nome)
-    function getAvatarPlaceholder(name) {
-        if (!name || name.trim() === '') return '';
-        const initial = name.charAt(0).toUpperCase();
-        // Cores de fundo aleatórias para diversificar (pode expandir)
-        const colors = ['bg-blue-500', 'bg-green-500', 'bg-red-500', 'bg-yellow-500', 'bg-indigo-500', 'bg-purple-500'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        return `<div class="w-8 h-8 rounded-full ${randomColor} text-white flex items-center justify-center text-sm font-semibold">${initial}</div>`;
-    }
+    function connect() {
+        const socket = new SockJS('http://localhost:8080/chat');
+        stompClient = Stomp.over(socket);
 
-    // Função para simular um URL de avatar (para teste)
-    function getMockAvatarUrl(userId) {
-        // Para simular diferentes avatares, você pode usar um serviço como placeimg.com ou randomuser.me
-        // Aqui, apenas alterno entre alguns para demonstração.
-        if (userId % 3 === 0) return 'https://randomuser.me/api/portraits/men/75.jpg';
-        if (userId % 3 === 1) return 'https://randomuser.me/api/portraits/women/75.jpg';
-        return 'https://randomuser.me/api/portraits/lego/1.jpg'; // Um avatar genérico
-    }
+        stompClient.connect({}, function(frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
 
-
-    async function carregarMensagens() {
-        try {
-            const res = await fetch(`${apiUrl}/grupo/${grupoId}`);
-            if (!res.ok) {
-                console.error("Erro ao carregar mensagens:", res.status, await res.text());
-                document.getElementById('messageList').innerHTML = '<p class="text-center text-neutral-500">Não foi possível carregar as mensagens.</p>';
-                return;
-            }
-            const mensagens = await res.json();
-            const messageList = document.getElementById('messageList');
-            messageList.innerHTML = ''; // Limpa mensagens antigas
-
-            if (!mensagens || mensagens.length === 0) {
-                messageList.innerHTML = '<p class="text-center text-neutral-500">Nenhuma mensagem ainda. Seja o primeiro a enviar!</p>';
-                return;
-            }
-
-            mensagens.forEach(mensagem => {
-                const div = document.createElement('div');
-                const isCurrentUser = mensagem.userId === currentUserId;
-                const userName = mensagem.user?.nome || 'Usuário Desconhecido';
-                const userAvatarUrl = mensagem.user?.avatarUrl || getMockAvatarUrl(mensagem.userId); // Use avatar real se disponível, senão mock
-
-                if (isCurrentUser) {
-                    div.className = 'flex flex-row-reverse items-start gap-3';
-                    div.innerHTML = `
-                        <div class="bg-zinc-200 p-3 rounded-lg max-w-[70%] shadow-sm">
-                            <p class="text-xs font-semibold text-neutral-700 mb-1 text-right">Você:</p>
-                            <p class="text-sm text-neutral-800 break-words">${mensagem.texto}</p>
-                        </div>
-                    `;
-                } else {
-                    div.className = 'flex items-start gap-3';
-                    div.innerHTML = `
-                        <img class="w-8 h-8 rounded-full object-cover shadow-sm" src="${userAvatarUrl}" alt="Avatar de ${userName}">
-                        <div class="bg-neutral-100 p-3 rounded-lg max-w-[70%] shadow-sm">
-                            <p class="text-xs font-semibold text-sky-600 mb-1">${userName}:</p>
-                            <p class="text-sm text-neutral-800 break-words">${mensagem.texto}</p>
-                        </div>
-                    `;
-                }
-                messageList.appendChild(div);
+            stompClient.subscribe('/topic/chat', function(message) {
+                const content = JSON.parse(message.body).content;
+                updateLiveChat(content);
             });
-            // Scroll para a mensagem mais recente
-            messageList.scrollTop = messageList.scrollHeight;
-        } catch (error) {
-            console.error("Falha ao buscar mensagens:", error);
-            document.getElementById('messageList').innerHTML = '<p class="text-center text-red-500">Ocorreu um erro ao conectar com o servidor.</p>';
+        }, function(error) {
+            console.error('Error: ' + error);
+        });
+    }
+
+    function setConnected(connected) {
+        $("#connect").prop("disabled", connected);
+        $("#disconnect").prop("disabled", !connected);
+        $("#conversation").toggle(connected);
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        console.log("Disconnected");
+    }
+
+    function sendMessage() {
+        const user = $("#user").val();
+        const message = $("#message").val();
+
+        if (user && message) {
+            stompClient.send("/brasfi/newMensagem", {},
+                JSON.stringify({'user': user, 'message': message})
+            );
+            $("#message").val("");
         }
     }
 
-    document.getElementById('messageForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const messageInput = document.getElementById('messageInput');
-        const texto = messageInput.value.trim();
+    function updateLiveChat(message) {
+        $("#livechat").append(
+            `<tr>
+                <td class="message-container">
+                    <div class="message-text">${message}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                </td>
+            </tr>`
+        );
+    }
 
-        if (texto === '') return; // Não envia mensagens vazias
+    $(function() {
+        $("form").on('submit', function(e) {
+            e.preventDefault();
+        });
 
-        const payload = {
-            texto,
-            userId: currentUserId, // Usar o ID do usuário atual
-            grupoId
-        };
+        $("#connect").click(function() {
+            connect();
+        });
 
-        try {
-            const res = await fetch(`${apiUrl}/enviar`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+        $("#disconnect").click(function() {
+            disconnect();
+        });
 
-            if (!res.ok) {
-                console.error("Erro ao enviar mensagem:", res.status, await res.text());
-                // Adicionar feedback visual para o usuário, se desejar
-                alert("Não foi possível enviar a mensagem.");
-                return;
-            }
-
-            messageInput.value = ''; // Limpa o campo de input
-            carregarMensagens(); // Recarrega as mensagens para mostrar a nova
-        } catch (error) {
-            console.error("Falha ao enviar mensagem:", error);
-            alert("Ocorreu um erro ao tentar enviar a mensagem.");
-        }
+        $("#send").click(function() {
+            sendMessage();
+        });
     });
-
-    // Carregar mensagens iniciais
-    carregarMensagens();
-
-    // Opcional: Recarregar mensagens periodicamente (se não estiver usando WebSockets)
-    // setInterval(carregarMensagens, 5000); // A cada 5 segundos
 </script>
 </body>
 </html>

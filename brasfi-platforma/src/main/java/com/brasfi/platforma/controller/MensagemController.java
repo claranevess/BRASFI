@@ -11,8 +11,13 @@ import org.springframework.web.util.HtmlUtils;
 public class MensagemController {
 
     @MessageMapping("/newMensagem")
-    @SendTo("/toppic/chat")
-    public ChatOutput newMessage(ChatInput input){
-        return new ChatOutput(HtmlUtils.htmlEscape(input.user() + ": " + input.message()));
+    @SendTo("/topic/chat")
+    public ChatOutput newMessage(ChatInput input) {
+        String escapedUser = HtmlUtils.htmlEscape(input.user());
+        String escapedMessage = HtmlUtils.htmlEscape(input.message());
+        return new ChatOutput(escapedUser + ": " + escapedMessage);
     }
+
+    public record ChatInput(String user, String message) {}
+    public record ChatOutput(String content) {}
 }
