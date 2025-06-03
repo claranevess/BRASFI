@@ -129,13 +129,19 @@
         <div class="flex-1 flex flex-col">
             <h2 class="text-2xl font-semibold text-dark-text mb-6">Meus Grupos</h2>
 
-            <div class="flex border-b border-gray-200 mb-6 pb-2">
-                <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
-                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Fixados</button>
-                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Não lidos</button>
-                <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
-            </div>
+            <div class="flex justify-between items-center mb-6 pb-2">
+                <div class="flex border-b border-gray-200 pb-2"> <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
+                    <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Fixados</button>
+                    <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Não lidos</button>
+                    <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
+                </div>
 
+                <div th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'MENTOR'}">
+                    <a th:href="@{/grupo/criar_grupo}" class="flex items-center px-5 py-2 bg-brasfi-blue text-white rounded-lg hover:bg-button-primary-hover transition duration-200">
+                        <i class="fas fa-plus mr-2"></i> Novo Grupo
+                    </a>
+                </div>
+            </div>
             <div class="space-y-4">
                 <div th:each="grupo : ${myGroups}" class="group-card bg-light-bg p-4 rounded-lg border border-gray-200 shadow-sm relative" th:data-group-id="${grupo.id}">
                     <div class="flex justify-between items-start mb-2">
@@ -281,19 +287,16 @@
                 event.stopPropagation(); // Prevent document click from closing it immediately
                 const dropdown = button.nextElementSibling; // The dropdown menu div
 
-                // Close any other open dropdowns
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
                     if (menu !== dropdown) {
                         menu.classList.add('hidden');
                     }
                 });
 
-                // Toggle the clicked dropdown
                 dropdown.classList.toggle('hidden');
             });
         });
 
-        // Close dropdowns when clicking outside
         document.addEventListener('click', (event) => {
             document.querySelectorAll('.dropdown-menu').forEach(menu => {
                 if (!menu.contains(event.target) && !menu.previousElementSibling.contains(event.target)) {
@@ -302,7 +305,6 @@
             });
         });
 
-        // --- Modal Logic ---
         const membersModal = document.getElementById('membersModal');
         const modalGroupTitleSpan = document.getElementById('modalGroupTitle');
         const modalGroupDescriptionParagraph = document.getElementById('modalGroupDescription');
@@ -311,8 +313,8 @@
 
         document.querySelectorAll('.group-info-btn').forEach(button => {
             button.addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent default link behavior
-                event.stopPropagation(); // Stop propagation to prevent closing dropdown immediately
+                event.preventDefault();
+                event.stopPropagation();
 
                 const groupId = event.target.dataset.groupId;
                 const groupName = event.target.dataset.groupName; // Get group name
@@ -325,8 +327,8 @@
                 memberSearchInput.value = ''; // Clear search input on open
                 currentGroupMembers = []; // Reset members data
 
-                fetchMembersForGroup(groupId); // Fetch and display members
-                closeAllDropdowns(); // Close dropdown after clicking "Informações"
+                fetchMembersForGroup(groupId);
+                closeAllDropdowns();
                 openModal();
             });
         });
@@ -364,8 +366,26 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const members = await response.json();
+
             currentGroupMembers = members; // Store fetched members for searching
             renderMembers(currentGroupMembers); // Initial render with all members
+
+            membersListElement.innerHTML = ''; // Clear loading message
+
+            if (members.length === 0) {
+                membersListElement.innerHTML = '<li class="text-center text-gray-500">Nenhum membro encontrado.</li>';
+            } else {
+                members.forEach(member => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md';
+                    listItem.innerHTML = `
+                            <img src="https://via.placeholder.com/32x32?text=${member.nome ? member.nome.charAt(0) : '?'}" alt="${member.nome}" class="w-8 h-8 rounded-full object-cover bg-blue-100 text-blue-800 flex items-center justify-center text-sm font-semibold">
+                            <span class="text-gray-700 font-medium">${member.nome}</span>
+                            <span class="text-gray-500 text-sm">${member.email ? member.email : ''}</span>
+                        `;
+                    membersListElement.appendChild(listItem);
+                });
+            }
 
         } catch (error) {
             console.error("Erro ao carregar membros:", error);
