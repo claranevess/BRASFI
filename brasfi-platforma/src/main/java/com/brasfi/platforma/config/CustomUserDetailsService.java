@@ -3,11 +3,10 @@ package com.brasfi.platforma.config;
 import com.brasfi.platforma.model.User;
 import com.brasfi.platforma.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,11 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .or(() -> userRepository.findByTelefone(login))
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + login));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getSenha(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+        return new UserDetailsImpl(user);
     }
-
 }
