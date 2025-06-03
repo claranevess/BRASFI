@@ -6,6 +6,40 @@
     <title th:text="${trilha.titulo}"></title>
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <style>
+        .completion-circle {
+            position: absolute;
+            left: -12px;
+            top: 1.25rem;
+            width: 24px;
+            height: 24px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .completion-circle.completed {
+            background-color: #4b5563;
+            border: 2px solid #4b5563;
+        }
+        .completion-circle.pending {
+            background-color: #f3f4f6;
+            border: 2px solid #d1d5db;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #e5e7eb;
+            z-index: 0;
+        }
+    </style>
+
 </head>
 <body class="bg-gray-100 flex h-screen">
 
@@ -46,8 +80,7 @@
                 (Descrição) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
             <div class="flex items-center text-sm text-gray-600 mb-8">
-                <span class="text mr-2">★★★★☆</span>
-                <span class="mr-4" th:text="'(' + (${trilha.inscritos != null ? trilha.inscritos.size() : 0}) + ')'"> (32)</span>
+                <span class="text-gray-500 mr-2">★★★★☆</span> <span class="mr-4" th:text="'(' + (${trilha.inscritos != null ? trilha.inscritos.size() : 0}) + ')'"> (32)</span>
                 <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold mr-4" th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.name() : 'SEM EIXO'}">FINANÇAS</span>
                 <span class="font-semibold">Duração: <span th:text="${#numbers.formatDecimal(trilha.duracao, 1, 0) + 'hrs'}">3hrs</span></span>
             </div>
@@ -60,22 +93,26 @@
     </div>
 
     <div class="flex gap-8">
-        <div class="w-2/3 bg-white p-6 rounded-lg shadow">
-            <h2 class="text-2xl font-semibold mb-4">Aulas</h2>
-            <div class="flex items-center gap-2 mb-6">
+        <div class="w-2/3"> <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-900">Aulas</h2>
+            <div class="flex items-center gap-2">
                 <span class="bg-gray-300 text-gray-800 text-xs px-3 py-1 rounded-full font-medium">● <span th:text="${aulas != null ? aulas.size() : 0}">26</span> totais</span>
-                <span class="bg-gray-500 text-white text-xs px-3 py-1 rounded-full font-medium">✓ <span>0</span> concluídas</span> </div>
+                <span class="bg-gray-600 text-white text-xs px-3 py-1 rounded-full font-medium">✓ <span>0</span> concluídas</span>
+            </div>
+        </div>
 
-            <div class="relative border-l-2 border-gray-200 pl-6 space-y-6">
+            <div class="relative pl-6 space-y-6">
+                <div class="timeline-line"></div>
+
                 <th:block th:each="aula, iterStat : ${aulas}">
-                    <div class="relative">
-                        <div th:classappend="${iterStat.index < 2 ? 'bg-gray-600' : 'bg-gray-300'}"
-                             class="absolute -left-4 top-2 w-6 h-6 rounded-full flex items-center justify-center">
-                            <span th:if="${iterStat.index < 2}" class="text-white text-xs font-bold">✓</span>
-                            <span th:unless="${iterStat.index < 2}" class="text-gray-600 text-xs font-bold"></span>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-100">
-                            <h3 class="font-semibold text-lg text-gray-800" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h3>
+                    <div class="relative z-10"> <div th:id="'aula-status-' + ${aula.id}"
+                                                     th:classappend="${iterStat.index < 2 ? 'completed' : 'pending'}"
+                                                     class="completion-circle"
+                                                     onclick="toggleCompletion(this)">
+                        <span th:if="${iterStat.index < 2}" class="text-white text-xs font-bold">✓</span>
+                        <span th:unless="${iterStat.index < 2}" class="text-gray-600 text-xs font-bold"></span>
+                    </div>
+                        <div class="bg-white rounded-lg p-4 shadow"> <h3 class="font-semibold text-lg text-gray-800" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h3>
                             <p class="text-sm text-gray-600 mt-1" th:text="${aula.descricao}">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
                             <div class="text-right mt-3 text-sm text-gray-600 flex items-center justify-end gap-1">
                                 <a th:href="${aula.link}" class="hover:underline font-medium">Acessar</a>
@@ -91,8 +128,7 @@
             </div>
         </div>
 
-        <aside class="w-1/3 bg-gray-500 text-white p-6 rounded-lg shadow h-fit">
-            <h3 class="text-xl font-semibold mb-4">O que você vai aprender nesta trilha:</h3>
+        <aside class="w-1/3 bg-gray-700 text-white p-6 rounded-lg shadow h-fit"> <h3 class="text-xl font-semibold mb-4">O que você vai aprender nesta trilha:</h3>
             <ul class="list-disc list-inside text-gray-200 space-y-2">
                 <li th:each="topico : ${trilha.topicosDeAprendizado != null ? trilha.topicosDeAprendizado.split('\n') : null}"
                     th:text="${topico}" class="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
@@ -103,5 +139,18 @@
         </aside>
     </div>
 </main>
+
+<script>
+    function toggleCompletion(element) {
+        const aulaId = element.id.replace('aula-status-', '');
+
+        const isCompleted = element.classList.toggle('completed');
+        element.classList.toggle('pending');
+
+        element.querySelector('span').innerHTML = isCompleted ? '✓' : '';
+
+        console.log(`Aula ${aulaId} agora está ${isCompleted ? 'concluída' : 'pendente'}`);
+    }
+</script>
 </body>
 </html>
