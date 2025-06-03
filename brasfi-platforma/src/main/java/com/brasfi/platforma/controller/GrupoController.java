@@ -95,8 +95,23 @@ public class GrupoController {
 
 
     @PostMapping("/entrar/{id}")
-    public String entrarGrupo(@PathVariable("id") Long grupoId, @RequestParam("usuarioId") Long usuarioId) {
-        grupoService.entrarGrupo(grupoId, usuarioId);
+    public String entrarGrupo(@PathVariable("id") Long grupoId) { // Removed @RequestParam("usuarioId")
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = null;
+
+        // Check if user is authenticated and not an anonymous user
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            String username = auth.getName();
+            currentUser = userService.getUserByUsername(username); // Use userService for currentUser
+        }
+
+        if (currentUser != null) {
+            grupoService.entrarGrupo(grupoId, currentUser.getId()); // Pass currentUser.getId()
+        } else {
+            // Handle case where user is not logged in or not found
+            // Redirect to login or show an error. Adjust "/login" to your actual login URL.
+            return "redirect:/login?error=notLoggedIn";
+        }
         return "redirect:/grupo/listar";
     }
 }
