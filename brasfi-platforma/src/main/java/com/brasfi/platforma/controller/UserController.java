@@ -35,6 +35,29 @@ public class UserController {
             Mentor mentor = new Mentor(user);
             userService.salvarUser(mentor);
         }
-        return "redirect:/login"; // Redireciona para a página de login após o registro
+        return "redirect:/escolherCargo"; // Redireciona para a página de login após o registro
     }
+
+    @GetMapping("/escolherCargo")
+    public String mostrarEscolhaCargo(Model model) {
+        return "user/escolherCargo";
+    }
+
+    @GetMapping("/validarCodigo")
+    public String mostrarValidacaoCodigo(Model model) {
+        model.addAttribute("user", new User());
+        return "user/validarCodigo";
+    }
+
+    @PostMapping("/validarCodigo")
+    public String validarCodigo(Model model) {
+        model.addAttribute("user", new User());
+        return "user/validarCodigo";
+    }
+
+
+
+
+
+
 }

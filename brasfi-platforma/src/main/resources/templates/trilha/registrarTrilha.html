@@ -1,22 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" th:href="@{/css/time-picker.css}" />
-    <link rel="stylesheet" th:href="@{/css/eixo-picker.css}" />
-    <title>Criar Trilha</title>
-</head>
-<body class="bg-gray-100">
-<div class="max-w-xl mx-auto mt-10 px-4">
-    <button id="openModal" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-        Criar Nova Trilha
-    </button>
-</div>
-
-<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-
+<div id="modalRegistrarTrilha" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white w-full max-w-xl min-w-[980px] mx-auto rounded-lg shadow-lg relative max-h-[80vh] flex flex-col">
         <div class="py-8 px-6 sticky top-0 z-10">
             <h2 class="text-3xl font-semibold">Criar Nova Trilha</h2>
@@ -149,37 +131,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    const modal = document.getElementById('modal');
-    const openBtn = document.getElementById('openModal');
-    const closeBtn = document.getElementById('closeModal');
-
-    function closeModalFunction() {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-    }
-
-    if (openBtn && modal) {
-        openBtn.addEventListener('click', () => {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        });
-    }
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeModalFunction);
-    }
-
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModalFunction();
-            }
-        });
-    }
-</script>
-<script th:src="@{/js/eixo-picker.js}"></script>
-<script th:src="@{/js/time-picker.js}"></script>
-</body>
-</html>

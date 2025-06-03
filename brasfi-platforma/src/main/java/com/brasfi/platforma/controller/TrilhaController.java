@@ -1,5 +1,6 @@
 package com.brasfi.platforma.controller;
 
+import com.brasfi.platforma.model.EixoTematico;
 import com.brasfi.platforma.model.Trilha;
 import com.brasfi.platforma.service.TrilhaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,6 +148,16 @@ public class TrilhaController {
         List<Trilha> trilhas = trilhaService.listaTrilhas();
         model.addAttribute("trilhas", trilhas);
         return "trilha/listarTrilha";
+    }
+
+    @GetMapping("/criar-modal")
+    public String getCriarTrilhaModal(Model model) {
+        // Preenche o model com os dados necessários para o formulário dentro do modal
+        model.addAttribute("trilha", new Trilha()); // Objeto vazio para o formulário de criação
+        model.addAttribute("eixosTematicos", EixoTematico.values()); // Para popular o eixo-picker
+        // O duracaoInput pode ser vazio inicialmente para um novo registro
+        model.addAttribute("duracaoInput", "");
+        return "trilha/registrarTrilha";
     }
 
 

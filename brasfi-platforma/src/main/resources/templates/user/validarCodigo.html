@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validar Código</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for button styling if Tailwind doesn't have the exact green */
+
+        .btn-continue {
+            background-color: #E0E0E0; /* Gray as per prototype */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            cursor: not-allowed; /* Default cursor for disabled state */
+            border: none;
+            width: 100%;
+            transition: background-color 0.3s ease, cursor 0.3s ease;
+        }
+
+        .btn-continue.active { /* Class for active (green) state */
+            background-color: #65A603;
+            cursor: pointer;
+        }
+
+        .btn-continue.active:hover { /* Hover for active state */
+            background-color: #558B2F; /* Slightly darker green on hover */
+        }
+
+
+        .code-input {
+            width: 5rem; /* Adjust size as needed for square appearance */
+            height: 3rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 1px solid #65A603;
+            border-radius: 0.25rem;
+            outline: none;
+        }
+        .code-input:focus {
+            border-color: #65A603; /* Green border on focus */
+        }
+    </style>
+</head>
+<body class="m-0 p-0 bg-[#fafafa] flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
+
+<header class="w-full flex justify-between items-center px-4 py-3 absolute top-2 left-0">
+    <!--    seta de voltar-->
+    <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500 cursor-pointer">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+    </div>
+
+    <div class="flex items-center text-gray-500 text-sm">
+        Português(BR)
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+    </div>
+</header>
+
+<div class="flex flex-grow items-center justify-center">
+    <div class="text-left mb-8">
+        <img src="/favicon-brasfi.png" alt="Logo BRASFI" class="mb-8" />
+        <p class="font-normal text-lg text-[#444444] mb-2">Só falta um passo!</p>
+        <h1 class="font-bold text-2xl mb-8">Insira o código</h1>
+
+        <div class="flex justify-center gap-3 mb-8">
+            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
+        </div>
+
+        <button type="button" class="btn-continue mb-4">Continuar</button>
+
+        <div class="flex flex-grow items-center justify-center">
+            <div class="text-center mb-8">
+                <p class="font-normal text-sm text-[#444444]">Não recebeu seu código? Solicite a outros administradores</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputs = document.querySelectorAll('.code-input');
+        const continueButton = document.querySelector('.btn-continue');
+
+        // Initialize all inputs with '0'
+        inputs.forEach(input => {
+            input.value = '0';
+        });
+
+        const checkAllInputsFilled = () => {
+            let allFilled = true;
+            inputs.forEach(input => {
+                if (input.value === '' || input.value === '0') { // Consider '0' as not "filled" for activation
+                    allFilled = false;
+                }
+            });
+
+            if (allFilled) {
+                continueButton.classList.add('active');
+                continueButton.disabled = false;
+            } else {
+                continueButton.classList.remove('active');
+                continueButton.disabled = true;
+            }
+        };
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                // Ensure only single digit integer input
+                input.value = e.data ? e.data.replace(/[^0-9]/g, '').slice(0, 1) : '';
+
+                if (input.value !== '' && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+                checkAllInputsFilled();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            // Handle focus and select '0' when input is clicked/focused
+            input.addEventListener('focus', (e) => {
+                if (input.value === '0') {
+                    input.select();
+                }
+            });
+
+            // Prevent default behavior for non-numeric input if typed
+            input.addEventListener('keypress', (e) => {
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Initial check on load
+        checkAllInputsFilled();
+    });
+</script>
+
+</body>
+</html>
