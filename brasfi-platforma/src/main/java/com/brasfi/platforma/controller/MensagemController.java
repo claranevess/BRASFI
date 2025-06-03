@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/mensagens")
@@ -24,7 +25,7 @@ public class MensagemController {
     @Autowired private MensagemService mensagemService;
     @Autowired private UserRepository userRepository;
     @Autowired private GrupoRepository grupoRepository;
-    @Autowired private MensagemRepository mensagemRepository; // Adicione esta linha
+    @Autowired private MensagemRepository mensagemRepository;
 
     @GetMapping("/mensagem")
     public String mostrarMensagem() {
@@ -56,5 +57,24 @@ public class MensagemController {
         Grupo grupo = grupoRepository.findById(id).orElseThrow();
         return ResponseEntity.ok(mensagemService.listarMensagensPorGrupo(grupo));
     }
-}
 
+    @GetMapping("/texto/{id}")
+    public ResponseEntity<String> getTextoMensagem(@PathVariable Long id) {
+        Optional<Mensagem> mensagemOpt = mensagemRepository.findById(id);
+
+        if (mensagemOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(mensagemOpt.get().getTexto());
+    }
+
+    @GetMapping("/todos-textos")
+    public ResponseEntity<List<String>> getAllTextosMensagens() {
+        List<Mensagem> mensagens = mensagemRepository.findAll();
+        List<String> textos = mensagens.stream()
+                .map(Mensagem::getTexto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(textos);
+    }
+}
