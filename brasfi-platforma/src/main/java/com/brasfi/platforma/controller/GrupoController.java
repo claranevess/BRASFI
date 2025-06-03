@@ -1,23 +1,25 @@
+// com.brasfi.platforma.controller.GrupoController.java
 package com.brasfi.platforma.controller;
 
 import com.brasfi.platforma.dto.MemberDto;
 import com.brasfi.platforma.model.Grupo;
+import com.brasfi.platforma.model.User;
+import com.brasfi.platforma.model.TipoUsuario;
+import com.brasfi.platforma.model.SolicitacaoAcesso; // Import new entity
 import com.brasfi.platforma.repository.GrupoRepository;
 import com.brasfi.platforma.service.GrupoService;
+import com.brasfi.platforma.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import com.brasfi.platforma.model.TipoUsuario;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.access.AccessDeniedException;
-import com.brasfi.platforma.model.User;
-import com.brasfi.platforma.service.UserService; // Importe o UserService
-
-import java.util.ArrayList;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity; // For @ResponseBody / ResponseEntity
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,37 +34,43 @@ public class GrupoController {
     private GrupoService grupoService;
 
     @Autowired
-    private UserService userService; // Injete o UserService AQUI
+    private UserService userService;
 
     @GetMapping("/listar")
     public String listarGrupos(Model model){
-        // Obter o usuário logado e adicionar ao modelo
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
-        List<Grupo> myGroups = new ArrayList<>(); // Initialize to empty lists
+        List<Grupo> myGroups = new ArrayList<>();
         List<Grupo> exploreGroups = new ArrayList<>();
+        List<SolicitacaoAcesso> pendingSolicitacoes = new ArrayList<>(); // New list for admin view
 
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) { // Check for anonymousUser
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             String username = auth.getName();
             currentUser = userService.getUserByUsername(username);
             model.addAttribute("currentUser", currentUser);
 
             if (currentUser != null) {
-                // Fetch groups the current user is a part of
+                // Common for both roles: My Groups
                 myGroups = grupoService.findGruposByUserId(currentUser.getId());
-                // Fetch groups the current user is NOT a part of
-                exploreGroups = grupoService.findGruposNotJoinedByUserId(currentUser.getId());
+
+                if (currentUser.getTipoUsuario() == TipoUsuario.MENTOR) { // Assuming ADMIN/MENTOR can see requests
+                    // For Admins: Show pending requests
+                    pendingSolicitacoes = grupoService.findAllPendingSolicitacoes();
+                    model.addAttribute("pendingSolicitacoes", pendingSolicitacoes);
+                    // Admins don't need "explore groups" in this view, they manage requests
+                    exploreGroups = new ArrayList<>(); // Ensure it's empty for admin view
+                } else { // For Students/Regular Users: Show explore groups
+                    exploreGroups = grupoService.findGruposNotJoinedByUserId(currentUser.getId());
+                }
             }
         } else {
-            // If no user is logged in, show all groups in "Explore" or leave both empty
-            // For now, let's put all groups in explore if no user is logged in
+            // No user logged in: show all groups in explore (default behavior)
             exploreGroups = grupoRepository.findAll();
-            // Or you could keep both empty if you want a stricter view for unauthenticated users
-            // myGroups = new ArrayList<>();
-            // exploreGroups = new ArrayList<>();
         }
-        model.addAttribute("myGroups", myGroups); // Now correctly named for Thymeleaf
-        model.addAttribute("exploreGroups", exploreGroups); // Now correctly named for Thymeleaf
+
+        model.addAttribute("myGroups", myGroups);
+        model.addAttribute("exploreGroups", exploreGroups); // Will be empty for Admins
+        // model.addAttribute("pendingSolicitacoes", pendingSolicitacoes); // Already added inside if(MENTOR) block
 
         return "listar_grupos";
     }
@@ -71,11 +79,9 @@ public class GrupoController {
     public String criarGrupo(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        // Use o userService para buscar o criador
         User criador = userService.getUserByUsername(username);
 
-
-        if (criador.getTipoUsuario() != TipoUsuario.MENTOR) {
+        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) { // Only MENTOR can create
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 
@@ -87,9 +93,9 @@ public class GrupoController {
     public String salvarGrupo(@ModelAttribute Grupo grupo) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        User criador = userService.getUserByUsername(username); // Use userService for creator
+        User criador = userService.getUserByUsername(username);
 
-        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) { // Added null check for criador
+        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) {
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 
@@ -97,41 +103,97 @@ public class GrupoController {
         return "redirect:/grupo/listar";
     }
 
-
-    @PostMapping("/entrar/{id}")
-    public String entrarGrupo(@PathVariable("id") Long grupoId) { // Removed @RequestParam("usuarioId")
+    // Modified endpoint for requesting access (for students)
+    @PostMapping("/solicitar_acesso/{id}")
+    public String solicitarAcesso(@PathVariable("id") Long grupoId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
 
-        // Check if user is authenticated and not an anonymous user
         if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             String username = auth.getName();
-            currentUser = userService.getUserByUsername(username); // Use userService for currentUser
+            currentUser = userService.getUserByUsername(username);
+        }
+
+        if (currentUser != null && currentUser.getTipoUsuario() != TipoUsuario.MENTOR) { // Only students/non-mentors request
+            grupoService.solicitarAcesso(grupoId, currentUser.getId());
+        } else {
+            // Handle error: mentor trying to request, or not logged in
+            return "redirect:/login?error=accessDenied"; // Or specific error page
+        }
+        return "redirect:/grupo/listar";
+    }
+
+    // New endpoint for ADMINS to accept requests
+    @PostMapping("/aceitar_solicitacao/{solicitacaoId}")
+    public String aceitarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User adminUser = null;
+
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            String username = auth.getName();
+            adminUser = userService.getUserByUsername(username);
+        }
+
+        if (adminUser != null && adminUser.getTipoUsuario() == TipoUsuario.MENTOR) { // Only admins can accept
+            grupoService.aceitarSolicitacao(solicitacaoId, adminUser);
+        } else {
+            throw new AccessDeniedException("Apenas administradores podem aceitar solicitações.");
+        }
+        return "redirect:/grupo/listar";
+    }
+
+    // New endpoint for ADMINS to reject requests
+    @PostMapping("/recusar_solicitacao/{solicitacaoId}")
+    public String recusarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User adminUser = null;
+
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            String username = auth.getName();
+            adminUser = userService.getUserByUsername(username);
+        }
+
+        if (adminUser != null && adminUser.getTipoUsuario() == TipoUsuario.MENTOR) { // Only admins can reject
+            grupoService.recusarSolicitacao(solicitacaoId, adminUser);
+        } else {
+            throw new AccessDeniedException("Apenas administradores podem recusar solicitações.");
+        }
+        return "redirect:/grupo/listar";
+    }
+
+    // Keep existing /entrar/{id} if it's used elsewhere for direct entry
+    // But for students requesting, they use /solicitar_acesso/{id}
+    @PostMapping("/entrar/{id}")
+    public String entrarGrupo(@PathVariable("id") Long grupoId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = null;
+
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            String username = auth.getName();
+            currentUser = userService.getUserByUsername(username);
         }
 
         if (currentUser != null) {
-            grupoService.entrarGrupo(grupoId, currentUser.getId()); // Pass currentUser.getId()
+            grupoService.entrarGrupo(grupoId, currentUser.getId());
         } else {
-            // Handle case where user is not logged in or not found
-            // Redirect to login or show an error. Adjust "/login" to your actual login URL.
             return "redirect:/login?error=notLoggedIn";
         }
         return "redirect:/grupo/listar";
     }
 
+    // NEW ENDPOINT TO FETCH GROUP MEMBERS (No change from last step)
     @GetMapping("/{id}/membros")
-    @ResponseBody // This tells Spring to return data directly, not a view name
+    @ResponseBody
     public ResponseEntity<List<MemberDto>> getGroupMembers(@PathVariable("id") Long grupoId) {
         Optional<Grupo> optionalGrupo = grupoRepository.findById(grupoId);
         if (optionalGrupo.isPresent()) {
             Grupo grupo = optionalGrupo.get();
-            // Convert User entities to MemberDto for controlled exposure
             List<MemberDto> members = grupo.getMembros().stream()
-                    .map(MemberDto::new) // Uses the DTO constructor
+                    .map(MemberDto::new)
                     .collect(Collectors.toList());
             return ResponseEntity.ok(members);
         } else {
-            return ResponseEntity.notFound().build(); // Return 404 if group not found
+            return ResponseEntity.notFound().build();
         }
     }
 }
