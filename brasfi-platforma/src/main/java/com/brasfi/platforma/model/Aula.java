@@ -21,8 +21,8 @@ public class Aula {
     private String link;
     private String descricao;
     @ManyToOne
-    @JoinColumn(name = "mentor_id")
-    private Mentor mentor;
+    @JoinColumn(name = "administrador_id")
+    private Administrador administrador;
 
     @ManyToMany(mappedBy = "aulas")
     private List<Trilha> trilhas;

@@ -45,7 +45,7 @@ public class GrupoController {
         User criador = grupoService.getUserByUsername(username);
 
 
-        if (criador.getTipoUsuario() != TipoUsuario.MENTOR) {
+        if (criador.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 

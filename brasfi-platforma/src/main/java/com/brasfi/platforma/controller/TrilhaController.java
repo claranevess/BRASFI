@@ -1,9 +1,12 @@
 package com.brasfi.platforma.controller;
 
+import com.brasfi.platforma.config.UserDetailsImpl;
 import com.brasfi.platforma.model.EixoTematico;
 import com.brasfi.platforma.model.Trilha;
 import com.brasfi.platforma.service.TrilhaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -147,6 +150,38 @@ public class TrilhaController {
     public String mostrarListaTrilha(Model model) {
         List<Trilha> trilhas = trilhaService.listaTrilhas();
         model.addAttribute("trilhas", trilhas);
+
+        // Obtenha a autenticação do contexto de segurança
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Verifique se o usuário está autenticado e não é um AnonymousAuthenticationToken
+        // (que é um token padrão para usuários não logados, mas ainda um Authentication)
+        if (authentication != null && authentication.isAuthenticated() &&
+                !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
+
+            // Obtenha o principal (que agora é o seu UserDetailsImpl)
+            Object principal = authentication.getPrincipal();
+
+            String cargoUsuario = "CONVIDADO"; // Valor padrão caso algo dê errado ou não seja seu UserDetailsImpl
+
+            // Verifique se o principal é uma instância do seu UserDetailsImpl
+            if (principal instanceof UserDetailsImpl) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) principal;
+                // Acesse o seu objeto User encapsulado e então o tipoUsuario
+                cargoUsuario = userDetails.getUser().getTipoUsuario().toString();
+            } else {
+                // Caso o principal seja de outro tipo (ex: String para o username padrão)
+                // Isso pode acontecer em testes ou configurações customizadas.
+                // Aqui você pode logar um aviso ou definir um cargo padrão.
+                System.out.println("Principal não é UserDetailsImpl, tipo: " + principal.getClass().getName());
+            }
+
+            model.addAttribute("cargoUsuario", cargoUsuario);
+        } else {
+            // Usuário não autenticado ou token anônimo
+            model.addAttribute("cargoUsuario", "CONVIDADO");
+        }
+
         return "trilha/listarTrilha";
     }
 

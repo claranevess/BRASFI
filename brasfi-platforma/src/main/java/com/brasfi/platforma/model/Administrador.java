@@ -9,14 +9,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Mentor extends User {
+public class Administrador extends User {
 
     private String avisos;
 
     @OneToMany
     private List<Aula> aulasPublicadas;
 
-    public Mentor(User user) {
+    public Administrador(User user) {
         this.setId(user.getId());
         this.setUsername(user.getUsername());
         this.setNome(user.getNome());
