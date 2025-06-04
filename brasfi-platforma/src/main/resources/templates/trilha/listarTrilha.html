@@ -95,11 +95,11 @@
 
             <div class="flex justify-between items-center mb-6">
                 <div class="flex gap-3" id="filter-buttons-container">
-                    <button class="filter-button bg-black text-white border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-900">Todos</button>
-                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Liderança</button>
-                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Finanças</button>
-                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Empreendedorismo</button>
-                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Salvos</button>
+                    <button class="filter-button bg-black text-white border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-900" data-filter="Todos">Todos</button>
+                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100" data-filter="Liderança">Liderança</button>
+                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100" data-filter="Finanças">Finanças</button>
+                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100" data-filter="Empreendedorismo">Empreendedorismo</button>
+                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100" data-filter="Salvos">Salvos</button>
                 </div>
 
                 <div th:if="${cargoUsuario == 'ADMINISTRADOR'}" class="flex gap-3">
@@ -124,9 +124,10 @@
             <div class="flex gap-6">
                 <div th:class="${cargoUsuario == 'ADMINISTRADOR' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full lg:w-3/4'}">
 
-                    <div th:each="trilha : ${trilhas}" class="bg-white p-4 rounded-xl shadow-md relative">
-                        <div th:style="'background-image: url(' + ${trilha.capa ?: 'https://via.placeholder.com/150'} + ')'"
-                             class="h-32 bg-gray-200 rounded-lg mb-4 bg-cover bg-center"></div>
+                    <div th:each="trilha : ${trilhas}"
+                         class="bg-white p-4 rounded-xl shadow-md relative trilha-card"
+                         th:data-eixo="${trilha.eixoTematico != null ? trilha.eixoTematico.displayValue : 'N/A'}"> <div th:style="'background-image: url(' + ${trilha.capa ?: 'https://via.placeholder.com/150'} + ')'"
+                                                                                                                        class="h-32 bg-gray-200 rounded-lg mb-4 bg-cover bg-center"></div>
 
                         <div class="flex justify-between items-center mb-2">
                             <span th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.displayValue : 'N/A'}"
@@ -197,7 +198,7 @@
 <script>
     // Function to toggle the kebab menu visibility
     function toggleKebabMenu(buttonElement, event) {
-        event.stopPropagation(); // Stop the event from bubbling up to the document
+        event.stopPropagation();
 
         const trilhaId = buttonElement.id.replace('kebab-menu-btn-', '');
         const menuDiv = document.getElementById('kebab-menu-' + trilhaId);
@@ -206,9 +207,9 @@
             menuDiv.classList.toggle('hidden');
         }
 
-        if (!menuDiv.classList.contains('hidden')) { // If menu is now OPEN
+        if (!menuDiv.classList.contains('hidden')) {
             document.addEventListener('click', closeKebabMenusOutside);
-        } else { // If menu is now CLOSED
+        } else {
             const anyMenuOpen = Array.from(document.querySelectorAll('[id^="kebab-menu-"]'))
                 .some(menu => !menu.classList.contains('hidden'));
             if (!anyMenuOpen) {
@@ -235,22 +236,51 @@
         }
     }
 
-    // Filter button active state logic
+    // Function to filter trilhas based on category
+    function filterTrilhas(filterCategory) {
+        const allTrilhaCards = document.querySelectorAll('.trilha-card');
+
+        // Normalize filter category and card eixo for robust comparison
+        // This handles differences in capitalization, accents, and cedillas (e.g., "Finanças" vs "Financas")
+        const normalizeString = (str) => {
+            return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        };
+
+        const normalizedFilter = normalizeString(filterCategory);
+
+        allTrilhaCards.forEach(card => {
+            const cardEixo = card.dataset.eixo;
+            const normalizedCardEixo = normalizeString(cardEixo);
+
+            if (normalizedFilter === 'todos' || normalizedCardEixo === normalizedFilter) {
+                card.classList.remove('hidden'); // Show the card
+            } else {
+                card.classList.add('hidden'); // Hide the card
+            }
+        });
+    }
+
+    // Filter button active state and filtering logic
     document.addEventListener('DOMContentLoaded', () => {
         const filterButtonsContainer = document.getElementById('filter-buttons-container');
         if (filterButtonsContainer) {
+            // Initial filter to show all cards when the page loads
+            filterTrilhas('Todos');
+
             filterButtonsContainer.addEventListener('click', (event) => {
                 const clickedButton = event.target.closest('.filter-button');
                 if (clickedButton) {
-                    // Remove active state from all buttons
+                    // Update active state visuals
                     document.querySelectorAll('.filter-button').forEach(button => {
                         button.classList.remove('bg-black', 'text-white', 'hover:bg-gray-900');
                         button.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
                     });
-
-                    // Add active state to the clicked button
                     clickedButton.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
                     clickedButton.classList.add('bg-black', 'text-white', 'hover:bg-gray-900');
+
+                    // Apply the filter
+                    const filterCategory = clickedButton.dataset.filter;
+                    filterTrilhas(filterCategory);
                 }
             });
         }
