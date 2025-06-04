@@ -65,14 +65,10 @@
     Abrir Modal de Adicionar Aula
 </button>
 
-<!-- O modal está inicialmente escondido com a classe 'hidden' -->
 <div id="modalRegistrarTrilha" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <!-- Removida a classe max-h-[80vh] para permitir que o modal se ajuste à altura do conteúdo -->
     <div class="bg-white w-full max-w-xl min-w-[980px] mx-auto rounded-lg shadow-lg relative flex flex-col p-8">
-        <!-- O título e o input de nome da aula estão agora na mesma seção p-8 -->
         <h2 class="text-4xl font-semibold mb-6">Adicionar Aula</h2>
 
-        <!-- Removida a classe overflow-y-auto para evitar o scroll interno -->
         <div class="p-0 flex-grow">
             <form th:action="@{/aulas/salvar}" th:object="${aula}" method="post" enctype="multipart/form-data">
                 <div class="mb-6">
@@ -83,9 +79,7 @@
                     </div>
                 </div>
 
-                <!-- Alterado para grid de 2 colunas para telas grandes -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    <!-- Coluna 1: Anexar link da aula -->
                     <div class="border border-[#65A603] p-4 rounded-lg flex flex-col">
                         <label for="link" class="flex text-lg items-center text-gray-700 font-medium mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
@@ -94,7 +88,6 @@
                             </svg>
                             Anexar link da aula
                         </label>
-                        <!-- Placeholder ajustado -->
                         <input type="url" id="link" th:field="*{link}" placeholder="Copie e cole aqui..."
                                class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4">
                         <label class="text-gray-700 font-medium mb-2">Pré-visualização</label>
@@ -102,9 +95,7 @@
                         </div>
                     </div>
 
-                    <!-- Coluna 2: Descrição e Trilha empilhadas, e Materiais de apoio abaixo -->
                     <div class="flex flex-col gap-6">
-                        <!-- Descrição e Trilha (lado a lado) -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="border border-[#65A603] p-4 rounded-lg flex flex-col">
                                 <label for="descricao" class="flex text-lg items-center text-gray-700 font-medium mb-2">
@@ -139,7 +130,6 @@
                             </div>
                         </div>
 
-                        <!-- Materiais de apoio: agora dentro da segunda coluna, abaixo de Descrição e Trilha -->
                         <div class="border border-[#65A603] p-4 rounded-lg">
                             <div class="text-gray-700 text-lg font-medium mb-4">
                                 <div class="flex items-baseline mb-1">
@@ -191,106 +181,6 @@
         </div>
     </div>
 </div>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-
-    // A função closeAddAulaModal() deve referenciar 'modalRegistrarTrilha'
-    function closeAddAulaModal() {
-        document.getElementById('modalRegistrarTrilha').classList.add('hidden');
-        resetForm(); // Opcional: redefinir o formulário ao fechar
-    }
-
-    // A função showAddAulaModal() deve referenciar 'modalRegistrarTrilha'
-    function showAddAulaModal() {
-        document.getElementById('modalRegistrarTrilha').classList.remove('hidden');
-    }
-
-    // Opcional: Função para redefinir o formulário (limpar inputs)
-    function resetForm() {
-        const form = document.querySelector('#modalRegistrarTrilha form');
-        if (form) {
-            form.reset();
-            // Limpar pré-visualização de vídeo
-            const videoPreviewContainer = document.getElementById('videoPreviewContainer');
-            videoPreviewContainer.innerHTML = '';
-            videoPreviewContainer.classList.remove('has-video');
-            // Redefinir campo de link para apenas um input sem o botão de adicionar
-            const linkApoioContainer = document.getElementById('linkApoioContainer');
-            const initialLinkField = `
-                <div class="flex">
-                    <input type="url" name="linkApoio" placeholder="Copie e cole aqui..."
-                           class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
-                </div>
-            `;
-            linkApoioContainer.innerHTML = initialLinkField;
-            // Redefinir exibição do input de arquivo
-            document.getElementById('documentos').classList.remove('file-chosen');
-        }
-    }
-
-    // Lidar com a pré-visualização de vídeo do YouTube
-    document.getElementById('link').addEventListener('input', function() {
-        const url = this.value;
-        const videoPreviewContainer = document.getElementById('videoPreviewContainer');
-        videoPreviewContainer.innerHTML = ''; // Limpar conteúdo anterior
-        videoPreviewContainer.classList.remove('has-video');
-
-        let videoId = '';
-        // Ajustes para as URLs do YouTube para usar a URL correta do YouTube
-        // Nota: As URLs de exemplo no código original (googleusercontent.com/youtube.com/...)
-        // não são URLs reais do YouTube. Para um funcionamento real, você precisaria
-        // ajustar isso para padrões de URL do YouTube como "youtube.com/watch?v=" ou "youtu.be/".
-        // Mantive o padrão original para compatibilidade com seu código existente,
-        // mas é importante estar ciente.
-        if (url.includes('youtube.com/watch?v=')) {
-            videoId = url.split('v=')[1].split('&')[0];
-        } else if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1].split('?')[0];
-        } else if (url.includes('youtube.com/embed/')) { // Para links já incorporados
-            videoId = url.split('youtube.com/embed/')[1].split('?')[0];
-        } else if (url.includes('youtube.com/live/')) { // Para transmissões ao vivo
-            videoId = url.split('youtube.com/live/')[1].split('?')[0];
-        }
-
-
-        if (videoId) {
-            const iframe = document.createElement('iframe');
-            iframe.setAttribute('width', '100%');
-            iframe.setAttribute('height', '100%');
-            // Usando a URL de incorporação padrão do YouTube
-            iframe.setAttribute('src', `https://www.youtube.com/embed/${videoId}`);
-            iframe.setAttribute('frameborder', '0');
-            iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-            iframe.setAttribute('allowfullscreen', '');
-            videoPreviewContainer.appendChild(iframe);
-            videoPreviewContainer.classList.add('has-video');
-        }
-    });
-
-    // Função addLinkField removida, pois o protótipo não mostra um botão explícito de '+'
-    // Se a funcionalidade for necessária, ela deve ser redesenhada para corresponder ao protótipo
-
-    // Função removeLinkField não é mais diretamente usada se addLinkField for removida
-
-    // Atualizar o visual do input de arquivo na mudança
-    document.getElementById('documentos').addEventListener('change', function() {
-        if (this.files && this.files.length > 0) {
-            this.classList.add('file-chosen');
-        } else {
-            this.classList.remove('file-chosen');
-        }
-    });
-
-    // Opcional: Chamar showAddAulaModal() para fins de teste
-    // Em uma aplicação real, isso seria acionado por um botão na sua página principal.
-    document.addEventListener('DOMContentLoaded', () => {
-        // Exemplo: O modal não é mais mostrado automaticamente no carregamento da página.
-        // Apenas o botão o abrirá.
-    });
-
-    /*]]>*/
-</script>
 
 </body>
 </html>
