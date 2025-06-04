@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Custom styles not easily done with pure Tailwind or for specific overrides */
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -16,23 +15,31 @@
             margin-left: -8px; /* Overlap avatars */
             border: 2px solid white; /* Border for avatars */
         }
-        /* Ensure the first avatar doesn't have negative margin-left */
         .avatar-group > img:first-child {
             margin-left: 0;
         }
 
-        /* Adjust button active state for tabs */
         .tab-button.active {
             border-bottom: 2px solid #007bff; /* Custom blue for active tab */
             color: #007bff;
         }
 
-        /* Custom color palette for Tailwind to match the screenshot */
         :root {
             --color-brasfi-blue: #007bff; /* Example, adjust to exact blue from logo */
             --color-gray-bg: #f8f8f8;
             --color-medium-gray: #777;
             --color-dark-gray: #333;
+        }
+
+        .toast {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: scale(1);
         }
     </style>
     <script>
@@ -101,6 +108,9 @@
 </div>
 
 <div class="flex-1 flex flex-col p-8">
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-3">
+    </div>
+
     <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm mb-8">
         <div class="relative flex-1 mr-4">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
@@ -130,10 +140,12 @@
             <h2 class="text-2xl font-semibold text-dark-text mb-6">Meus Grupos</h2>
 
             <div class="flex justify-between items-center mb-6 pb-2">
-                <div class="flex border-b border-gray-200 pb-2"> <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
+                <div class="flex border-b border-gray-200 pb-2">
+                    <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
                     <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Fixados</button>
                     <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Não lidos</button>
-                    <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
+                    <button th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'MENTOR'}"
+                            class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
                 </div>
 
                 <div th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'MENTOR'}">
@@ -142,6 +154,7 @@
                     </a>
                 </div>
             </div>
+
             <div class="space-y-4">
                 <div th:each="grupo : ${myGroups}" class="group-card bg-light-bg p-4 rounded-lg border border-gray-200 shadow-sm relative" th:data-group-id="${grupo.id}">
                     <div class="flex justify-between items-start mb-2">
@@ -195,7 +208,7 @@
             </div>
         </div>
 
-        <div class="flex-1 flex flex-col">
+        <div th:if="${currentUser == null or currentUser.tipoUsuario == null or currentUser.tipoUsuario.name() != 'MENTOR'}" class="flex-1 flex flex-col">
             <h2 class="text-2xl font-semibold text-dark-text mb-6">Navegue a BRASFI: <br>Explore novos grupos</h2>
 
             <div class="relative flex items-center mb-6">
@@ -236,7 +249,7 @@
                         </div>
                     </div>
                     <p th:text="${grupo.descricao}" class="text-sm text-medium-gray-text mb-4">Grupo de discussão e formação de líderes para o amanhã - técnicas, estudos e geração de impacto.</p>
-                    <form th:action="@{'/grupo/entrar/' + ${grupo.id}}" method="post" style="display:inline;">
+                    <form th:action="@{'/grupo/solicitar_acesso/' + ${grupo.id}}" method="post" style="display:inline;">
                         <button type="submit" class="px-5 py-2 bg-brasfi-blue text-white rounded-lg hover:bg-button-primary-hover transition duration-200 text-sm">
                             Solicitar acesso
                         </button>
@@ -244,6 +257,51 @@
                 </div>
                 <div th:if="${#lists.isEmpty(exploreGroups)}" class="text-center text-gray-500 py-8">
                     Não há novos grupos para explorar no momento.
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'MENTOR'}" class="flex-1 flex flex-col">
+            <h2 class="text-2xl font-semibold text-dark-text mb-6">Solicitações</h2>
+
+            <div class="relative flex items-center mb-6">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" placeholder="Pesquisar solicitações..." class="w-full pl-12 pr-4 py-3 rounded-lg border border-input-border focus:outline-none focus:ring-1 focus:ring-brasfi-blue">
+                <button class="ml-3 px-5 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-200">
+                    <i class="fas fa-filter mr-2"></i>Filtrar
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div th:each="solicitacao : ${pendingSolicitacoes}" class="solicitation-card bg-light-bg p-4 rounded-lg border border-gray-200 shadow-sm relative">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-semibold text-dark-text">
+                            <span th:text="'#' + ${solicitacao.grupo.nome}">#Nome do Grupo</span>
+                        </h3>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-user-circle mr-1"></i>
+                            <span th:text="${solicitacao.solicitante.username}">Nome do Solicitante</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-medium-gray-text mb-4">
+                        Solicita acesso ao grupo.
+                        <span class="block text-xs text-gray-500 mt-1" th:text="${#temporals.format(solicitacao.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">Data da solicitação</span>
+                    </p>
+                    <div class="mt-4 flex justify-end space-x-2">
+                        <form th:action="@{'/grupo/aceitar_solicitacao/' + ${solicitacao.id}}" method="post" style="display:inline;">
+                            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md text-sm hover:bg-green-600 transition duration-200">
+                                Aceitar
+                            </button>
+                        </form>
+                        <form th:action="@{'/grupo/recusar_solicitacao/' + ${solicitacao.id}}" method="post" style="display:inline;">
+                            <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 transition duration-200">
+                                Recusar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(pendingSolicitacoes)}" class="text-center text-gray-500 py-8">
+                    Não há solicitações pendentes no momento.
                 </div>
             </div>
         </div>
@@ -274,25 +332,72 @@
     </div>
 </div>
 
-<script>
-    // Global variable to store members for searching
+<script th:inline="javascript">
     let currentGroupMembers = [];
+    let toastTimeout;
 
-    // --- Dropdown Menu Logic ---
+    function showToast(message, type) {
+        const toastContainer = document.getElementById('toast-container');
+
+        const existingToast = document.getElementById('dynamic-toast');
+        if (existingToast) {
+            existingToast.remove();
+            clearTimeout(toastTimeout);
+        }
+
+        const toastElement = document.createElement('div');
+        toastElement.id = 'dynamic-toast';
+        toastElement.classList.add(
+            'px-6', 'py-3', 'rounded-lg', 'shadow-md', 'flex', 'items-center',
+            'transition-all', 'duration-300', 'ease-in-out', 'transform',
+            'toast' // Add a generic 'toast' class for common styling
+        );
+
+        if (type === 'success') {
+            toastElement.classList.add('bg-green-500', 'text-white');
+            toastElement.innerHTML = '<i class="fas fa-check-circle mr-3 text-lg"></i><span>' + message + '</span>';
+        } else if (type === 'error') {
+            toastElement.classList.add('bg-red-500', 'text-white');
+            toastElement.innerHTML = '<i class="fas fa-exclamation-circle mr-3 text-lg"></i><span>' + message + '</span>';
+        } else {
+            toastElement.classList.add('bg-gray-700', 'text-white');
+            toastElement.innerHTML = '<i class="fas fa-info-circle mr-3 text-lg"></i><span>' + message + '</span>';
+        }
+
+        toastContainer.appendChild(toastElement);
+
+        setTimeout(() => {
+            toastElement.classList.add('show');
+        }, 50);
+
+        toastTimeout = setTimeout(() => {
+            toastElement.classList.remove('show');
+            setTimeout(() => {
+                toastElement.remove();
+            }, 300);
+        }, 5000);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        const kebabMenuBtns = document.querySelectorAll('.kebab-menu-btn');
+        const successMessage = /*[[${successMessage}]]*/ null;
+        const errorMessage = /*[[${errorMessage}]]*/ null;
 
+        if (successMessage) {
+            showToast(successMessage, 'success');
+        } else if (errorMessage) {
+            showToast(errorMessage, 'error');
+        }
+
+        const kebabMenuBtns = document.querySelectorAll('.kebab-menu-btn');
         kebabMenuBtns.forEach(button => {
             button.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent document click from closing it immediately
-                const dropdown = button.nextElementSibling; // The dropdown menu div
-
+                event.stopPropagation();
+                const dropdown = button.nextElementSibling;
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
                     if (menu !== dropdown) {
                         menu.classList.add('hidden');
                     }
                 });
-
                 dropdown.classList.toggle('hidden');
             });
         });
@@ -317,15 +422,14 @@
                 event.stopPropagation();
 
                 const groupId = event.target.dataset.groupId;
-                const groupName = event.target.dataset.groupName; // Get group name
-                const groupDescription = event.target.dataset.groupDescription; // Get group description
+                const groupName = event.target.dataset.groupName;
+                const groupDescription = event.target.dataset.groupDescription;
 
-                // Populate modal's static info
-                modalGroupTitleSpan.textContent = `#${groupName}`; // Set group name in modal title
-                modalGroupDescriptionParagraph.textContent = groupDescription; // Set group description
+                modalGroupTitleSpan.textContent = `#${groupName}`;
+                modalGroupDescriptionParagraph.textContent = groupDescription;
 
-                memberSearchInput.value = ''; // Clear search input on open
-                currentGroupMembers = []; // Reset members data
+                memberSearchInput.value = '';
+                currentGroupMembers = [];
 
                 fetchMembersForGroup(groupId);
                 closeAllDropdowns();
@@ -335,7 +439,7 @@
 
         if (memberSearchInput) {
             memberSearchInput.addEventListener('keyup', searchMembers);
-            memberSearchInput.addEventListener('change', searchMembers); // For changes not triggered by keyup
+            memberSearchInput.addEventListener('change', searchMembers);
         }
     });
 
@@ -345,9 +449,9 @@
 
     function closeModal() {
         document.getElementById('membersModal').classList.add('hidden');
-        document.getElementById('membersList').innerHTML = ''; // Clear content
-        document.getElementById('memberSearchInput').value = ''; // Clear search input
-        currentGroupMembers = []; // Reset stored members
+        document.getElementById('membersList').innerHTML = '';
+        document.getElementById('memberSearchInput').value = '';
+        currentGroupMembers = [];
     }
 
     function closeAllDropdowns() {
@@ -358,34 +462,17 @@
 
     async function fetchMembersForGroup(groupId) {
         const membersListElement = document.getElementById('membersList');
-        membersListElement.innerHTML = '<li class="text-center text-gray-500">Carregando membros...</li>'; // Loading message
+        membersListElement.innerHTML = '<li class="text-center text-gray-500">Carregando membros...</li>';
 
         try {
-            const response = await fetch(`/grupo/${groupId}/membros`); // Call your backend endpoint
+            const response = await fetch(`/grupo/${groupId}/membros`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const members = await response.json();
 
-            currentGroupMembers = members; // Store fetched members for searching
-            renderMembers(currentGroupMembers); // Initial render with all members
-
-            membersListElement.innerHTML = ''; // Clear loading message
-
-            if (members.length === 0) {
-                membersListElement.innerHTML = '<li class="text-center text-gray-500">Nenhum membro encontrado.</li>';
-            } else {
-                members.forEach(member => {
-                    const listItem = document.createElement('li');
-                    listItem.className = 'flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md';
-                    listItem.innerHTML = `
-                            <img src="https://via.placeholder.com/32x32?text=${member.nome ? member.nome.charAt(0) : '?'}" alt="${member.nome}" class="w-8 h-8 rounded-full object-cover bg-blue-100 text-blue-800 flex items-center justify-center text-sm font-semibold">
-                            <span class="text-gray-700 font-medium">${member.nome}</span>
-                            <span class="text-gray-500 text-sm">${member.email ? member.email : ''}</span>
-                        `;
-                    membersListElement.appendChild(listItem);
-                });
-            }
+            currentGroupMembers = members;
+            renderMembers(currentGroupMembers);
 
         } catch (error) {
             console.error("Erro ao carregar membros:", error);
@@ -395,7 +482,7 @@
 
     function renderMembers(membersToRender) {
         const membersListElement = document.getElementById('membersList');
-        membersListElement.innerHTML = ''; // Clear previous content
+        membersListElement.innerHTML = '';
 
         if (membersToRender.length === 0) {
             membersListElement.innerHTML = '<li class="text-center text-gray-500">Nenhum membro encontrado.</li>';
@@ -418,7 +505,6 @@
         const searchTerm = searchInput.value.toLowerCase();
 
         const filteredMembers = currentGroupMembers.filter(member => {
-            // Search by name or email
             const memberName = member.nome ? member.nome.toLowerCase() : '';
             const memberEmail = member.email ? member.email.toLowerCase() : '';
             return memberName.includes(searchTerm) || memberEmail.includes(searchTerm);

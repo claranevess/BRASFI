@@ -2,22 +2,25 @@ package com.brasfi.platforma.controller;
 
 import com.brasfi.platforma.dto.MemberDto;
 import com.brasfi.platforma.model.Grupo;
+import com.brasfi.platforma.model.User;
+import com.brasfi.platforma.model.TipoUsuario;
+import com.brasfi.platforma.model.SolicitacaoAcesso;
 import com.brasfi.platforma.repository.GrupoRepository;
 import com.brasfi.platforma.service.GrupoService;
+import com.brasfi.platforma.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import com.brasfi.platforma.model.TipoUsuario;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.access.AccessDeniedException;
-import com.brasfi.platforma.model.User;
-import com.brasfi.platforma.service.UserService; // Importe o UserService
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; 
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,37 +35,38 @@ public class GrupoController {
     private GrupoService grupoService;
 
     @Autowired
-    private UserService userService; // Injete o UserService AQUI
+    private UserService userService;
 
     @GetMapping("/listar")
     public String listarGrupos(Model model){
-        // Obter o usuário logado e adicionar ao modelo
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
-        List<Grupo> myGroups = new ArrayList<>(); // Initialize to empty lists
+        List<Grupo> myGroups = new ArrayList<>();
         List<Grupo> exploreGroups = new ArrayList<>();
+        List<SolicitacaoAcesso> pendingSolicitacoes = new ArrayList<>();
 
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) { // Check for anonymousUser
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             String username = auth.getName();
             currentUser = userService.getUserByUsername(username);
             model.addAttribute("currentUser", currentUser);
 
             if (currentUser != null) {
-                // Fetch groups the current user is a part of
                 myGroups = grupoService.findGruposByUserId(currentUser.getId());
-                // Fetch groups the current user is NOT a part of
-                exploreGroups = grupoService.findGruposNotJoinedByUserId(currentUser.getId());
+
+                if (currentUser.getTipoUsuario() == TipoUsuario.MENTOR) {
+                    pendingSolicitacoes = grupoService.findAllPendingSolicitacoes();
+                    model.addAttribute("pendingSolicitacoes", pendingSolicitacoes);
+                    exploreGroups = new ArrayList<>();
+                } else {
+                    exploreGroups = grupoService.findGruposNotJoinedByUserId(currentUser.getId());
+                }
             }
         } else {
-            // If no user is logged in, show all groups in "Explore" or leave both empty
-            // For now, let's put all groups in explore if no user is logged in
             exploreGroups = grupoRepository.findAll();
-            // Or you could keep both empty if you want a stricter view for unauthenticated users
-            // myGroups = new ArrayList<>();
-            // exploreGroups = new ArrayList<>();
         }
-        model.addAttribute("myGroups", myGroups); // Now correctly named for Thymeleaf
-        model.addAttribute("exploreGroups", exploreGroups); // Now correctly named for Thymeleaf
+
+        model.addAttribute("myGroups", myGroups);
+        model.addAttribute("exploreGroups", exploreGroups);
 
         return "listar_grupos";
     }
@@ -71,11 +75,9 @@ public class GrupoController {
     public String criarGrupo(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        // Use o userService para buscar o criador
         User criador = userService.getUserByUsername(username);
 
-
-        if (criador.getTipoUsuario() != TipoUsuario.MENTOR) {
+        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) {
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 
@@ -84,55 +86,148 @@ public class GrupoController {
     }
 
     @PostMapping("/criar_grupo")
-    public String salvarGrupo(@ModelAttribute Grupo grupo) {
+    public String salvarGrupo(@ModelAttribute Grupo grupo, RedirectAttributes redirectAttributes) { 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        User criador = userService.getUserByUsername(username); // Use userService for creator
+        User criador = userService.getUserByUsername(username);
 
-
-        if (criador.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
+        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) {
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 
-        grupoService.salvarComCriador(grupo, criador);
+        try {
+            grupoService.salvarComCriador(grupo, criador);
+            redirectAttributes.addFlashAttribute("successMessage", "Grupo criado com sucesso!"); 
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar grupo: " + e.getMessage()); 
+            System.err.println("Erro ao criar grupo: " + e.getMessage());
+        }
+
         return "redirect:/grupo/listar";
     }
 
-
-    @PostMapping("/entrar/{id}")
-    public String entrarGrupo(@PathVariable("id") Long grupoId) { // Removed @RequestParam("usuarioId")
+    @PostMapping("/solicitar_acesso/{id}")
+    public String solicitarAcesso(@PathVariable("id") Long grupoId,
+                                  RedirectAttributes redirectAttributes) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
 
-        // Check if user is authenticated and not an anonymous user
         if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             String username = auth.getName();
-            currentUser = userService.getUserByUsername(username); // Use userService for currentUser
+            currentUser = userService.getUserByUsername(username);
+        }
+
+        if (currentUser == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para solicitar acesso.");
+            return "redirect:/login";
+        }
+
+        if (currentUser.getTipoUsuario() == TipoUsuario.MENTOR) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Mentores não solicitam acesso a grupos dessa forma.");
+            return "redirect:/grupo/listar";
+        }
+
+        try {
+            grupoService.solicitarAcesso(grupoId, currentUser.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "Sua solicitação de acesso foi enviada com sucesso!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Ocorreu um erro inesperado ao enviar sua solicitação.");
+            System.err.println("Error soliciting access for group " + grupoId + " by user " + currentUser.getId() + ": " + e.getMessage());
+        }
+        return "redirect:/grupo/listar";
+    }
+
+    @PostMapping("/aceitar_solicitacao/{solicitacaoId}")
+    public String aceitarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId, RedirectAttributes redirectAttributes) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User adminUser = null;
+
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            String username = auth.getName();
+            adminUser = userService.getUserByUsername(username);
+        }
+
+        if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.MENTOR) {
+            throw new AccessDeniedException("Apenas mentores podem aceitar solicitações.");
+        }
+
+        try {
+            grupoService.aceitarSolicitacao(solicitacaoId, adminUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitação aceita com sucesso!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao aceitar solicitação.");
+            System.err.println("Erro ao aceitar solicitação " + solicitacaoId + ": " + e.getMessage());
+        }
+        return "redirect:/grupo/listar";
+    }
+
+    @PostMapping("/recusar_solicitacao/{solicitacaoId}")
+    public String recusarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId, RedirectAttributes redirectAttributes) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User adminUser = null;
+
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            String username = auth.getName();
+            adminUser = userService.getUserByUsername(username);
+        }
+
+        if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.MENTOR) {
+            throw new AccessDeniedException("Apenas mentores podem recusar solicitações.");
+        }
+
+        try {
+            grupoService.recusarSolicitacao(solicitacaoId, adminUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitação recusada com sucesso!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao recusar solicitação.");
+            System.err.println("Erro ao recusar solicitação " + solicitacaoId + ": " + e.getMessage());
+        }
+        return "redirect:/grupo/listar";
+    }
+
+    @PostMapping("/entrar/{id}")
+    public String entrarGrupo(@PathVariable("id") Long grupoId, RedirectAttributes redirectAttributes) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = null;
+
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            String username = auth.getName();
+            currentUser = userService.getUserByUsername(username);
         }
 
         if (currentUser != null) {
-            grupoService.entrarGrupo(grupoId, currentUser.getId()); // Pass currentUser.getId()
+            try {
+                grupoService.entrarGrupo(grupoId, currentUser.getId());
+                redirectAttributes.addFlashAttribute("successMessage", "Você entrou no grupo com sucesso!");
+            } catch (RuntimeException e) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao entrar no grupo: " + e.getMessage());
+                System.err.println("Error entering group " + grupoId + " by user " + currentUser.getId() + ": " + e.getMessage());
+            }
         } else {
-            // Handle case where user is not logged in or not found
-            // Redirect to login or show an error. Adjust "/login" to your actual login URL.
+            redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para entrar em um grupo.");
             return "redirect:/login?error=notLoggedIn";
         }
         return "redirect:/grupo/listar";
     }
 
     @GetMapping("/{id}/membros")
-    @ResponseBody // This tells Spring to return data directly, not a view name
+    @ResponseBody
     public ResponseEntity<List<MemberDto>> getGroupMembers(@PathVariable("id") Long grupoId) {
         Optional<Grupo> optionalGrupo = grupoRepository.findById(grupoId);
         if (optionalGrupo.isPresent()) {
             Grupo grupo = optionalGrupo.get();
-            // Convert User entities to MemberDto for controlled exposure
             List<MemberDto> members = grupo.getMembros().stream()
-                    .map(MemberDto::new) // Uses the DTO constructor
+                    .map(MemberDto::new)
                     .collect(Collectors.toList());
             return ResponseEntity.ok(members);
         } else {
-            return ResponseEntity.notFound().build(); // Return 404 if group not found
+            return ResponseEntity.notFound().build();
         }
     }
 }
