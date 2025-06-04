@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Custom styles not easily done with pure Tailwind or for specific overrides */
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -16,23 +15,31 @@
             margin-left: -8px; /* Overlap avatars */
             border: 2px solid white; /* Border for avatars */
         }
-        /* Ensure the first avatar doesn't have negative margin-left */
         .avatar-group > img:first-child {
             margin-left: 0;
         }
 
-        /* Adjust button active state for tabs */
         .tab-button.active {
             border-bottom: 2px solid #007bff; /* Custom blue for active tab */
             color: #007bff;
         }
 
-        /* Custom color palette for Tailwind to match the screenshot */
         :root {
             --color-brasfi-blue: #007bff; /* Example, adjust to exact blue from logo */
             --color-gray-bg: #f8f8f8;
             --color-medium-gray: #777;
             --color-dark-gray: #333;
+        }
+
+        .toast {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: scale(1);
         }
     </style>
     <script>
@@ -101,6 +108,9 @@
 </div>
 
 <div class="flex-1 flex flex-col p-8">
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-3">
+    </div>
+
     <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm mb-8">
         <div class="relative flex-1 mr-4">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
@@ -322,25 +332,72 @@
     </div>
 </div>
 
-<script>
-    // Global variable to store members for searching
+<script th:inline="javascript">
     let currentGroupMembers = [];
+    let toastTimeout;
 
-    // --- Dropdown Menu Logic ---
+    function showToast(message, type) {
+        const toastContainer = document.getElementById('toast-container');
+
+        const existingToast = document.getElementById('dynamic-toast');
+        if (existingToast) {
+            existingToast.remove();
+            clearTimeout(toastTimeout);
+        }
+
+        const toastElement = document.createElement('div');
+        toastElement.id = 'dynamic-toast';
+        toastElement.classList.add(
+            'px-6', 'py-3', 'rounded-lg', 'shadow-md', 'flex', 'items-center',
+            'transition-all', 'duration-300', 'ease-in-out', 'transform',
+            'toast' // Add a generic 'toast' class for common styling
+        );
+
+        if (type === 'success') {
+            toastElement.classList.add('bg-green-500', 'text-white');
+            toastElement.innerHTML = '<i class="fas fa-check-circle mr-3 text-lg"></i><span>' + message + '</span>';
+        } else if (type === 'error') {
+            toastElement.classList.add('bg-red-500', 'text-white');
+            toastElement.innerHTML = '<i class="fas fa-exclamation-circle mr-3 text-lg"></i><span>' + message + '</span>';
+        } else {
+            toastElement.classList.add('bg-gray-700', 'text-white');
+            toastElement.innerHTML = '<i class="fas fa-info-circle mr-3 text-lg"></i><span>' + message + '</span>';
+        }
+
+        toastContainer.appendChild(toastElement);
+
+        setTimeout(() => {
+            toastElement.classList.add('show');
+        }, 50);
+
+        toastTimeout = setTimeout(() => {
+            toastElement.classList.remove('show');
+            setTimeout(() => {
+                toastElement.remove();
+            }, 300);
+        }, 5000);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        const kebabMenuBtns = document.querySelectorAll('.kebab-menu-btn');
+        const successMessage = /*[[${successMessage}]]*/ null;
+        const errorMessage = /*[[${errorMessage}]]*/ null;
 
+        if (successMessage) {
+            showToast(successMessage, 'success');
+        } else if (errorMessage) {
+            showToast(errorMessage, 'error');
+        }
+
+        const kebabMenuBtns = document.querySelectorAll('.kebab-menu-btn');
         kebabMenuBtns.forEach(button => {
             button.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent document click from closing it immediately
-                const dropdown = button.nextElementSibling; // The dropdown menu div
-
+                event.stopPropagation();
+                const dropdown = button.nextElementSibling;
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
                     if (menu !== dropdown) {
                         menu.classList.add('hidden');
                     }
                 });
-
                 dropdown.classList.toggle('hidden');
             });
         });
@@ -365,15 +422,14 @@
                 event.stopPropagation();
 
                 const groupId = event.target.dataset.groupId;
-                const groupName = event.target.dataset.groupName; // Get group name
-                const groupDescription = event.target.dataset.groupDescription; // Get group description
+                const groupName = event.target.dataset.groupName;
+                const groupDescription = event.target.dataset.groupDescription;
 
-                // Populate modal's static info
-                modalGroupTitleSpan.textContent = `#${groupName}`; // Set group name in modal title
-                modalGroupDescriptionParagraph.textContent = groupDescription; // Set group description
+                modalGroupTitleSpan.textContent = `#${groupName}`;
+                modalGroupDescriptionParagraph.textContent = groupDescription;
 
-                memberSearchInput.value = ''; // Clear search input on open
-                currentGroupMembers = []; // Reset members data
+                memberSearchInput.value = '';
+                currentGroupMembers = [];
 
                 fetchMembersForGroup(groupId);
                 closeAllDropdowns();
@@ -383,7 +439,7 @@
 
         if (memberSearchInput) {
             memberSearchInput.addEventListener('keyup', searchMembers);
-            memberSearchInput.addEventListener('change', searchMembers); // For changes not triggered by keyup
+            memberSearchInput.addEventListener('change', searchMembers);
         }
     });
 
@@ -393,9 +449,9 @@
 
     function closeModal() {
         document.getElementById('membersModal').classList.add('hidden');
-        document.getElementById('membersList').innerHTML = ''; // Clear content
-        document.getElementById('memberSearchInput').value = ''; // Clear search input
-        currentGroupMembers = []; // Reset stored members
+        document.getElementById('membersList').innerHTML = '';
+        document.getElementById('memberSearchInput').value = '';
+        currentGroupMembers = [];
     }
 
     function closeAllDropdowns() {
@@ -406,17 +462,17 @@
 
     async function fetchMembersForGroup(groupId) {
         const membersListElement = document.getElementById('membersList');
-        membersListElement.innerHTML = '<li class="text-center text-gray-500">Carregando membros...</li>'; // Loading message
+        membersListElement.innerHTML = '<li class="text-center text-gray-500">Carregando membros...</li>';
 
         try {
-            const response = await fetch(`/grupo/${groupId}/membros`); // Call your backend endpoint
+            const response = await fetch(`/grupo/${groupId}/membros`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const members = await response.json();
 
-            currentGroupMembers = members; // Store fetched members for searching
-            renderMembers(currentGroupMembers); // Initial render with all members
+            currentGroupMembers = members;
+            renderMembers(currentGroupMembers);
 
         } catch (error) {
             console.error("Erro ao carregar membros:", error);
@@ -426,7 +482,7 @@
 
     function renderMembers(membersToRender) {
         const membersListElement = document.getElementById('membersList');
-        membersListElement.innerHTML = ''; // Clear previous content
+        membersListElement.innerHTML = '';
 
         if (membersToRender.length === 0) {
             membersListElement.innerHTML = '<li class="text-center text-gray-500">Nenhum membro encontrado.</li>';
@@ -449,7 +505,6 @@
         const searchTerm = searchInput.value.toLowerCase();
 
         const filteredMembers = currentGroupMembers.filter(member => {
-            // Search by name or email
             const memberName = member.nome ? member.nome.toLowerCase() : '';
             const memberEmail = member.email ? member.email.toLowerCase() : '';
             return memberName.includes(searchTerm) || memberEmail.includes(searchTerm);
