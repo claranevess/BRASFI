@@ -26,6 +26,18 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow on hover */
         }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brasfi-green-dark': '#437312', // For the main comment section background
+                        'brasfi-green-light': '#65A603', // For Aula Title and Materiais disponíveis
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body class="bg-gray-100 font-sans">
 
@@ -48,7 +60,7 @@
             <nav class="text-sm text-gray-600 space-x-1">
                 <span>Trilhas</span> >
                 <span>Fundamentos de Finanças Sustentáveis</span> >
-                <span class="font-semibold text-black" th:text="${aula.titulo}">Nome da Aula</span>
+                <span class="font-semibold text-brasfi-green-light" th:text="${aula.titulo}">Nome da Aula</span>
             </nav>
             <div class="flex items-center space-x-2">
                 <div class="text-sm text-gray-600">Usuário</div>
@@ -56,7 +68,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-8">
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
             <div class="flex-1">
                 <div class="aspect-video bg-gray-200 rounded mb-6 overflow-hidden">
                     <iframe class="w-full h-full"
@@ -100,7 +112,8 @@
                     </div>
                 </div>
 
-                <div class="bg-green-700 rounded-lg shadow-md mt-6 p-4"> <h2 class="text-lg font-semibold text-white mb-4">Comentários</h2>
+                <div class="bg-brasfi-green-dark rounded-lg shadow-md mt-6 p-4">
+                    <h2 class="text-lg font-semibold text-white mb-4">Comentários</h2>
 
                     <div class="bg-white rounded-lg p-3 mb-4 flex items-center space-x-3">
                         <img src="/path/to/user-avatar.png" alt="Avatar" class="w-8 h-8 rounded-full" />
@@ -122,21 +135,21 @@
 
             </div>
 
-            <aside class="w-full lg:w-72 bg-gray-100 rounded-lg p-4 space-y-4">
-                <h2 class="text-lg font-semibold">Materiais disponíveis</h2>
+            <aside class="w-full lg:w-72 bg-brasfi-green-light rounded-lg p-4 space-y-4 shadow-md self-start">
+                <h2 class="text-lg font-semibold text-white">Materiais disponíveis</h2>
 
                 <ul class="space-y-2 list-none">
                     <li th:each="material : ${aula.materiais}">
                         <div th:if="${material.linkApoio != null}">
                             <a th:href="${material.linkApoio}" target="_blank"
-                               class="block text-blue-600 hover:underline text-sm">
+                               class="block text-white hover:underline text-sm">
                                 🔗 <span th:text="${material.linkApoio}">Link</span>
                             </a>
                         </div>
 
                         <div th:if="${material.caminhoArquivo != null}">
                             <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank"
-                               class="block text-green-600 hover:underline text-sm">
+                               class="block text-white hover:underline text-sm">
                                 📄 <span th:text="${material.nomeOriginal}">PDF Slide Apresentação</span>
                             </a>
                         </div>
@@ -179,7 +192,7 @@
     async function loadComments() {
         const aulaId = document.getElementById('aulaId').value;
         const commentsList = document.getElementById('commentsList');
-        commentsList.innerHTML = `<div class="text-white text-center py-4" id="loadingComments">Carregando comentários...</div>`; // Changed text-gray-500 to text-white here for visibility
+        commentsList.innerHTML = `<div class="text-white text-center py-4" id="loadingComments">Carregando comentários...</div>`;
 
         try {
             const response = await fetch(`/api/comentarios/aula/${aulaId}`);
@@ -190,12 +203,12 @@
             renderComments(comments);
         } catch (error) {
             console.error("Error loading comments:", error);
-            commentsList.innerHTML = `<div class="text-red-300 text-center py-4">Erro ao carregar comentários.</div>`; // Changed text-red-500 to text-red-300 for better contrast on green
+            commentsList.innerHTML = `<div class="text-red-300 text-center py-4">Erro ao carregar comentários.</div>`;
         }
     }
 
     function renderComments(comments, parentElement = document.getElementById('commentsList'), isReply = false) {
-        if (!isReply) { // Only clear if it's the top-level rendering
+        if (!isReply) {
             parentElement.innerHTML = '';
         }
 
@@ -208,7 +221,9 @@
             const commentDiv = document.createElement('div');
             commentDiv.className = `bg-white p-4 rounded-lg shadow-sm`;
 
-            commentDiv.className += ` ${isReply ? 'ml-8 mt-4' : ''}`;
+            // Adjust margin for replies - NO ml-8 here
+            commentDiv.className += ` ${isReply ? 'mt-4' : ''}`;
+
 
             const avatarSrc = "/path/to/user-avatar.png";
 
@@ -216,10 +231,8 @@
                 <div class="flex items-center mb-2">
                     <img src="${avatarSrc}" alt="Avatar" class="w-8 h-8 rounded-full mr-3" />
                     <div>
-                        <p class="font-semibold text-gray-800">${comment.autorNome}</p>
-                        <p class="text-xs text-gray-500 flex items-center">
-                            Postado ${comment.dataCriacao}
-                        </p>
+                        <p class="font-semibold text-gray-800 inline-block mr-2">${comment.autorNome}</p>
+                        <p class="text-xs text-gray-500 inline-block">${comment.dataCriacao}</p>
                     </div>
                 </div>
                 <p class="text-gray-700 mb-2">${comment.texto}</p>
@@ -248,7 +261,6 @@
             `;
             parentElement.appendChild(commentDiv);
 
-            // FIX: Changed comment.repllies.length to comment.replies.length
             if (comment.replies && comment.replies.length > 0) {
                 renderComments(comment.replies, document.getElementById(`replies-${comment.id}`), true);
             }
@@ -258,7 +270,6 @@
     function toggleReplyForm(commentId) {
         const replyForm = document.getElementById(`replyForm-${commentId}`);
         replyForm.classList.toggle('hidden');
-        // Auto-resize textarea when shown
         if (!replyForm.classList.contains('hidden')) {
             const textarea = document.getElementById(`replyText-${commentId}`);
             textarea.style.height = 'auto';
@@ -276,7 +287,6 @@
             return;
         }
 
-        // Add CSRF token handling if you have Spring Security enabled
         const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
@@ -300,7 +310,7 @@
             }
 
             document.getElementById('newCommentText').value = '';
-            document.getElementById('newCommentText').style.height = 'auto'; // Reset textarea height
+            document.getElementById('newCommentText').style.height = 'auto';
             loadComments();
         } catch (error) {
             console.error("Error posting comment:", error);
@@ -316,7 +326,6 @@
             return;
         }
 
-        // Add CSRF token handling if you have Spring Security enabled
         const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
@@ -340,7 +349,7 @@
             }
 
             document.getElementById(`replyText-${parentCommentId}`).value = '';
-            document.getElementById(`replyText-${parentCommentId}`).style.height = 'auto'; // Reset textarea height
+            document.getElementById(`replyText-${parentCommentId}`).style.height = 'auto';
             toggleReplyForm(parentCommentId);
             loadComments();
         } catch (error) {
