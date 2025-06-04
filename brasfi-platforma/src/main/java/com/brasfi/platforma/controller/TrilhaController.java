@@ -1,6 +1,7 @@
 package com.brasfi.platforma.controller;
 
 import com.brasfi.platforma.config.UserDetailsImpl;
+import com.brasfi.platforma.model.Aula;
 import com.brasfi.platforma.model.EixoTematico;
 import com.brasfi.platforma.model.Trilha;
 import com.brasfi.platforma.service.TrilhaService;
@@ -209,6 +210,22 @@ public class TrilhaController {
     public String deletarTrilha(Trilha trilha) {
         trilhaService.deletarTrilha(trilha);
         return "redirect:/trilhas/listar";
+    }
+
+
+    @GetMapping("/adicionar-aula") // Ou o endpoint que renderiza esta view
+    public String showAddAulaModal(Model model) {
+        // 1. Obtenha todas as trilhas do seu serviço/repositório
+        List<Trilha> todasAsTrilhas = trilhaService.listaTrilhas();
+
+        // 2. Adicione a lista de trilhas ao modelo (para ser acessível pelo Thymeleaf)
+        model.addAttribute("trilhas", todasAsTrilhas);
+
+        // 3. Adicione um objeto 'aula' vazio para o formulário (se você estiver usando th:object="${aula}")
+        model.addAttribute("aula", new Aula()); // Ajuste para o caminho da sua classe Aula
+
+        // Retorne o nome do seu template HTML (sem a extensão .html)
+        return "aula/adicionarAula :: modalContent";
     }
 
 

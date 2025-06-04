@@ -1,12 +1,11 @@
 // A função closeAddAulaModal() deve referenciar 'modalRegistrarTrilha'
 function closeAddAulaModal() {
-    document.getElementById('modalRegistrarTrilha').classList.add('hidden');
+    document.getElementById('modalAdicionarAula').classList.add('hidden');
     resetForm();
 }
 
-// A função showAddAulaModal() deve referenciar 'modalRegistrarTrilha'
 function showAddAulaModal() {
-    document.getElementById('modalRegistrarTrilha').classList.remove('hidden');
+    document.getElementById('modalAdicionarAula').classList.remove('hidden');
 }
 
 function resetForm() {
