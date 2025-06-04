@@ -5,14 +5,17 @@ O Portal Educacional da BRASFI é uma plataforma web dedicada à formação e ao
 ## Funcionalidades
 Acesso a Aulas:
 Assistir a vídeos educativos gravados na plataforma.
+
 Gestão de Conteúdo (para comunicadores):
 Upload de vídeos educativos.
+
 Acesso e Gestão de Trilhas de Conhecimento:
 Acessar trilhas de conhecimento (com atividades e recursos).
 Criar trilhas de conhecimento (agrupando aulas sobre temas específicos).
 Editar trilhas de conhecimento.
 Deletar trilhas de conhecimento.
 Visualizar listagem de aulas em uma trilha.
+
 Interação e Comunicação:
 Enviar comentários no final de aulas.
 Criar o quadro de avisos (postar avisos sobre eventos e mudanças).
@@ -20,10 +23,12 @@ Entrar em comunidades nichadas (através dos vídeos nas trilhas).
 Escrever mensagens em comunidades nichadas.
 Editar mensagens em comunidades nichadas.
 Deletar mensagens em comunidades nichadas.
+
 Gestão de Usuários e Grupos (para administradores/moderadores):
 Liberar cadastro de administrador por código de validação.
 Visualizar lista de usuários participantes de grupo.
 Pesquisar usuários participantes de grupo pela barra de pesquisa.
+
 Acompanhamento do Progresso:
 Marcar uma aula como concluída.
 ## Tecnologias usadas
