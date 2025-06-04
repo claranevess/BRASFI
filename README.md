@@ -44,6 +44,9 @@ Marcar uma aula como concluída.
 ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
+## Sites úteis
+[Google sites](https://sites.google.com/cesar.school/projetos-3-g5/in%C3%ADcio)
+
 ## Contatos
 
 ### Ciência da Computação
@@ -114,6 +117,9 @@ Mark a class/lesson as completed.
 ![Railway](https://img.shields.io/badge/Railway-000000?style=for-the-badge&logo=railway&logoColor=white)
 ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+
+## Useful sites
+[Google sites](https://sites.google.com/cesar.school/projetos-3-g5/in%C3%ADcio)
 
 ## Contact
 
