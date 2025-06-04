@@ -70,7 +70,7 @@ Marcar uma aula como concluída.
   <img src="https://contrib.rocks/image?repo=claranevess/BRASFI" />
 </a>
 
-#
+
 
 <h1 align="center">Brasfi</h1>
 
