@@ -45,7 +45,7 @@ Marcar uma aula como concluída.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
 ## Sites úteis
-<img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Google_Sites_2020_Logo.svg" width="20"> [Google sites](https://sites.google.com/cesar.school/projetos-3-g5/in%C3%ADcio)
+<img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Google_Sites_2020_Logo.svg" width="10"> [Google sites](https://sites.google.com/cesar.school/projetos-3-g5/in%C3%ADcio)
 
 ## Contatos
 
