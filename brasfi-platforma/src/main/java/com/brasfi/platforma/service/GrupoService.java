@@ -1,12 +1,11 @@
-// src/main/java/com/brasfi/platforma/service/GrupoService.java
 package com.brasfi.platforma.service;
 
 import com.brasfi.platforma.model.Grupo;
 import com.brasfi.platforma.model.User;
-import com.brasfi.platforma.model.SolicitacaoAcesso; // Import new entity
+import com.brasfi.platforma.model.SolicitacaoAcesso;
 import com.brasfi.platforma.repository.GrupoRepository;
 import com.brasfi.platforma.repository.UserRepository;
-import com.brasfi.platforma.repository.SolicitacaoAcessoRepository; // Import new repository
+import com.brasfi.platforma.repository.SolicitacaoAcessoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.ArrayList; // Added this import
+import java.util.ArrayList;
 
 @Service
 public class GrupoService {
@@ -27,10 +26,10 @@ public class GrupoService {
     private UserRepository userRepository;
 
     @Autowired
-    private SolicitacaoAcessoRepository solicitacaoAcessoRepository; // Inject new repository
+    private SolicitacaoAcessoRepository solicitacaoAcessoRepository;
 
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElse(null); // Use orElse(null) for Optional
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     @Transactional
@@ -68,7 +67,6 @@ public class GrupoService {
                 grupo.getMembros().add(user);
                 grupoRepository.save(grupo);
 
-                // If accepted via a request, update the request status
                 Optional<SolicitacaoAcesso> pendingRequest = solicitacaoAcessoRepository.findByGrupoAndSolicitanteAndStatus(grupo, user, SolicitacaoAcesso.StatusSolicitacao.PENDENTE);
                 pendingRequest.ifPresent(req -> {
                     req.setStatus(SolicitacaoAcesso.StatusSolicitacao.ACEITA);
@@ -81,7 +79,6 @@ public class GrupoService {
         }
     }
 
-    // New method to handle access request submission
     @Transactional
     public void solicitarAcesso(Long grupoId, Long solicitanteId) {
         Optional<Grupo> optionalGrupo = grupoRepository.findById(grupoId);
@@ -91,17 +88,15 @@ public class GrupoService {
             Grupo grupo = optionalGrupo.get();
             User solicitante = optionalSolicitante.get();
 
-            // Check if user is already a member
             boolean isMember = grupo.getMembros().stream()
                     .anyMatch(membro -> membro.getId().equals(solicitante.getId()));
             if (isMember) {
                 throw new IllegalStateException("Usuário já é membro deste grupo.");
             }
 
-            // Check if there's already a pending request from this user for this group
             Optional<SolicitacaoAcesso> existingRequest = solicitacaoAcessoRepository.findByGrupoAndSolicitanteAndStatus(grupo, solicitante, SolicitacaoAcesso.StatusSolicitacao.PENDENTE);
             if (existingRequest.isPresent()) {
-                throw new IllegalStateException("Solicitação de acesso já pendente para este grupo.");
+                throw new IllegalStateException("Você já tem uma solicitação de acesso pendente para este grupo!");
             }
 
             SolicitacaoAcesso novaSolicitacao = new SolicitacaoAcesso();
@@ -114,17 +109,14 @@ public class GrupoService {
         }
     }
 
-    // New method for admins to accept a request
     @Transactional
     public void aceitarSolicitacao(Long solicitacaoId, User adminProcessador) {
         Optional<SolicitacaoAcesso> optionalSolicitacao = solicitacaoAcessoRepository.findById(solicitacaoId);
         if (optionalSolicitacao.isPresent()) {
             SolicitacaoAcesso solicitacao = optionalSolicitacao.get();
             if (solicitacao.getStatus() == SolicitacaoAcesso.StatusSolicitacao.PENDENTE) {
-                // Add the user to the group
                 entrarGrupo(solicitacao.getGrupo().getId(), solicitacao.getSolicitante().getId());
 
-                // Update request status
                 solicitacao.setStatus(SolicitacaoAcesso.StatusSolicitacao.ACEITA);
                 solicitacao.setDataProcessamento(LocalDateTime.now());
                 solicitacao.setAdminProcessador(adminProcessador);
@@ -137,7 +129,6 @@ public class GrupoService {
         }
     }
 
-    // New method for admins to reject a request
     @Transactional
     public void recusarSolicitacao(Long solicitacaoId, User adminProcessador) {
         Optional<SolicitacaoAcesso> optionalSolicitacao = solicitacaoAcessoRepository.findById(solicitacaoId);
@@ -156,7 +147,6 @@ public class GrupoService {
         }
     }
 
-
     public List<Grupo> findGruposByUserId(Long userId) {
         return grupoRepository.findByMembros_Id(userId);
     }
@@ -174,7 +164,6 @@ public class GrupoService {
                 .collect(Collectors.toList());
     }
 
-    // New method to find all pending requests for display in admin view
     public List<SolicitacaoAcesso> findAllPendingSolicitacoes() {
         return solicitacaoAcessoRepository.findByStatus(SolicitacaoAcesso.StatusSolicitacao.PENDENTE);
     }
