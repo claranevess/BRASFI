@@ -92,7 +92,7 @@
         </div>
 
         <div th:if="${cargoUsuario == 'ADMINISTRADOR'}" class="flex gap-3 justify-end mr-2">
-            <button id=""
+            <button onclick="showAddAulaModal()"
                     class="rounded-md bg-[#65A603] text-white px-4 py-2 hover:bg-green-700 mb-6 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -175,6 +175,7 @@
 <div id="newTrilhaModalContainer"></div>
 <div id="editTrilhaModalContainer"></div>
 <div id="deleteTrilhaModalContainer"></div>
+<div id="addAulaModalContainer"></div>
 
 <script>
     // Function to toggle the kebab menu visibility
@@ -226,6 +227,7 @@
 
 </script>
 <script th:src="@{/js/criar-trilha.js}"></script>
+<script th:src="@{/js/adicionar-aula.js}"></script>
 <script th:src="@{/js/deletar-trilha.js}"></script>
 <script th:src="@{/js/editar-trilha.js}"></script>
 <script th:src="@{/js/eixo-picker.js}"></script>

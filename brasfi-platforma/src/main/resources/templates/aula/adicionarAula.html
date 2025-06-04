@@ -1,21 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Adicionar Aula</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-
-</head>
-<body class="p-8">
-
-<!-- Botão para abrir o modal -->
-<button onclick="showAddAulaModal()"
-        class="px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-    Abrir Modal de Adicionar Aula
-</button>
-
-<div id="modalRegistrarTrilha" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+<div id="modalAdicionarAula" class="hidden fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white w-full max-w-xl min-w-[980px] mx-auto rounded-lg shadow-lg relative flex flex-col p-8">
         <h2 class="text-4xl font-semibold mb-6">Adicionar Aula</h2>
 
@@ -23,7 +6,6 @@
             <form th:action="@{/aulas/salvar}" th:object="${aula}" method="post" enctype="multipart/form-data">
                 <div class="mb-6">
                     <div class="mb-4">
-                        <!-- Placeholder ajustado -->
                         <input placeholder="Digite o nome da aula..." type="text" th:field="*{titulo}"
                                class="w-full border-b-2 border-gray-300 p-2 focus:ring-0 outline-none font-semibold text-xl" />
                     </div>
@@ -131,6 +113,3 @@
         </div>
     </div>
 </div>
-
-</body>
-</html>
