@@ -17,6 +17,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/verificacao")
+    public String showVerificationPage() {
+        return "user/gerarCodigo";
+    }
+
     // Rota para exibir o formulário de registro
     @GetMapping("/registrar")
     public String mostrarRegistroForm(Model model) {

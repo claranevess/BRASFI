@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -26,7 +27,7 @@ public class SecurityConfig {
                                 "/exemplo.jpg",
                                 "/favicon-brasfi.png"
                         ).permitAll() // rotas públicas
-                        .requestMatchers("/").authenticated() // raiz exige login
+                        .requestMatchers("/").authenticated() // exige login
                         .anyRequest().authenticated() // tudo o que não foi listado acima também exige login
                 )
                 .formLogin(login -> login
@@ -42,7 +43,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**") // CSRF desabilitado para h2-console
+                        .ignoringRequestMatchers(
+                                AntPathRequestMatcher.antMatcher("/api/verification/**"),
+                                AntPathRequestMatcher.antMatcher("/h2-console/**")
+                        )
                 )
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable) // permite iframe para h2-console
