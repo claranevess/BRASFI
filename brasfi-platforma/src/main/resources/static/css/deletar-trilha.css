@@ -1,0 +1,20 @@
+/* Custom Button Styles (resembling Bootstrap but custom) */
+.custom-btn {
+    padding: 10px 20px;
+    border-radius: 5px; /* Adjust if prototype has different border-radius */
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500; /* Medium font weight for buttons */
+}
+
+/* Adjustments for text */
+.font-bold {
+    font-weight: 700; /* Typically for 'bold' in Tailwind */
+}
+.text-2xl {
+    font-size: 1.5rem; /* For 'Atenção!' */
+    line-height: 2rem;
+}
