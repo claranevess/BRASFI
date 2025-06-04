@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador e Validador de Código</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        input[type="email"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #ddd;
+            margin: 30px 0;
+        }
+        #message {
+            margin-top: 20px;
+            color: green;
+        }
+        #error-message {
+            margin-top: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Gerar e Enviar Código</h2>
+    <input type="email" id="emailInput" placeholder="Digite seu email" required>
+    <button onclick="sendCode()">Gerar Código e Enviar</button>
+    <p id="message"></p>
+    <p id="error-message"></p>
+
+    <hr>
+
+    <h2>Validar Código</h2>
+    <input type="text" id="codeInput" placeholder="Digite o código recebido" required>
+    <button onclick="validateCode()">Validar Código</button>
+    <p id="validationMessage"></p>
+    <p id="validationErrorMessage"></p>
+</div>
+
+<script>
+    async function sendCode() {
+        const email = document.getElementById('emailInput').value;
+        const messageElement = document.getElementById('message');
+        const errorMessageElement = document.getElementById('error-message');
+
+        messageElement.textContent = '';
+        errorMessageElement.textContent = '';
+        document.getElementById('validationMessage').textContent = '';
+        document.getElementById('validationErrorMessage').textContent = '';
+
+        if (!email) {
+            errorMessageElement.textContent = 'Por favor, digite um email válido.';
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/api/verification/send-code?email=' + encodeURIComponent(email), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.text();
+
+            if (response.ok) {
+                messageElement.textContent = data;
+            } else {
+                errorMessageElement.textContent = 'Erro: ' + data;
+            }
+        } catch (error) {
+            console.error('Erro ao enviar a requisição de código:', error);
+            errorMessageElement.textContent = 'Ocorreu um erro de rede ou de conexão. Verifique o console para mais detalhes.';
+        }
+    }
+
+    async function validateCode() {
+        const email = document.getElementById('emailInput').value; // Usar o mesmo email do input
+        const code = document.getElementById('codeInput').value;
+        const validationMessageElement = document.getElementById('validationMessage');
+        const validationErrorMessageElement = document.getElementById('validationErrorMessage');
+
+        validationMessageElement.textContent = '';
+        validationErrorMessageElement.textContent = '';
+
+        if (!email || !code) {
+            validationErrorMessageElement.textContent = 'Por favor, digite o email e o código.';
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/verification/validate-code?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.text();
+
+            if (response.ok) {
+                validationMessageElement.textContent = data;
+            } else {
+                validationErrorMessageElement.textContent = 'Erro: ' + data;
+            }
+        } catch (error) {
+            console.error('Erro ao enviar a requisição de validação:', error);
+            validationErrorMessageElement.textContent = 'Ocorreu um erro de rede ou de conexão. Verifique o console para mais detalhes.';
+        }
+    }
+</script>
+</body>
+</html>

@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -29,6 +30,7 @@ public class SecurityConfig {
                                 "/h2-console/**",
                                 "/aulas/*/concluir" // permite PATCH para concluir aula
                         ).permitAll()
+                        .requestMatchers("/").authenticated() // exige login
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -45,8 +47,9 @@ public class SecurityConfig {
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers(
-                                "/h2-console/**",
-                                "/aulas/*/concluir" // desabilita CSRF apenas para esse endpoint PATCH
+                                AntPathRequestMatcher.antMatcher("/api/verification/**"),
+                                AntPathRequestMatcher.antMatcher("/h2-console/**"),
+                                AntPathRequestMatcher.antMatcher("/aulas/*/concluir")
                         )
                 )
                 .headers(headers -> headers
