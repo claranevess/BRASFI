@@ -1,5 +1,6 @@
 package com.brasfi.platforma.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,5 +51,6 @@ public class Trilha {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<User> inscritos = new HashSet<>();
+
 
 }

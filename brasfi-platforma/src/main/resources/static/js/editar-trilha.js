@@ -68,13 +68,6 @@ function setSelectedTime(horas, minutos) {
     updateActiveItem(minuteCol, minutos / 5);
 }
 
-// Preencher Eixo Temático
-setSelectedEixo(atividade.eixo);
-
-// Preencher Duração
-const [horas, minutos] = atividade.duracao.split(':').map(Number);
-setSelectedTime(horas, minutos);
-
 function openEditTrilhaModal(element) {
     const trilhaData = {
         id: element.dataset.trilhaId,

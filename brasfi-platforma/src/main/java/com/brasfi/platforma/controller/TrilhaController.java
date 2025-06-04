@@ -84,20 +84,6 @@ public class TrilhaController {
         }
     }
 
-
-    @GetMapping("/deletar")
-    public String mostrarConfirmacao(@RequestParam("id") Long id, Model model) {
-        Trilha trilha = trilhaService.buscarPorId(id);
-        model.addAttribute("trilha", trilha);
-        return "trilha/deletarTrilha";
-    }
-
-    @PostMapping("/deletar")
-    public String deletarTrilha(Trilha trilha) {
-        trilhaService.deletarTrilha(trilha);
-        return "redirect:/";
-    }
-
     @GetMapping("/editar")
     public String mostrarEditarTrilhaForm(@RequestParam("id") Long id, Model model) {
         Trilha trilha = trilhaService.buscarPorId(id);
@@ -212,7 +198,18 @@ public class TrilhaController {
         return "trilha/editarTrilha :: modalContent";
     }
 
+    @GetMapping("/deletar-modal/{id}")
+    public String mostrarConfirmacao(@PathVariable("id") Long id, Model model) {
+        Trilha trilha = trilhaService.buscarPorId(id);
+        model.addAttribute("trilha", trilha);
+        return "trilha/deletarTrilha :: modalContent"; // THIS IS IMPORTANT
+    }
 
+    @PostMapping("/deletar")
+    public String deletarTrilha(Trilha trilha) {
+        trilhaService.deletarTrilha(trilha);
+        return "redirect:/trilhas/listar";
+    }
 
 
 }
