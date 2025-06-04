@@ -93,34 +93,36 @@
         <div class="p-6 flex-grow">
             <h1 class="text-3xl font-bold mb-6">Trilhas de conhecimento</h1>
 
-            <div class="flex gap-3 mb-6" id="filter-buttons-container">
-                <button class="filter-button bg-black text-white border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-900">Todos</button>
-                <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Liderança</button>
-                <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Finanças</button>
-                <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Empreendedorismo</button>
-                <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Salvos</button>
-            </div>
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex gap-3" id="filter-buttons-container">
+                    <button class="filter-button bg-black text-white border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-900">Todos</button>
+                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Liderança</button>
+                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Finanças</button>
+                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Empreendedorismo</button>
+                    <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Salvos</button>
+                </div>
 
-            <div th:if="${cargoUsuario == 'ADMINISTRADOR'}" class="flex gap-3 justify-end mb-6">
-                <button id=""
-                        class="rounded-md bg-[#65A603] text-white px-4 py-2 hover:bg-green-700 flex items-center justify-center transition-colors text-sm font-medium">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Adicionar aula
-                </button>
+                <div th:if="${cargoUsuario == 'ADMINISTRADOR'}" class="flex gap-3">
+                    <button id=""
+                            class="rounded-md bg-[#65A603] text-white px-4 py-2 hover:bg-green-700 flex items-center justify-center transition-colors text-sm font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Adicionar aula
+                    </button>
 
-                <button id="openNewTrilhaModalBtn"
-                        class="rounded-md bg-[#18290C] text-white px-4 py-2 hover:bg-gray-800 flex items-center justify-center transition-colors text-sm font-medium">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Criar Trilha
-                </button>
+                    <button id="openNewTrilhaModalBtn"
+                            class="rounded-md bg-[#18290C] text-white px-4 py-2 hover:bg-gray-800 flex items-center justify-center transition-colors text-sm font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Criar Trilha
+                    </button>
+                </div>
             </div>
 
             <div class="flex gap-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full lg:w-3/4">
+                <div th:class="${cargoUsuario == 'ADMINISTRADOR' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full lg:w-3/4'}">
 
                     <div th:each="trilha : ${trilhas}" class="bg-white p-4 rounded-xl shadow-md relative">
                         <div th:style="'background-image: url(' + ${trilha.capa ?: 'https://via.placeholder.com/150'} + ')'"
