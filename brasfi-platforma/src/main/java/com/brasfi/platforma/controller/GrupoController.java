@@ -1,11 +1,10 @@
-// com.brasfi.platforma.controller.GrupoController.java
 package com.brasfi.platforma.controller;
 
 import com.brasfi.platforma.dto.MemberDto;
 import com.brasfi.platforma.model.Grupo;
 import com.brasfi.platforma.model.User;
 import com.brasfi.platforma.model.TipoUsuario;
-import com.brasfi.platforma.model.SolicitacaoAcesso; // Import new entity
+import com.brasfi.platforma.model.SolicitacaoAcesso;
 import com.brasfi.platforma.repository.GrupoRepository;
 import com.brasfi.platforma.service.GrupoService;
 import com.brasfi.platforma.service.UserService;
@@ -17,7 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity; // For @ResponseBody / ResponseEntity
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Import RedirectAttributes
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public class GrupoController {
         User currentUser = null;
         List<Grupo> myGroups = new ArrayList<>();
         List<Grupo> exploreGroups = new ArrayList<>();
-        List<SolicitacaoAcesso> pendingSolicitacoes = new ArrayList<>(); // New list for admin view
+        List<SolicitacaoAcesso> pendingSolicitacoes = new ArrayList<>();
 
         if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             String username = auth.getName();
@@ -50,27 +51,22 @@ public class GrupoController {
             model.addAttribute("currentUser", currentUser);
 
             if (currentUser != null) {
-                // Common for both roles: My Groups
                 myGroups = grupoService.findGruposByUserId(currentUser.getId());
 
-                if (currentUser.getTipoUsuario() == TipoUsuario.MENTOR) { // Assuming ADMIN/MENTOR can see requests
-                    // For Admins: Show pending requests
+                if (currentUser.getTipoUsuario() == TipoUsuario.MENTOR) {
                     pendingSolicitacoes = grupoService.findAllPendingSolicitacoes();
                     model.addAttribute("pendingSolicitacoes", pendingSolicitacoes);
-                    // Admins don't need "explore groups" in this view, they manage requests
-                    exploreGroups = new ArrayList<>(); // Ensure it's empty for admin view
-                } else { // For Students/Regular Users: Show explore groups
+                    exploreGroups = new ArrayList<>();
+                } else {
                     exploreGroups = grupoService.findGruposNotJoinedByUserId(currentUser.getId());
                 }
             }
         } else {
-            // No user logged in: show all groups in explore (default behavior)
             exploreGroups = grupoRepository.findAll();
         }
 
         model.addAttribute("myGroups", myGroups);
-        model.addAttribute("exploreGroups", exploreGroups); // Will be empty for Admins
-        // model.addAttribute("pendingSolicitacoes", pendingSolicitacoes); // Already added inside if(MENTOR) block
+        model.addAttribute("exploreGroups", exploreGroups);
 
         return "listar_grupos";
     }
@@ -81,7 +77,7 @@ public class GrupoController {
         String username = auth.getName();
         User criador = userService.getUserByUsername(username);
 
-        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) { // Only MENTOR can create
+        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) {
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 
@@ -90,7 +86,7 @@ public class GrupoController {
     }
 
     @PostMapping("/criar_grupo")
-    public String salvarGrupo(@ModelAttribute Grupo grupo) {
+    public String salvarGrupo(@ModelAttribute Grupo grupo, RedirectAttributes redirectAttributes) { // Added RedirectAttributes
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User criador = userService.getUserByUsername(username);
@@ -99,13 +95,21 @@ public class GrupoController {
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 
-        grupoService.salvarComCriador(grupo, criador);
+        try {
+            grupoService.salvarComCriador(grupo, criador);
+            redirectAttributes.addFlashAttribute("successMessage", "Grupo criado com sucesso!"); // Add success message
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar grupo: " + e.getMessage()); // Add error message
+            // Log the exception
+            System.err.println("Erro ao criar grupo: " + e.getMessage());
+        }
+
         return "redirect:/grupo/listar";
     }
 
-    // Modified endpoint for requesting access (for students)
     @PostMapping("/solicitar_acesso/{id}")
-    public String solicitarAcesso(@PathVariable("id") Long grupoId) {
+    public String solicitarAcesso(@PathVariable("id") Long grupoId,
+                                  RedirectAttributes redirectAttributes) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
 
@@ -114,18 +118,30 @@ public class GrupoController {
             currentUser = userService.getUserByUsername(username);
         }
 
-        if (currentUser != null && currentUser.getTipoUsuario() != TipoUsuario.MENTOR) { // Only students/non-mentors request
+        if (currentUser == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para solicitar acesso.");
+            return "redirect:/login";
+        }
+
+        if (currentUser.getTipoUsuario() == TipoUsuario.MENTOR) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Mentores não solicitam acesso a grupos dessa forma.");
+            return "redirect:/grupo/listar";
+        }
+
+        try {
             grupoService.solicitarAcesso(grupoId, currentUser.getId());
-        } else {
-            // Handle error: mentor trying to request, or not logged in
-            return "redirect:/login?error=accessDenied"; // Or specific error page
+            redirectAttributes.addFlashAttribute("successMessage", "Sua solicitação de acesso foi enviada com sucesso!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Ocorreu um erro inesperado ao enviar sua solicitação.");
+            System.err.println("Error soliciting access for group " + grupoId + " by user " + currentUser.getId() + ": " + e.getMessage());
         }
         return "redirect:/grupo/listar";
     }
 
-    // New endpoint for ADMINS to accept requests
     @PostMapping("/aceitar_solicitacao/{solicitacaoId}")
-    public String aceitarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId) {
+    public String aceitarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId, RedirectAttributes redirectAttributes) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User adminUser = null;
 
@@ -134,17 +150,24 @@ public class GrupoController {
             adminUser = userService.getUserByUsername(username);
         }
 
-        if (adminUser != null && adminUser.getTipoUsuario() == TipoUsuario.MENTOR) { // Only admins can accept
+        if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.MENTOR) {
+            throw new AccessDeniedException("Apenas mentores podem aceitar solicitações.");
+        }
+
+        try {
             grupoService.aceitarSolicitacao(solicitacaoId, adminUser);
-        } else {
-            throw new AccessDeniedException("Apenas administradores podem aceitar solicitações.");
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitação aceita com sucesso!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao aceitar solicitação.");
+            System.err.println("Erro ao aceitar solicitação " + solicitacaoId + ": " + e.getMessage());
         }
         return "redirect:/grupo/listar";
     }
 
-    // New endpoint for ADMINS to reject requests
     @PostMapping("/recusar_solicitacao/{solicitacaoId}")
-    public String recusarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId) {
+    public String recusarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId, RedirectAttributes redirectAttributes) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User adminUser = null;
 
@@ -153,18 +176,24 @@ public class GrupoController {
             adminUser = userService.getUserByUsername(username);
         }
 
-        if (adminUser != null && adminUser.getTipoUsuario() == TipoUsuario.MENTOR) { // Only admins can reject
+        if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.MENTOR) {
+            throw new AccessDeniedException("Apenas mentores podem recusar solicitações.");
+        }
+
+        try {
             grupoService.recusarSolicitacao(solicitacaoId, adminUser);
-        } else {
-            throw new AccessDeniedException("Apenas administradores podem recusar solicitações.");
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitação recusada com sucesso!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao recusar solicitação.");
+            System.err.println("Erro ao recusar solicitação " + solicitacaoId + ": " + e.getMessage());
         }
         return "redirect:/grupo/listar";
     }
 
-    // Keep existing /entrar/{id} if it's used elsewhere for direct entry
-    // But for students requesting, they use /solicitar_acesso/{id}
     @PostMapping("/entrar/{id}")
-    public String entrarGrupo(@PathVariable("id") Long grupoId) {
+    public String entrarGrupo(@PathVariable("id") Long grupoId, RedirectAttributes redirectAttributes) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
 
@@ -174,14 +203,20 @@ public class GrupoController {
         }
 
         if (currentUser != null) {
-            grupoService.entrarGrupo(grupoId, currentUser.getId());
+            try {
+                grupoService.entrarGrupo(grupoId, currentUser.getId());
+                redirectAttributes.addFlashAttribute("successMessage", "Você entrou no grupo com sucesso!");
+            } catch (RuntimeException e) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao entrar no grupo: " + e.getMessage());
+                System.err.println("Error entering group " + grupoId + " by user " + currentUser.getId() + ": " + e.getMessage());
+            }
         } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para entrar em um grupo.");
             return "redirect:/login?error=notLoggedIn";
         }
         return "redirect:/grupo/listar";
     }
 
-    // NEW ENDPOINT TO FETCH GROUP MEMBERS (No change from last step)
     @GetMapping("/{id}/membros")
     @ResponseBody
     public ResponseEntity<List<MemberDto>> getGroupMembers(@PathVariable("id") Long grupoId) {
