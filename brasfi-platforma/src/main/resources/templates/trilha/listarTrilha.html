@@ -71,13 +71,22 @@
 
                     <div class="flex justify-between items-center mt-2">
                         <h2 th:text="${trilha.titulo}" class="font-semibold text-base"></h2>
-                        <div class="relative group">
-                            <button class="text-gray-500 hover:text-gray-800 px-2">
-                                &#x22EE;
+                        <div class="relative">
+                            <button th:id="'kebab-menu-btn-' + ${trilha.id}"
+                                    class="text-gray-500 hover:text-gray-800 px-2"
+                                    onclick="toggleKebabMenu(this, event)"> &#x22EE;
                             </button>
-                            <div class="absolute right-0 mt-1 bg-white border border-gray-200 rounded shadow-md hidden group-hover:block z-10">
-                                <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    Editar
+                            <div th:id="'kebab-menu-' + ${trilha.id}"
+                                 class="absolute right-0 mt-8 bg-white border border-gray-200 rounded shadow-md hidden z-10">
+                                <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        th:data-trilha-id="${trilha.id}"
+                                        th:data-trilha-titulo="${trilha.titulo}"
+                                        th:data-trilha-descricao="${trilha.descricao}"
+                                        th:data-trilha-eixo="${trilha.eixoTematico}"
+                                        th:data-trilha-duracao="${duracaoInput}"
+                                        th:data-trilha-topicos="${trilha.topicosDeAprendizado}"
+                                        onclick="openEditTrilhaModal(this)">
+                                        Editar
                                 </button>
                                 <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
                                         th:onclick="'abrirDeletarModal(\'modal-trilha-' + ${trilha.id} + '\')'">
@@ -139,6 +148,7 @@
 </div>
 
 <div id="newTrilhaModalContainer"></div>
+<div id="editTrilhaModalContainer"></div>
 
 <script>
     // Funções para o modal de DELETAR (já existentes)
@@ -150,79 +160,56 @@
         document.getElementById(id).classList.add('hidden');
     }
 
-    // --- Script para o modal de CRIAR NOVA TRILHA ---
-    const newTrilhaOpenBtn = document.getElementById('openNewTrilhaModalBtn');
-    let newTrilhaModal = null; // Variável para armazenar a referência ao modal
+    // Function to toggle the kebab menu visibility
+    function toggleKebabMenu(buttonElement, event) { // Added event parameter
+        event.stopPropagation(); // Stop the event from bubbling up to the document
 
-    async function loadNewTrilhaModal() {
-        if (!newTrilhaModal) { // Carrega o modal apenas uma vez
-            try {
-                const response = await fetch('/trilhas/criar-modal');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const htmlContent = await response.text();
-                document.getElementById('newTrilhaModalContainer').innerHTML = htmlContent;
+        const trilhaId = buttonElement.id.replace('kebab-menu-btn-', '');
+        const menuDiv = document.getElementById('kebab-menu-' + trilhaId);
 
-                newTrilhaModal = document.getElementById('modalRegistrarTrilha');
-                const closeNewTrilhaBtn = newTrilhaModal.querySelector('#closeModal');
+        if (menuDiv) {
+            menuDiv.classList.toggle('hidden');
+        }
 
-                if (closeNewTrilhaBtn) {
-                    closeNewTrilhaBtn.addEventListener('click', closeNewTrilhaModal);
-                }
-                if (newTrilhaModal) {
-                    newTrilhaModal.addEventListener('click', (e) => {
-                        if (e.target === newTrilhaModal) {
-                            closeNewTrilhaModal();
-                        }
-                    });
-                }
-
-                // *** AS FUNÇÕES DE INICIALIZAÇÃO AGORA SÃO CHAMADAS AQUI ***
-                // Isso garante que o DOM do modal foi carregado e os scripts que definem
-                // initializeEixoPicker e initializeTimePicker já foram executados.
-                initializeEixoPicker();
-                initializeTimePicker();
-
-            } catch (error) {
-                console.error("Erro ao carregar o modal de Nova Trilha:", error);
+        if (!menuDiv.classList.contains('hidden')) {
+            // We only add it once and rely on it for all menus.
+            // It's removed and re-added in the openEditTrilhaModal to ensure it's always active.
+            // For simplicity, we can just ensure it's always there, but be mindful of many event listeners.
+            // A better approach might be to ensure only one document listener exists at all times.
+            document.addEventListener('click', closeKebabMenusOutside);
+        } else {
+            // If the menu is being closed, you might want to remove the global listener if no other menus are open
+            const anyMenuOpen = Array.from(document.querySelectorAll('[id^="kebab-menu-"]'))
+                                    .some(menu => !menu.classList.contains('hidden'));
+            if (!anyMenuOpen) {
+                document.removeEventListener('click', closeKebabMenusOutside);
             }
         }
     }
 
-    function openNewTrilhaModal() {
-        // A lógica de carregamento do modal deve estar no 'then'
-        // para garantir que o modal foi carregado ANTES de tentar abri-lo e inicializar os pickers.
-        if (!newTrilhaModal) { // Se o modal ainda não foi carregado
-            loadNewTrilhaModal().then(() => {
-                // Após o carregamento bem-sucedido e inicialização dos pickers
-                if (newTrilhaModal) {
-                    newTrilhaModal.classList.remove('hidden');
-                    newTrilhaModal.classList.add('flex');
-                }
-            });
-        } else { // Se o modal já foi carregado
-            newTrilhaModal.classList.remove('hidden');
-            newTrilhaModal.classList.add('flex');
-            // Re-inicializa os pickers aqui também caso o modal seja aberto novamente sem recarregar a página
-            // Isso pode ser útil se o estado dos pickers precisar ser redefinido a cada abertura
-            initializeEixoPicker();
-            initializeTimePicker();
+    // Function to close kebab menus when clicking outside
+    function closeKebabMenusOutside(event) {
+        let anyMenuWasOpen = false;
+        document.querySelectorAll('[id^="kebab-menu-"]').forEach(menu => {
+            const buttonId = 'kebab-menu-btn-' + menu.id.replace('kebab-menu-', '');
+            const button = document.getElementById(buttonId);
+
+            // If the click is outside the menu and its button, hide the menu
+            if (menu && button && !menu.contains(event.target) && !button.contains(event.target) && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                anyMenuWasOpen = true; // Mark that at least one menu was closed
+            }
+        });
+
+        // If no menus are open after this click, remove the global listener
+        if (anyMenuWasOpen && !Array.from(document.querySelectorAll('[id^="kebab-menu-"]')).some(m => !m.classList.contains('hidden'))) {
+            document.removeEventListener('click', closeKebabMenusOutside);
         }
     }
 
-    function closeNewTrilhaModal() {
-        if (newTrilhaModal) {
-            newTrilhaModal.classList.remove('flex');
-            newTrilhaModal.classList.add('hidden');
-        }
-    }
-
-    // Adiciona o event listener ao botão de abrir o modal de Nova Trilha
-    if (newTrilhaOpenBtn) {
-        newTrilhaOpenBtn.addEventListener('click', openNewTrilhaModal);
-    }
 </script>
+<script th:src="@{/js/criar-trilha.js}"></script>
+<script th:src="@{/js/editar-trilha.js}"></script>
 <script th:src="@{/js/eixo-picker.js}"></script>
 <script th:src="@{/js/time-picker.js}"></script>
 
