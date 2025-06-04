@@ -93,12 +93,12 @@
         <div class="p-6 flex-grow">
             <h1 class="text-3xl font-bold mb-6">Trilhas de conhecimento</h1>
 
-            <div class="flex gap-3 mb-6">
-                <button class="bg-gray-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-400 transition-colors">Todos</button>
-                <button class="bg-gray-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors">Liderança</button>
-                <button class="bg-gray-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors">Finanças</button>
-                <button class="bg-gray-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors">Empreendedorismo</button>
-                <button class="bg-gray-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors">Salvos</button>
+            <div class="flex gap-3 mb-6" id="filter-buttons-container">
+                <button class="filter-button bg-black text-white border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-900">Todos</button>
+                <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Liderança</button>
+                <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Finanças</button>
+                <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Empreendedorismo</button>
+                <button class="filter-button bg-white text-gray-800 border border-black px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-gray-100">Salvos</button>
             </div>
 
             <div th:if="${cargoUsuario == 'ADMINISTRADOR'}" class="flex gap-3 justify-end mb-6">
@@ -195,12 +195,11 @@
 <script>
     // Function to toggle the kebab menu visibility
     function toggleKebabMenu(buttonElement, event) {
-        event.stopPropagation(); // Crucial: Prevents the document click listener from immediately closing the menu
+        event.stopPropagation();
 
         const trilhaId = buttonElement.id.replace('kebab-menu-btn-', '');
         const menuDiv = document.getElementById('kebab-menu-' + trilhaId);
 
-        // Close all other open kebab menus EXCEPT the one being toggled
         document.querySelectorAll('[id^="kebab-menu-"]').forEach(menu => {
             if (menu.id !== 'kebab-menu-' + trilhaId && !menu.classList.contains('hidden')) {
                 menu.classList.add('hidden');
@@ -214,20 +213,36 @@
 
     // Function to close kebab menus when clicking outside
     function closeKebabMenusOutside(event) {
-        // Iterate through all kebab menus
         document.querySelectorAll('[id^="kebab-menu-"]').forEach(menu => {
             const buttonId = 'kebab-menu-btn-' + menu.id.replace('kebab-menu-', '');
             const button = document.getElementById(buttonId);
 
-            // Check if the clicked element is *not* the menu, and *not* the button that controls this menu
             if (menu && button && !menu.classList.contains('hidden') && !menu.contains(event.target) && !button.contains(event.target)) {
                 menu.classList.add('hidden');
             }
         });
     }
 
-    // Add the global click listener once when the DOM is loaded
+    // Filter button active state logic
     document.addEventListener('DOMContentLoaded', () => {
+        const filterButtonsContainer = document.getElementById('filter-buttons-container');
+        if (filterButtonsContainer) {
+            filterButtonsContainer.addEventListener('click', (event) => {
+                const clickedButton = event.target.closest('.filter-button');
+                if (clickedButton) {
+                    // Remove active state from all buttons
+                    document.querySelectorAll('.filter-button').forEach(button => {
+                        button.classList.remove('bg-black', 'text-white', 'hover:bg-gray-900');
+                        button.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+                    });
+
+                    // Add active state to the clicked button
+                    clickedButton.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+                    clickedButton.classList.add('bg-black', 'text-white', 'hover:bg-gray-900');
+                }
+            });
+        }
+        // Attach the global click listener for kebab menus
         document.addEventListener('click', closeKebabMenusOutside);
     });
 </script>
