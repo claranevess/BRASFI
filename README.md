@@ -3,7 +3,29 @@
 ## Descrição
 O Portal Educacional da BRASFI é uma plataforma web dedicada à formação e ao fortalecimento de lideranças comprometidas com a construção de um futuro sustentável. Oferecendo conteúdos exclusivos em finanças sustentáveis, inovação, justiça social e governança colaborativa, a ferramenta visa capacitar indivíduos para atuarem com propósito, impacto e responsabilidade na transformação de sistemas financeiros, sociais e ambientais. Aberta e acessível a todos, a plataforma promove uma comunidade de aprendizagem e transformação, onde o conhecimento circula e a liderança se constrói coletivamente, com a possibilidade de associação via contribuições que sustentam o projeto.
 ## Funcionalidades
-
+Acesso a Aulas:
+Assistir a vídeos educativos gravados na plataforma.
+Gestão de Conteúdo (para comunicadores):
+Upload de vídeos educativos.
+Acesso e Gestão de Trilhas de Conhecimento:
+Acessar trilhas de conhecimento (com atividades e recursos).
+Criar trilhas de conhecimento (agrupando aulas sobre temas específicos).
+Editar trilhas de conhecimento.
+Deletar trilhas de conhecimento.
+Visualizar listagem de aulas em uma trilha.
+Interação e Comunicação:
+Enviar comentários no final de aulas.
+Criar o quadro de avisos (postar avisos sobre eventos e mudanças).
+Entrar em comunidades nichadas (através dos vídeos nas trilhas).
+Escrever mensagens em comunidades nichadas.
+Editar mensagens em comunidades nichadas.
+Deletar mensagens em comunidades nichadas.
+Gestão de Usuários e Grupos (para administradores/moderadores):
+Liberar cadastro de administrador por código de validação.
+Visualizar lista de usuários participantes de grupo.
+Pesquisar usuários participantes de grupo pela barra de pesquisa.
+Acompanhamento do Progresso:
+Marcar uma aula como concluída.
 ## Tecnologias usadas
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=Spring&logoColor=white)
@@ -47,7 +69,35 @@ O Portal Educacional da BRASFI é uma plataforma web dedicada à formação e ao
 ## Description
 The BRASFI Educational Portal is a web platform dedicated to forming and strengthening leaders committed to building a sustainable future. Offering exclusive content on sustainable finance, innovation, social justice, and collaborative governance, the tool aims to empower individuals to act with purpose, impact, and responsibility in the transformation of financial, social, and environmental systems. Open and accessible to all, the platform fosters a community of learning and transformation, where knowledge circulates and leadership is built collectively, with the possibility of association through contributions that sustain the project.
 ## Functionalities
+Access to Classes/Lessons:
 
+Watch recorded educational videos on the platform.
+Content Management (for content creators):
+
+Upload educational videos.
+Access and Management of Knowledge Trails:
+
+Access knowledge trails (with activities and resources).
+Create knowledge trails (grouping classes/lessons on specific topics).
+Edit knowledge trails.
+Delete knowledge trails.
+View the list of classes/lessons within a trail.
+Interaction and Communication:
+
+Send comments at the end of classes/lessons.
+Create the announcements board (post notices about events and changes).
+Join niche communities (through videos in the trails).
+Write messages in niche communities.
+Edit messages in niche communities.
+Delete messages in niche communities.
+User and Group Management (for administrators/moderators):
+
+Release administrator registration by validation code.
+View a list of group participants.
+Search for group participants using the search bar.
+Progress Tracking:
+
+Mark a class/lesson as completed.
 ## Used tecnologies
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=Spring&logoColor=white)
