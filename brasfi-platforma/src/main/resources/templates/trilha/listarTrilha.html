@@ -170,7 +170,7 @@
 
                 </div>
 
-                <aside class="w-1/4 bg-white p-4 rounded-lg shadow h-fit hidden lg:block">
+                <aside th:unless="${cargoUsuario == 'ADMINISTRADOR'}" class="w-1/4 bg-white p-4 rounded-lg shadow h-fit hidden lg:block">
                     <h3 class="font-semibold mb-4">Sugestões:</h3>
                     <div class="mb-3">
                         <p class="text-sm text-gray-500">Aula 01: Nome da aula</p>
