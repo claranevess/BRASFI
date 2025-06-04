@@ -6,6 +6,24 @@
     <title>Detalhe da Aula</title>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optional: Custom scrollbar for better appearance */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans">
 
@@ -80,21 +98,28 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg p-6 shadow-md mt-6">
-                    <h2 class="text-lg font-semibold mb-4">Comentários</h2>
-
-                    <div class="mb-6">
-                        <textarea id="newCommentText"
-                                  class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                  rows="3"
-                                  placeholder="Deixe seu comentário ou faça perguntas..."></textarea>
-                        <button onclick="postComment()"
-                                class="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-                            Comentar
-                        </button>
+                <div class="rounded-lg shadow-md mt-6 overflow-hidden">
+                    <div class="bg-green-700 p-4">
+                        <h2 class="text-lg font-semibold text-white">Comentários</h2>
                     </div>
 
-                    <div id="commentsList" class="space-y-4">
+                    <div class="bg-green-700 px-4 pb-4">
+                        <div class="bg-white rounded-lg p-3 flex items-center space-x-3">
+                            <img src="/path/to/user-avatar.png" alt="Avatar" class="w-8 h-8 rounded-full" />
+                            <textarea id="newCommentText"
+                                      class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 resize-none overflow-hidden"
+                                      rows="1"
+                                      placeholder="Deixe seu comentário ou faça perguntas..."
+                                      oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+                            <button onclick="postComment()"
+                                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 self-end ml-2">
+                                Comentar
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div id="commentsList" class="p-4 space-y-4 bg-white">
                         <div class="text-gray-500 text-center py-4" id="loadingComments">Carregando comentários...</div>
                     </div>
                 </div>
@@ -146,20 +171,19 @@
         }
     }
 
-    // Fecha o modal quando o usuário clica em "Gostei" ou "Não gostei"
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('#modalConcluida button').forEach(button => {
             button.addEventListener('click', function () {
                 document.getElementById('modalConcluida').classList.add('hidden');
             });
         });
-        loadComments(); // Load comments when the page loads
+        loadComments();
     });
 
     async function loadComments() {
         const aulaId = document.getElementById('aulaId').value;
         const commentsList = document.getElementById('commentsList');
-        commentsList.innerHTML = `<div class="text-gray-500 text-center py-4" id="loadingComments">Carregando comentários...</div>`; // Show loading
+        commentsList.innerHTML = `<div class="text-gray-500 text-center py-4" id="loadingComments">Carregando comentários...</div>`;
 
         try {
             const response = await fetch(`/api/comentarios/aula/${aulaId}`);
@@ -174,47 +198,61 @@
         }
     }
 
-    function renderComments(comments, parentElement = document.getElementById('commentsList')) {
-        parentElement.innerHTML = ''; // Clear existing comments
+    function renderComments(comments, parentElement = document.getElementById('commentsList'), isReply = false) {
+        if (!isReply) { // Only clear if it's the top-level rendering
+            parentElement.innerHTML = '';
+        }
 
-        if (comments.length === 0) {
+        if (comments.length === 0 && !isReply) {
             parentElement.innerHTML = `<div class="text-gray-500 text-center py-4">Nenhum comentário ainda. Seja o primeiro a comentar!</div>`;
             return;
         }
 
         comments.forEach(comment => {
             const commentDiv = document.createElement('div');
-            commentDiv.className = 'bg-gray-50 p-4 rounded-lg shadow-sm';
+            commentDiv.className = `p-4 rounded-lg ${isReply ? 'bg-gray-100' : 'bg-gray-50'} ${isReply ? 'mt-3 border border-gray-200' : ''}`; // Add border for replies for visual separation
+
+            // Default avatar (you might want to make this dynamic later)
+            const avatarSrc = "/path/to/user-avatar.png"; // Placeholder for user avatar
+
             commentDiv.innerHTML = `
                 <div class="flex items-center mb-2">
-                    <div class="w-8 h-8 bg-green-500 text-white flex items-center justify-center rounded-full text-sm font-bold mr-3">${comment.autorNome.charAt(0)}</div>
+                    <img src="${avatarSrc}" alt="Avatar" class="w-8 h-8 rounded-full mr-3" />
                     <div>
                         <p class="font-semibold text-gray-800">${comment.autorNome}</p>
-                        <p class="text-xs text-gray-500">${comment.dataCriacao}</p>
+                        <p class="text-xs text-gray-500 flex items-center">
+                            Postado ${comment.dataCriacao}
+                        </p>
                     </div>
                 </div>
                 <p class="text-gray-700 mb-2">${comment.texto}</p>
-                <button onclick="toggleReplyForm(${comment.id})" class="text-sm text-green-600 hover:underline">Comentar</button>
-                <div id="replyForm-${comment.id}" class="hidden mt-3">
-                    <textarea id="replyText-${comment.id}"
-                              class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
-                              rows="2"
-                              placeholder="Responder a este comentário..."></textarea>
-                    <button onclick="postReply(${comment.id})"
-                            class="mt-2 bg-green-600 text-white px-3 py-1 rounded-md text-sm hover:bg-green-700">
-                        Responder
-                    </button>
-                    <button onclick="toggleReplyForm(${comment.id})"
-                            class="mt-2 ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-300">
-                        Cancelar
-                    </button>
+                <div class="relative">
+                    <button onclick="toggleReplyForm(${comment.id})" class="text-sm text-green-600 hover:underline">Comentar</button>
+                    <div id="replyForm-${comment.id}" class="hidden mt-3">
+                        <div class="bg-gray-50 rounded-lg p-3 flex items-center space-x-3">
+                             <img src="${avatarSrc}" alt="Avatar" class="w-8 h-8 rounded-full" />
+                            <textarea id="replyText-${comment.id}"
+                                      class="flex-grow p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 resize-none overflow-hidden"
+                                      rows="1"
+                                      placeholder="Comentar..."
+                                      oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+                            <button onclick="postReply(${comment.id})"
+                                    class="bg-green-600 text-white px-3 py-1 rounded-md text-sm hover:bg-green-700 self-end ml-2">
+                                Responder
+                            </button>
+                            <button onclick="toggleReplyForm(${comment.id})"
+                                    class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-300 self-end ml-2">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div id="replies-${comment.id}" class="pl-8 mt-4 space-y-3"></div>
             `;
             parentElement.appendChild(commentDiv);
 
             if (comment.replies && comment.replies.length > 0) {
-                renderComments(comment.replies, document.getElementById(`replies-${comment.id}`));
+                renderComments(comment.replies, document.getElementById(`replies-${comment.id}`), true);
             }
         });
     }
@@ -222,6 +260,13 @@
     function toggleReplyForm(commentId) {
         const replyForm = document.getElementById(`replyForm-${commentId}`);
         replyForm.classList.toggle('hidden');
+        // Auto-resize textarea when shown
+        if (!replyForm.classList.contains('hidden')) {
+            const textarea = document.getElementById(`replyText-${commentId}`);
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+            textarea.focus();
+        }
     }
 
     async function postComment() {
