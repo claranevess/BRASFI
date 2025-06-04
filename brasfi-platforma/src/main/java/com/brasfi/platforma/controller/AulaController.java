@@ -2,8 +2,10 @@ package com.brasfi.platforma.controller;
 
 import com.brasfi.platforma.model.Aula;
 import com.brasfi.platforma.model.Material;
+import com.brasfi.platforma.model.Trilha;
 import com.brasfi.platforma.repository.MaterialRepository;
 import com.brasfi.platforma.service.AulaService;
+import com.brasfi.platforma.service.TrilhaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ public class AulaController {
     private MaterialRepository materialRepository;
 
     private final AulaService aulaService;
+    private final TrilhaService trilhaService;
 
     @GetMapping("/enviar")
     public String mostrarFormularioEnvio(Model model) {
@@ -36,11 +39,12 @@ public class AulaController {
     public String salvarAula(@ModelAttribute Aula aula,
                              @RequestParam("documentos") MultipartFile[] documentos,
                              @RequestParam(value = "linkApoio", required = false) String[] linksApoio,
+                             @RequestParam(value = "trilhaIds", required = false) Long[] trilhaIds, // Recebe os IDs das trilhas
                              Model model) {
 
         Aula aulaSalva = aulaService.salvarAula(aula);
 
-        // Salva arquivos
+        // Salva arquivos (código existente)
         if (documentos != null) {
             System.out.println(">>> Total de arquivos recebidos: " + documentos.length);
             for (MultipartFile arquivo : documentos) {
@@ -72,7 +76,7 @@ public class AulaController {
             }
         }
 
-        // Salva links
+        // Salva links (código existente)
         if (linksApoio != null) {
             for (String link : linksApoio) {
                 if (link != null && !link.isBlank()) {
@@ -81,6 +85,18 @@ public class AulaController {
                     material.setAula(aulaSalva);
                     materialRepository.save(material);
                     System.out.println(">>> Link salvo: " + link);
+                }
+            }
+        }
+
+        // Associa a aula às trilhas
+        if (trilhaIds != null) {
+            for (Long trilhaId : trilhaIds) {
+                Trilha trilha = trilhaService.buscarPorId(trilhaId);
+                if (trilha != null) {
+                    trilha.getAulas().add(aulaSalva);
+                    aulaSalva.getTrilhas().add(trilha);
+                    trilhaService.atualizarTrilha(trilha); // Ou salve a trilha
                 }
             }
         }

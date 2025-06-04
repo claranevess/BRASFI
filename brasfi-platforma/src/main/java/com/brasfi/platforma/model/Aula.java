@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList; // Importe ArrayList
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -29,7 +32,7 @@ public class Aula {
     private Administrador administrador;
 
     @ManyToMany(mappedBy = "aulas")
-    private List<Trilha> trilhas;
+    private List<Trilha> trilhas = new ArrayList<>();
 
     // TO-DO: adicionar o atributo de comentarios
 
@@ -38,6 +41,5 @@ public class Aula {
     private Grupo grupo;
 
     @OneToMany(mappedBy = "aula", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Material> materiais;
-
+    private List<Material> materiais = new ArrayList<>();
 }

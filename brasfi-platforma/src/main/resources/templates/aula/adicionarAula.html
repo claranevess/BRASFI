@@ -54,7 +54,7 @@
                                 </label>
                                 <div class="space-y-2 flex-grow overflow-y-auto">
                                     <div th:each="trilha : ${trilhas}">
-                                        <input type="checkbox" th:id="${'trilha-' + trilha.id}" name="trilhas" th:value="${trilha.id}"
+                                        <input type="checkbox" th:id="${'trilha-' + trilha.id}" name="trilhaIds[]" th:value="${trilha.id}"
                                                class="form-checkbox h-4 w-4 text-[#65A603] border-gray-300 rounded focus:ring-green-500">
                                         <label th:for="${'trilha-' + trilha.id}" th:text="${trilha.titulo}" class="ml-2 text-gray-700"></label>
                                     </div>
