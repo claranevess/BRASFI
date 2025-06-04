@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 <head>
     <title>Detalhe da Aula</title>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optional: Custom scrollbar for better appearance */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow on hover */
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans">
 
 <div class="flex min-h-screen">
-    <!-- Sidebar -->
     <aside class="w-64 bg-white shadow-md p-6 space-y-4">
         <div class="mb-6">
             <img src="/path/to/logo.png" alt="BRASFI Conecta" class="h-8" />
@@ -21,10 +42,8 @@
         </nav>
     </aside>
 
-    <!-- Main content -->
     <main class="flex-1 p-8">
         <input type="hidden" id="aulaId" th:value="${aula.id}">
-        <!-- Breadcrumb + Header -->
         <div class="flex justify-between items-center mb-6">
             <nav class="text-sm text-gray-600 space-x-1">
                 <span>Trilhas</span> >
@@ -38,7 +57,6 @@
         </div>
 
         <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Vídeo e Descrição -->
             <div class="flex-1">
                 <div class="aspect-video bg-gray-200 rounded mb-6 overflow-hidden">
                     <iframe class="w-full h-full"
@@ -81,15 +99,34 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="bg-green-700 rounded-lg shadow-md mt-6 p-4"> <h2 class="text-lg font-semibold text-white mb-4">Comentários</h2>
+
+                    <div class="bg-white rounded-lg p-3 mb-4 flex items-center space-x-3">
+                        <img src="/path/to/user-avatar.png" alt="Avatar" class="w-8 h-8 rounded-full" />
+                        <textarea id="newCommentText"
+                                  class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 resize-none overflow-hidden"
+                                  rows="1"
+                                  placeholder="Deixe seu comentário ou faça perguntas..."
+                                  oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+                        <button onclick="postComment()"
+                                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 self-end ml-2">
+                            Comentar
+                        </button>
+                    </div>
+
+                    <div id="commentsList" class="space-y-4">
+                        <div class="text-white text-center py-4" id="loadingComments">Carregando comentários...</div>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Materiais Disponíveis -->
             <aside class="w-full lg:w-72 bg-gray-100 rounded-lg p-4 space-y-4">
                 <h2 class="text-lg font-semibold">Materiais disponíveis</h2>
 
                 <ul class="space-y-2 list-none">
                     <li th:each="material : ${aula.materiais}">
-                        <!-- Link -->
                         <div th:if="${material.linkApoio != null}">
                             <a th:href="${material.linkApoio}" target="_blank"
                                class="block text-blue-600 hover:underline text-sm">
@@ -97,7 +134,6 @@
                             </a>
                         </div>
 
-                        <!-- Arquivo -->
                         <div th:if="${material.caminhoArquivo != null}">
                             <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank"
                                class="block text-green-600 hover:underline text-sm">
@@ -131,13 +167,185 @@
         }
     }
 
-    // Fecha o modal quando o usuário clica em "Gostei" ou "Não gostei"
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('#modalConcluida button').forEach(button => {
             button.addEventListener('click', function () {
                 document.getElementById('modalConcluida').classList.add('hidden');
             });
         });
+        loadComments();
     });
-</script>
 
+    async function loadComments() {
+        const aulaId = document.getElementById('aulaId').value;
+        const commentsList = document.getElementById('commentsList');
+        commentsList.innerHTML = `<div class="text-white text-center py-4" id="loadingComments">Carregando comentários...</div>`; // Changed text-gray-500 to text-white here for visibility
+
+        try {
+            const response = await fetch(`/api/comentarios/aula/${aulaId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const comments = await response.json();
+            renderComments(comments);
+        } catch (error) {
+            console.error("Error loading comments:", error);
+            commentsList.innerHTML = `<div class="text-red-300 text-center py-4">Erro ao carregar comentários.</div>`; // Changed text-red-500 to text-red-300 for better contrast on green
+        }
+    }
+
+    function renderComments(comments, parentElement = document.getElementById('commentsList'), isReply = false) {
+        if (!isReply) { // Only clear if it's the top-level rendering
+            parentElement.innerHTML = '';
+        }
+
+        if (comments.length === 0 && !isReply) {
+            parentElement.innerHTML = `<div class="text-white text-center py-4">Nenhum comentário ainda. Seja o primeiro a comentar!</div>`;
+            return;
+        }
+
+        comments.forEach(comment => {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = `bg-white p-4 rounded-lg shadow-sm`;
+
+            commentDiv.className += ` ${isReply ? 'ml-8 mt-4' : ''}`;
+
+            const avatarSrc = "/path/to/user-avatar.png";
+
+            commentDiv.innerHTML = `
+                <div class="flex items-center mb-2">
+                    <img src="${avatarSrc}" alt="Avatar" class="w-8 h-8 rounded-full mr-3" />
+                    <div>
+                        <p class="font-semibold text-gray-800">${comment.autorNome}</p>
+                        <p class="text-xs text-gray-500 flex items-center">
+                            Postado ${comment.dataCriacao}
+                        </p>
+                    </div>
+                </div>
+                <p class="text-gray-700 mb-2">${comment.texto}</p>
+                <div class="relative">
+                    <button onclick="toggleReplyForm(${comment.id})" class="text-sm text-green-600 hover:underline">Comentar</button>
+                    <div id="replyForm-${comment.id}" class="hidden mt-3">
+                        <div class="bg-gray-50 rounded-lg p-3 flex items-center space-x-3">
+                             <img src="${avatarSrc}" alt="Avatar" class="w-8 h-8 rounded-full" />
+                            <textarea id="replyText-${comment.id}"
+                                      class="flex-grow p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 resize-none overflow-hidden"
+                                      rows="1"
+                                      placeholder="Comentar..."
+                                      oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+                            <button onclick="postReply(${comment.id})"
+                                    class="bg-green-600 text-white px-3 py-1 rounded-md text-sm hover:bg-green-700 self-end ml-2">
+                                Responder
+                            </button>
+                            <button onclick="toggleReplyForm(${comment.id})"
+                                    class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-300 self-end ml-2">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="replies-${comment.id}" class="mt-4 space-y-3"></div>
+            `;
+            parentElement.appendChild(commentDiv);
+
+            // FIX: Changed comment.repllies.length to comment.replies.length
+            if (comment.replies && comment.replies.length > 0) {
+                renderComments(comment.replies, document.getElementById(`replies-${comment.id}`), true);
+            }
+        });
+    }
+
+    function toggleReplyForm(commentId) {
+        const replyForm = document.getElementById(`replyForm-${commentId}`);
+        replyForm.classList.toggle('hidden');
+        // Auto-resize textarea when shown
+        if (!replyForm.classList.contains('hidden')) {
+            const textarea = document.getElementById(`replyText-${commentId}`);
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+            textarea.focus();
+        }
+    }
+
+    async function postComment() {
+        const aulaId = document.getElementById('aulaId').value;
+        const commentText = document.getElementById('newCommentText').value;
+
+        if (!commentText.trim()) {
+            alert('Por favor, escreva um comentário.');
+            return;
+        }
+
+        // Add CSRF token handling if you have Spring Security enabled
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        try {
+            const headers = { 'Content-Type': 'application/json' };
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
+
+            const response = await fetch(`/api/comentarios/aula/${aulaId}`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ texto: commentText })
+            });
+
+            if (!response.ok) {
+                if (response.status === 403) {
+                    alert('Acesso negado. Verifique sua autenticação ou permissões.');
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            document.getElementById('newCommentText').value = '';
+            document.getElementById('newCommentText').style.height = 'auto'; // Reset textarea height
+            loadComments();
+        } catch (error) {
+            console.error("Error posting comment:", error);
+            alert('Erro ao postar comentário.');
+        }
+    }
+
+    async function postReply(parentCommentId) {
+        const replyText = document.getElementById(`replyText-${parentCommentId}`).value;
+
+        if (!replyText.trim()) {
+            alert('Por favor, escreva uma resposta.');
+            return;
+        }
+
+        // Add CSRF token handling if you have Spring Security enabled
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        try {
+            const headers = { 'Content-Type': 'application/json' };
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
+
+            const response = await fetch(`/api/comentarios/${parentCommentId}/reply`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ texto: replyText })
+            });
+
+            if (!response.ok) {
+                if (response.status === 403) {
+                    alert('Acesso negado. Verifique sua autenticação ou permissões.');
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            document.getElementById(`replyText-${parentCommentId}`).value = '';
+            document.getElementById(`replyText-${parentCommentId}`).style.height = 'auto'; // Reset textarea height
+            toggleReplyForm(parentCommentId);
+            loadComments();
+        } catch (error) {
+            console.error("Error posting reply:", error);
+            alert('Erro ao postar resposta.');
+        }
+    }
+</script>
