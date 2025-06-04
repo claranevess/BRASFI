@@ -197,32 +197,42 @@
 <script>
     // Function to toggle the kebab menu visibility
     function toggleKebabMenu(buttonElement, event) {
-        event.stopPropagation();
+        event.stopPropagation(); // Stop the event from bubbling up to the document
 
         const trilhaId = buttonElement.id.replace('kebab-menu-btn-', '');
         const menuDiv = document.getElementById('kebab-menu-' + trilhaId);
 
-        document.querySelectorAll('[id^="kebab-menu-"]').forEach(menu => {
-            if (menu.id !== 'kebab-menu-' + trilhaId && !menu.classList.contains('hidden')) {
-                menu.classList.add('hidden');
-            }
-        });
-
         if (menuDiv) {
             menuDiv.classList.toggle('hidden');
+        }
+
+        if (!menuDiv.classList.contains('hidden')) { // If menu is now OPEN
+            document.addEventListener('click', closeKebabMenusOutside);
+        } else { // If menu is now CLOSED
+            const anyMenuOpen = Array.from(document.querySelectorAll('[id^="kebab-menu-"]'))
+                .some(menu => !menu.classList.contains('hidden'));
+            if (!anyMenuOpen) {
+                document.removeEventListener('click', closeKebabMenusOutside);
+            }
         }
     }
 
     // Function to close kebab menus when clicking outside
     function closeKebabMenusOutside(event) {
+        let anyMenuWasOpen = false;
         document.querySelectorAll('[id^="kebab-menu-"]').forEach(menu => {
             const buttonId = 'kebab-menu-btn-' + menu.id.replace('kebab-menu-', '');
             const button = document.getElementById(buttonId);
 
-            if (menu && button && !menu.classList.contains('hidden') && !menu.contains(event.target) && !button.contains(event.target)) {
+            if (menu && button && !menu.contains(event.target) && !button.contains(event.target) && !menu.classList.contains('hidden')) {
                 menu.classList.add('hidden');
+                anyMenuWasOpen = true;
             }
         });
+
+        if (anyMenuWasOpen && !Array.from(document.querySelectorAll('[id^="kebab-menu-"]')).some(m => !m.classList.contains('hidden'))) {
+            document.removeEventListener('click', closeKebabMenusOutside);
+        }
     }
 
     // Filter button active state logic
@@ -244,8 +254,6 @@
                 }
             });
         }
-        // Attach the global click listener for kebab menus
-        document.addEventListener('click', closeKebabMenusOutside);
     });
 </script>
 <script th:src="@{/js/criar-trilha.js}"></script>
