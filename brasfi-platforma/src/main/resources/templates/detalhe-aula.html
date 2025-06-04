@@ -200,21 +200,17 @@
         }
 
         if (comments.length === 0 && !isReply) {
-            parentElement.innerHTML = `<div class="text-white text-center py-4">Nenhum comentário ainda. Seja o primeiro a comentar!</div>`; // Changed text-gray-500 to text-white
+            parentElement.innerHTML = `<div class="text-white text-center py-4">Nenhum comentário ainda. Seja o primeiro a comentar!</div>`;
             return;
         }
 
         comments.forEach(comment => {
             const commentDiv = document.createElement('div');
-            // All comment cards are bg-white. Replies have specific margins.
             commentDiv.className = `bg-white p-4 rounded-lg shadow-sm`;
 
-            // Adjust margin for replies
             commentDiv.className += ` ${isReply ? 'ml-8 mt-4' : ''}`;
 
-
-            // Default avatar (you might want to make this dynamic later)
-            const avatarSrc = "/path/to/user-avatar.png"; // Placeholder for user avatar
+            const avatarSrc = "/path/to/user-avatar.png";
 
             commentDiv.innerHTML = `
                 <div class="flex items-center mb-2">
@@ -252,7 +248,8 @@
             `;
             parentElement.appendChild(commentDiv);
 
-            if (comment.replies && comment.repllies.length > 0) {
+            // FIX: Changed comment.repllies.length to comment.replies.length
+            if (comment.replies && comment.replies.length > 0) {
                 renderComments(comment.replies, document.getElementById(`replies-${comment.id}`), true);
             }
         });
