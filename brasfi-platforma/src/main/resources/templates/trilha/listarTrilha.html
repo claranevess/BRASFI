@@ -55,6 +55,25 @@
             margin-top: 20px; /* Space above the border */
         }
 
+        /* Custom styles for the Sugestões section text */
+        .sugestoes-box h3 {
+            color: white; /* Ensure heading is white */
+        }
+
+        .sugestoes-box p {
+            color: white;
+            opacity: 0.9; /* Slightly less opaque for subtle hierarchy */
+        }
+
+        .sugestoes-box a {
+            color: white; /* Ensure links are white */
+            opacity: 0.9;
+        }
+
+        .sugestoes-box a:hover {
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 <body class="bg-gray-100">
@@ -173,17 +192,17 @@
 
                 </div>
 
-                <aside th:unless="${cargoUsuario == 'ADMINISTRADOR'}" class="w-1/4 bg-white p-4 rounded-lg shadow h-fit hidden lg:block">
+                <aside th:unless="${cargoUsuario == 'ADMINISTRADOR'}" class="w-1/4 bg-[#65A603] p-4 rounded-lg shadow -mt-20 sugestoes-box">
                     <h3 class="font-semibold mb-4">Sugestões:</h3>
                     <div class="mb-3">
-                        <p class="text-sm text-gray-500">Aula 01: Nome da aula</p>
-                        <p class="text-xs text-gray-400">Nome do curso</p>
-                        <a href="#" class="text-blue-600 text-xs">Acessar ></a>
+                        <p class="text-sm">Aula 01: Nome da aula</p>
+                        <p class="text-xs">Nome do curso</p>
+                        <a href="#" class="text-xs">Acessar ></a>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Aula 02: Por que Sustentabilidade Importa?</p>
-                        <p class="text-xs text-gray-400">Introdução à Finanças Sustentáveis</p>
-                        <a href="#" class="text-blue-600 text-xs">Acessar ></a>
+                        <p class="text-sm">Aula 02: Por que Sustentabilidade Importa?</p>
+                        <p class="text-xs">Introdução à Finanças Sustentáveis</p>
+                        <a href="#" class="text-xs">Acessar ></a>
                     </div>
                 </aside>
             </div>
