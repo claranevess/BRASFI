@@ -1,7 +1,7 @@
 <h1 align="center">Brasfi</h1>
 
 ## Descrição
-
+O Portal Educacional da BRASFI é uma plataforma web dedicada à formação e ao fortalecimento de lideranças comprometidas com a construção de um futuro sustentável. Oferecendo conteúdos exclusivos em finanças sustentáveis, inovação, justiça social e governança colaborativa, a ferramenta visa capacitar indivíduos para atuarem com propósito, impacto e responsabilidade na transformação de sistemas financeiros, sociais e ambientais. Aberta e acessível a todos, a plataforma promove uma comunidade de aprendizagem e transformação, onde o conhecimento circula e a liderança se constrói coletivamente, com a possibilidade de associação via contribuições que sustentam o projeto.
 ## Funcionalidades
 
 ## Tecnologias usadas
@@ -45,7 +45,7 @@
 <h1 align="center">Brasfi</h1>
 
 ## Description
-
+The BRASFI Educational Portal is a web platform dedicated to forming and strengthening leaders committed to building a sustainable future. Offering exclusive content on sustainable finance, innovation, social justice, and collaborative governance, the tool aims to empower individuals to act with purpose, impact, and responsibility in the transformation of financial, social, and environmental systems. Open and accessible to all, the platform fosters a community of learning and transformation, where knowledge circulates and leadership is built collectively, with the possibility of association through contributions that sustain the project.
 ## Functionalities
 
 ## Used tecnologies
