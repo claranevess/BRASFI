@@ -84,20 +84,6 @@ public class TrilhaController {
         }
     }
 
-
-    @GetMapping("/deletar")
-    public String mostrarConfirmacao(@RequestParam("id") Long id, Model model) {
-        Trilha trilha = trilhaService.buscarPorId(id);
-        model.addAttribute("trilha", trilha);
-        return "trilha/deletarTrilha";
-    }
-
-    @PostMapping("/deletar")
-    public String deletarTrilha(Trilha trilha) {
-        trilhaService.deletarTrilha(trilha);
-        return "redirect:/";
-    }
-
     @GetMapping("/editar")
     public String mostrarEditarTrilhaForm(@RequestParam("id") Long id, Model model) {
         Trilha trilha = trilhaService.buscarPorId(id);
@@ -119,8 +105,8 @@ public class TrilhaController {
     public String editarTrilha(
             @ModelAttribute Trilha trilha,
             @RequestParam("duracaoInput") String duracaoStr,
-            @RequestParam("capaFile") MultipartFile capaFile
-    ) throws IOException {
+            @RequestParam(value = "capaFile", required = false) MultipartFile capaFile
+            ) throws IOException {
         // Converte "hh:mm" para double
         double duracao = parseDuracao(duracaoStr);
         trilha.setDuracao(duracao);
@@ -195,6 +181,35 @@ public class TrilhaController {
         return "trilha/registrarTrilha";
     }
 
+    @GetMapping("/editar-modal/{id}")
+    public String getEditarTrilhaModal(@PathVariable("id") Long id, Model model) {
+        Trilha trilha = trilhaService.buscarPorId(id);
+
+        // Converte double para "hh:mm" para popular o time picker
+        double duracao = trilha.getDuracao(); // pega o valor primitivo
+        int horas = (int) duracao;
+        int minutos = (int) Math.round((duracao - horas) * 60);
+        String duracaoStr = String.format("%02d:%02d", horas, minutos);
+
+        model.addAttribute("trilha", trilha);
+        model.addAttribute("duracaoInput", duracaoStr); // envia pra preencher o input hidden
+        model.addAttribute("eixosTematicos", EixoTematico.values()); // Para popular o eixo-picker, se necessário no fragmento
+
+        return "trilha/editarTrilha :: modalContent";
+    }
+
+    @GetMapping("/deletar-modal/{id}")
+    public String mostrarConfirmacao(@PathVariable("id") Long id, Model model) {
+        Trilha trilha = trilhaService.buscarPorId(id);
+        model.addAttribute("trilha", trilha);
+        return "trilha/deletarTrilha :: modalContent"; // THIS IS IMPORTANT
+    }
+
+    @PostMapping("/deletar")
+    public String deletarTrilha(Trilha trilha) {
+        trilhaService.deletarTrilha(trilha);
+        return "redirect:/trilhas/listar";
+    }
 
 
 }

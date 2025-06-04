@@ -31,6 +31,7 @@ public class SecurityConfig {
                                 "/aulas/*/concluir" // permite PATCH para concluir aula
                         ).permitAll()
                         .requestMatchers("/").authenticated() // exige login
+                        .requestMatchers("/trilhas/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
