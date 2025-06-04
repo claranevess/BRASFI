@@ -17,7 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Import RedirectAttributes
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; 
 
 import java.util.List;
 import java.util.ArrayList;
@@ -86,7 +86,7 @@ public class GrupoController {
     }
 
     @PostMapping("/criar_grupo")
-    public String salvarGrupo(@ModelAttribute Grupo grupo, RedirectAttributes redirectAttributes) { // Added RedirectAttributes
+    public String salvarGrupo(@ModelAttribute Grupo grupo, RedirectAttributes redirectAttributes) { 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User criador = userService.getUserByUsername(username);
@@ -97,10 +97,9 @@ public class GrupoController {
 
         try {
             grupoService.salvarComCriador(grupo, criador);
-            redirectAttributes.addFlashAttribute("successMessage", "Grupo criado com sucesso!"); // Add success message
+            redirectAttributes.addFlashAttribute("successMessage", "Grupo criado com sucesso!"); 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar grupo: " + e.getMessage()); // Add error message
-            // Log the exception
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar grupo: " + e.getMessage()); 
             System.err.println("Erro ao criar grupo: " + e.getMessage());
         }
 

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seu papel</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for button styling if Tailwind doesn't have the exact green */
+        .btn-primary {
+            background-color: #65A603;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: #65A603;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #65A603;
+        }
+    </style>
+</head>
+<body class="m-0 p-0 bg-[#fafafa] flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
+
+<header class="w-full flex justify-between items-center px-4 py-3 absolute top-2 left-0">
+<!--    seta de voltar-->
+    <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500 cursor-pointer">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+    </div>
+
+    <div class="flex items-center text-gray-500 text-sm">
+        Português(BR)
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+    </div>
+</header>
+
+<div class="flex flex-grow items-center justify-center">
+    <div class="text-left mb-8">
+        <img src="/favicon-brasfi.png" alt="Logo BRASFI" class="mb-8" />
+        <p class="font-normal text-lg text-[#444444] mb-2">Estamos quase lá!</p>
+        <h1 class="font-bold text-2xl mb-8">Qual o seu papel na BRASFI?</h1>
+
+        <div class="flex gap-3">
+            <form th:action="@{/login}" method="post">
+                <button type="submit" class="btn-primary">Sou membro BRASFI</button>
+            </form>
+
+            <form th:action="@{/validarCodigo}" method="post">
+                <button type="submit" class="btn-secondary">Sou Administrador</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

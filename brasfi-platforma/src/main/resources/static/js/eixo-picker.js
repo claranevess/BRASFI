@@ -1,14 +1,51 @@
+function initializeEixoPicker() {
+    fillEixoColumn();
+    document.getElementById('togglePickerEixo').addEventListener('click', function (e) {
+        e.stopPropagation();
+        document.getElementById('eixopicker').classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function () {
+        const picker = document.getElementById('eixopicker');
+        if (!picker.classList.contains('hidden')) {
+            picker.classList.add('hidden');
+        }
+    });
+
+    document.getElementById('eixopicker').addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    document.getElementById('eixo-col').addEventListener('scroll', () => {
+        clearTimeout(window._eixoScrollTimeout);
+        window._eixoScrollTimeout = setTimeout(() => {
+            const selected = getSelectedEixo(); // ex: "Empreendedorismo"
+            document.getElementById('buttonTextEixo').innerText = selected;
+
+            // converte para o formato do enum
+            const enumValue = eixoMapping[selected] || "";
+            document.getElementById('eixoInput').value = enumValue;
+
+            const eixoCol = document.getElementById('eixo-col');
+            const eixoIndex = Math.round(eixoCol.scrollTop / 50);
+            updateActiveEixo(eixoIndex);
+        }, 100);
+    });
+}
+
 // Dados do eixo (pode alterar conforme necessário)
 const eixosTematicos = [
   "Finanças",
   "Empreendedorismo",
-  "Liderança"
+  "Liderança",
+  "Saúde"
 ];
 
 const eixoMapping = {
   "Finanças": "FINANCAS",
   "Empreendedorismo": "EMPREENDEDORISMO",
-  "Liderança": "LIDERANCA"
+  "Liderança": "LIDERANCA",
+  "Saúde": "SAUDE"
 };
 
 function fillEixoColumn() {
@@ -48,37 +85,5 @@ function updateActiveEixo(index) {
     });
 }
 
-document.getElementById('togglePickerEixo').addEventListener('click', function (e) {
-    e.stopPropagation();
-    document.getElementById('eixopicker').classList.toggle('hidden');
-});
-
-document.addEventListener('click', function () {
-    const picker = document.getElementById('eixopicker');
-    if (!picker.classList.contains('hidden')) {
-        picker.classList.add('hidden');
-    }
-});
-
-document.getElementById('eixopicker').addEventListener('click', function (e) {
-    e.stopPropagation();
-});
-
-document.getElementById('eixo-col').addEventListener('scroll', () => {
-    clearTimeout(window._eixoScrollTimeout);
-    window._eixoScrollTimeout = setTimeout(() => {
-        const selected = getSelectedEixo(); // ex: "Empreendedorismo"
-        document.getElementById('buttonTextEixo').innerText = selected;
-
-        // converte para o formato do enum
-        const enumValue = eixoMapping[selected] || "";
-        document.getElementById('eixoInput').value = enumValue;
-
-        const eixoCol = document.getElementById('eixo-col');
-        const eixoIndex = Math.round(eixoCol.scrollTop / 50);
-        updateActiveEixo(eixoIndex);
-    }, 100);
-});
 
 
-fillEixoColumn();

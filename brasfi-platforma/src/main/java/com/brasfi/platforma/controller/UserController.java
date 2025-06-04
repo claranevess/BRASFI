@@ -1,7 +1,7 @@
 package com.brasfi.platforma.controller;
 
 import com.brasfi.platforma.model.Estudante;
-import com.brasfi.platforma.model.Mentor;
+import com.brasfi.platforma.model.Administrador;
 import com.brasfi.platforma.model.TipoUsuario;
 import com.brasfi.platforma.model.User;
 import com.brasfi.platforma.service.UserService;
@@ -31,10 +31,33 @@ public class UserController {
         if(user.getTipoUsuario() == TipoUsuario.ESTUDANTE){
             Estudante estudante = new Estudante(user);
             userService.salvarUser(estudante);
-        } else if (user.getTipoUsuario() == TipoUsuario.MENTOR){
-            Mentor mentor = new Mentor(user);
-            userService.salvarUser(mentor);
+        } else if (user.getTipoUsuario() == TipoUsuario.ADMINISTRADOR){
+            Administrador administrador = new Administrador(user);
+            userService.salvarUser(administrador);
         }
-        return "redirect:/login"; // Redireciona para a página de login após o registro
+        return "redirect:/escolherCargo"; // Redireciona para a página de login após o registro
     }
+
+    @GetMapping("/escolherCargo")
+    public String mostrarEscolhaCargo(Model model) {
+        return "user/escolherCargo";
+    }
+
+    @GetMapping("/validarCodigo")
+    public String mostrarValidacaoCodigo(Model model) {
+        model.addAttribute("user", new User());
+        return "user/validarCodigo";
+    }
+
+    @PostMapping("/validarCodigo")
+    public String validarCodigo(Model model) {
+        model.addAttribute("user", new User());
+        return "user/validarCodigo";
+    }
+
+
+
+
+
+
 }
