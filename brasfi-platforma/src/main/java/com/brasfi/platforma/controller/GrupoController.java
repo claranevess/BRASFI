@@ -53,7 +53,7 @@ public class GrupoController {
             if (currentUser != null) {
                 myGroups = grupoService.findGruposByUserId(currentUser.getId());
 
-                if (currentUser.getTipoUsuario() == TipoUsuario.MENTOR) {
+                if (currentUser.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
                     pendingSolicitacoes = grupoService.findAllPendingSolicitacoes();
                     model.addAttribute("pendingSolicitacoes", pendingSolicitacoes);
                     exploreGroups = new ArrayList<>();
@@ -77,7 +77,7 @@ public class GrupoController {
         String username = auth.getName();
         User criador = userService.getUserByUsername(username);
 
-        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) {
+        if (criador == null || criador.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 
@@ -91,7 +91,7 @@ public class GrupoController {
         String username = auth.getName();
         User criador = userService.getUserByUsername(username);
 
-        if (criador == null || criador.getTipoUsuario() != TipoUsuario.MENTOR) {
+        if (criador == null || criador.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
             throw new AccessDeniedException("Apenas mentores podem criar grupos.");
         }
 
@@ -122,7 +122,7 @@ public class GrupoController {
             return "redirect:/login";
         }
 
-        if (currentUser.getTipoUsuario() == TipoUsuario.MENTOR) {
+        if (currentUser.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
             redirectAttributes.addFlashAttribute("errorMessage", "Mentores não solicitam acesso a grupos dessa forma.");
             return "redirect:/grupo/listar";
         }
@@ -149,7 +149,7 @@ public class GrupoController {
             adminUser = userService.getUserByUsername(username);
         }
 
-        if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.MENTOR) {
+        if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
             throw new AccessDeniedException("Apenas mentores podem aceitar solicitações.");
         }
 
@@ -175,7 +175,7 @@ public class GrupoController {
             adminUser = userService.getUserByUsername(username);
         }
 
-        if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.MENTOR) {
+        if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
             throw new AccessDeniedException("Apenas mentores podem recusar solicitações.");
         }
 

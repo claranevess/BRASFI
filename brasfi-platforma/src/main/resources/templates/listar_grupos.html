@@ -144,11 +144,11 @@
                     <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
                     <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Fixados</button>
                     <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Não lidos</button>
-                    <button th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'MENTOR'}"
+                    <button th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'ADMINISTRADOR'}"
                             class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
                 </div>
 
-                <div th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'MENTOR'}">
+                <div th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'ADMINISTRADOR'}">
                     <a th:href="@{/grupo/criar_grupo}" class="flex items-center px-5 py-2 bg-brasfi-blue text-white rounded-lg hover:bg-button-primary-hover transition duration-200">
                         <i class="fas fa-plus mr-2"></i> Novo Grupo
                     </a>
@@ -208,7 +208,7 @@
             </div>
         </div>
 
-        <div th:if="${currentUser == null or currentUser.tipoUsuario == null or currentUser.tipoUsuario.name() != 'MENTOR'}" class="flex-1 flex flex-col">
+        <div th:if="${currentUser == null or currentUser.tipoUsuario == null or currentUser.tipoUsuario.name() != 'ADMINISTRADOR'}" class="flex-1 flex flex-col">
             <h2 class="text-2xl font-semibold text-dark-text mb-6">Navegue a BRASFI: <br>Explore novos grupos</h2>
 
             <div class="relative flex items-center mb-6">
@@ -261,7 +261,7 @@
             </div>
         </div>
 
-        <div th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'MENTOR'}" class="flex-1 flex flex-col">
+        <div th:if="${currentUser != null and currentUser.tipoUsuario != null and currentUser.tipoUsuario.name() == 'ADMINISTRADOR'}" class="flex-1 flex flex-col">
             <h2 class="text-2xl font-semibold text-dark-text mb-6">Solicitações</h2>
 
             <div class="relative flex items-center mb-6">
