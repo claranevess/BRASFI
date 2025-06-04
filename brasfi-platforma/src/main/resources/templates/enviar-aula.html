@@ -1,88 +1,87 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Upload das Aulas</title>
+    <title>Envio das Aulas</title>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 min-h-screen p-8">
-<div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Upload da Aula</h2>
+<body class="bg-gray-100 min-h-screen p-6">
+<div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md p-6">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Envio das Aulas</h2>
 
-    <form id="uploadForm" th:action="@{/aulas/salvar}" th:object="${aula}" method="post" class="space-y-4">
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Link do vídeo:</label>
-            <input type="text" th:field="*{link}" required
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <form th:action="@{/aulas/salvar}" th:object="${aula}" method="post" enctype="multipart/form-data" onsubmit="return mostrarPopup()">
+        <!-- Título da Aula -->
+        <div class="mb-6">
+            <input type="text" th:field="*{titulo}" placeholder="Adicione um título para a aula..." required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"/>
         </div>
 
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Título do vídeo:</label>
-            <input type="text" th:field="*{titulo}" required
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Coluna Esquerda: Link da Aula + Descrição -->
+            <div>
+                <!-- Link da Aula -->
+                <label class="block text-gray-700 font-semibold mb-2">Anexar link da aula</label>
+                <input type="url" th:field="*{link}" placeholder="https://www.youtube.com/..." required
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"/>
+
+                <!-- Descrição -->
+                <label class="block text-gray-700 font-semibold mb-2">Descrição</label>
+                <textarea th:field="*{descricao}" rows="8" placeholder="Adicione uma descrição..." required
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+
+            <!-- Coluna Direita: Materiais de Apoio -->
+            <div class="flex flex-col justify-between">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Materiais de apoio</label>
+
+                    <!-- Links de Apoio -->
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-1">Links</label>
+
+                        <div id="links-container">
+                            <input type="url" name="linkApoio" placeholder="www.exemplo.com"
+                                   class="w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <button type="button" onclick="adicionarCampoLink()"
+                                class="text-blue-600 hover:underline text-sm mt-1">+ Adicionar outro link</button>
+                    </div>
+
+                    <!-- Upload de Documentos -->
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">Documentos</label>
+                        <input type="file" name="documentos" multiple
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Categoria do vídeo:</label>
-            <input type="text" th:field="*{descricao}" required
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- Botão Salvar -->
+        <div class="mt-8">
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Salvar Aula
+            </button>
         </div>
-
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Comunidade:</label>
-            <input type="text" th:field="*{grupo}" required
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-
-        <button type="submit"
-                class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-            Salvar
-        </button>
     </form>
 </div>
 
-<!-- Modal/Popup de sucesso (inicialmente oculto) -->
-<div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-        <div class="text-center">
-            <svg class="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            <h3 class="text-lg font-medium text-gray-900 mt-3">Sucesso!</h3>
-            <div class="mt-2">
-                <p class="text-sm text-gray-500">Vídeo salvo com sucesso!</p>
-            </div>
-        </div>
-        <div class="mt-5">
-            <button onclick="document.getElementById('successModal').classList.add('hidden')"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Fechar
-            </button>
-        </div>
-    </div>
+<div th:if="${mensagem}" class="mt-4 p-4 bg-green-100 text-green-700 rounded">
+    <p th:text="${mensagem}"></p>
 </div>
 
-<script>
-    // Verifica se há parâmetro de sucesso na URL
-    document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('sucesso')) {
-            document.getElementById('successModal').classList.remove('hidden');
-        }
-
-        // Fechar o modal ao pressionar ESC
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                document.getElementById('successModal').classList.add('hidden');
-            }
-        });
-    });
-
-    // Opcional: Limpar parâmetros da URL após mostrar o modal
-    if (window.history.replaceState && new URLSearchParams(window.location.search).has('sucesso')) {
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, cleanUrl);
-    }
-</script>
 </body>
 </html>
+<script>
+    function adicionarCampoLink() {
+        const container = document.getElementById("links-container");
+        const input = document.createElement("input");
+        input.type = "url";
+        input.name = "linkApoio";
+        input.placeholder = "www.exemplo.com";
+        input.className = "w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
+        container.appendChild(input);
+    }
+</script>

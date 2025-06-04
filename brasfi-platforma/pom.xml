@@ -87,15 +87,24 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+    
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+    
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>java-dotenv</artifactId>
 			<version>5.2.2</version>
 		</dependency>
+
+		<!-- WebSocket -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
