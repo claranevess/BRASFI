@@ -31,7 +31,7 @@ Pesquisar usuários participantes de grupo pela barra de pesquisa.
 
 Acompanhamento do Progresso:
 Marcar uma aula como concluída.
-## Tecnologias usadas
+## Tecnologias utilizadas
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=Spring&logoColor=white)
 ![Javascript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
@@ -102,7 +102,7 @@ Search for group participants using the search bar.
 
 Progress Tracking:
 Mark a class/lesson as completed.
-## Used tecnologies
+## Used technologies
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=Spring&logoColor=white)
 ![Javascript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
