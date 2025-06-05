@@ -18,20 +18,20 @@
         .timeline-line {
             position: absolute;
             left: 30px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background-color: #E5E7EB;
-            z-index: 5; /* Linha sobre os cards */
+            top: -20px;
+            bottom: -20px;
+            width: 3px;
+            background-color: #D1D5DB;
+            z-index: 5;
         }
         .status-dot {
-            width: 24px;
-            height: 24px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            z-index: 10; /* Bolinhas sobre os cards */
+            z-index: 10;
             position: absolute;
             left: 18px;
             top: 20px;
@@ -55,7 +55,7 @@
         }
         .lesson-card-content {
             padding: 20px;
-            padding-left: 50px; /* Espaço para a linha e bolinha */
+            padding-left: 60px;
             position: relative;
             z-index: 1;
         }
@@ -65,9 +65,9 @@
             left: 0;
             top: 0;
             bottom: 0;
-            width: 40px;
+            width: 45px;
             background-color: white;
-            z-index: 2; /* Área branca abaixo da linha */
+            z-index: 2;
         }
         .lesson-card:hover {
             transform: translateY(-3px);
@@ -98,11 +98,7 @@
             margin-left: auto;
             gap: 12px;
         }
-        .card-divider {
-            height: 1px;
-            background-color: #E5E7EB;
-            margin: 15px 0;
-        }
+
     </style>
     <script>
         tailwind.config = {
@@ -119,7 +115,7 @@
                         'medium-text': '#4B5563',
                         'light-text': '#6B7280',
                         'input-border': '#D1D5DB',
-                        'line-gray': '#E5E7EB',
+                        'line-gray': '#D1D5DB',
                         'success-green': '#10B981',
                         'pending-yellow': '#F59E0B',
                     }
