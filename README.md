@@ -14,7 +14,7 @@ Ao promover uma rede de aprendizagem e troca, a BRASFI oferece um espaço onde o
 
 # 🚀 Funcionalidades da Plataforma
 
-### 🎓 Acesso a Aulas
+###  🎓 Acesso a Aulas
 Assistir a vídeos educativos diretamente na plataforma.
 Marcar aulas como concluídas para acompanhar o progresso.
 ### 🧭 Trilhas de Conhecimento
