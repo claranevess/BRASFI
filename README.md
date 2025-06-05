@@ -10,7 +10,7 @@ Com conteúdos exclusivos sobre finanças sustentáveis, inovação, justiça so
 
 Este portal foi desenvolvido para impulsionar o conhecimento e fortalecer uma comunidade de lideranças ativas na transformação de sistemas sociais, financeiros e ambientais.
 
-Ao promover uma rede de aprendizagem e troca, a BRASFI oferece um espaço onde o saber circula e a liderança se constrói de forma colaborativa.
+Ao promover uma rede de aprendizagem e troca, a BRASFI oferece um espaço onde o saber circula e a liderança se constrói de forma colaborativa. 
 
 # 🚀 Funcionalidades da Plataforma
 
