@@ -36,6 +36,10 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com username: " + username));
     }
 
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     public User findById(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         return userOptional.orElse(null);
