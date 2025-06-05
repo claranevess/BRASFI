@@ -1,0 +1,87 @@
+<div id="modalAdicionarAulaTrilha" th:fragment="modalContent" class="custom-modal-overlay hidden">
+    <div class="bg-white w-full max-w-xl min-w-[980px] mx-auto rounded-lg shadow-lg relative flex flex-col p-8">
+        <h2 class="text-4xl font-semibold mb-6">Adicionar Aula Na Trilha</h2>
+
+        <div class="p-0 flex-grow">
+            <form th:action="@{/aulas/salvar}" th:object="${aula}" method="post" enctype="multipart/form-data">
+                <div class="mb-6">
+                    <div class="mb-4">
+                        <input placeholder="Digite o nome da aula..." type="text" th:field="*{titulo}"
+                               class="w-full border-b-2 border-gray-300 p-2 focus:ring-0 outline-none font-semibold text-xl" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="border border-[#65A603] p-4 rounded-lg flex flex-col">
+                        <label for="link" class="flex text-lg items-center text-gray-700 font-medium mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
+                                <path d="M10.0811 19.2147C15.0091 19.2147 19.004 15.2198 19.004 10.2918C19.004 5.36379 15.0091 1.36887 10.0811 1.36887C5.15312 1.36887 1.1582 5.36379 1.1582 10.2918C1.1582 15.2198 5.15312 19.2147 10.0811 19.2147Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8.29688 6.72261L13.6506 10.2918L8.29688 13.8609V6.72261Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Anexar link da aula
+                        </label>
+                        <input type="url" id="link" th:field="*{link}" placeholder="Copie e cole aqui..."
+                               class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4">
+                        <label class="text-gray-700 font-medium mb-2">Pré-visualização</label>
+                        <div id="videoPreviewContainer" class="flex-grow w-full bg-gray-200 rounded-md flex items-center justify-center relative video-preview-placeholder" style="min-height: 180px;">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="border border-[#65A603] p-4 rounded-lg flex flex-col">
+                                <label for="descricao" class="flex text-lg items-center text-gray-700 font-medium mb-2">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-600" viewBox="0 0 19 15" fill="none">
+                                        <path d="M14.0885 13.0421H1.13379" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M17.7899 9.34073H1.13379" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M14.0885 5.6394H1.13379" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M17.7899 1.93802H1.13379" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Descrição
+                                </label>
+                                <textarea id="descricao" th:field="*{descricao}" rows="5" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+                                          class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 flex-grow"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="border border-[#65A603] p-4 rounded-lg">
+                            <div class="text-gray-700 text-lg font-medium mb-4">
+                                <div class="flex items-baseline mb-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-2" viewBox="0 0 20 21" fill="none">
+                                        <path d="M18.1688 10.023L10.2942 17.8976C9.32947 18.8623 8.02105 19.4042 6.65676 19.4042C5.29247 19.4042 3.98406 18.8623 3.01936 17.8976C2.05466 16.9329 1.5127 15.6245 1.5127 14.2602C1.5127 12.8959 2.05466 11.5875 3.01936 10.6228L10.894 2.74815C11.5371 2.10502 12.4094 1.74371 13.3189 1.74371C14.2284 1.74371 15.1007 2.10502 15.7438 2.74815C16.387 3.39129 16.7483 4.26356 16.7483 5.17309C16.7483 6.08262 16.387 6.95489 15.7438 7.59803L7.86066 15.4726C7.53909 15.7942 7.10296 15.9749 6.64819 15.9749C6.19343 15.9749 5.75729 15.7942 5.43572 15.4726C5.11416 15.1511 4.9335 14.7149 4.9335 14.2602C4.9335 13.8054 5.11416 13.3693 5.43572 13.0477L12.7105 5.78147" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span>Materiais de apoio</span>
+                                </div>
+
+                                <p class="ml-auto text-sm text-gray-500 font-normal">Deseja anexar algum material?</p>
+                            </div>
+
+                            <div class="flex gap-3 items-baseline mb-4 pr-6">
+                                <label for="linkApoio" class="block text-gray-600 text-sm font-semibold mb-1">Links</label>
+                                <input type="url" name="linkApoio" placeholder="Copie e cole aqui..."
+                                       class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            </div>
+
+                            <div class="flex gap-3 items-baseline">
+                                <label for="documentos" class="block text-gray-600 text-sm font-semibold mb-1">Documentos</label>
+
+                                <input type="file" id="documentos" name="documentos" multiple class="hidden">
+
+                                <div class="flex items-baseline mb-1 text-[#444444] hover:text-gray-800 cursor-pointer text-sm font-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-4 mr-1" viewBox="0 0 14 14" fill="none">
+                                        <path d="M12.7624 8.87225V11.5161C12.7624 11.8667 12.6232 12.2029 12.3753 12.4508C12.1274 12.6987 11.7911 12.838 11.4405 12.838H2.18715C1.83655 12.838 1.50032 12.6987 1.25241 12.4508C1.00451 12.2029 0.865234 11.8667 0.865234 11.5161V8.87225" stroke="#444444" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M10.1183 4.24576L6.81357 0.940979L3.50879 4.24576" stroke="#444444" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M6.81348 0.940979V8.87245" stroke="#444444" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Fazer Upload de Arquivos
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
