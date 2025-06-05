@@ -14,5 +14,8 @@ public class AvisoController {
     @Autowired //faz repository funcionar
     private AvisoRepository avisoRepository; //acesso ao banco de dados pra salvar e buscar
 
-
+    @GetMapping("/dashboard/adm")
+    public String mostrarDashboard(Model model) {
+        return "visaoAdmQuadroAvisos";
+    }
 }

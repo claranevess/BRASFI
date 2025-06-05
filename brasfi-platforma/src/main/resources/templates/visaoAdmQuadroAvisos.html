@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Painel BRASFI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
 </head>
 <body class="bg-gray-100 font-sans">
 
@@ -13,12 +14,27 @@
 
 
     <aside class="w-20 bg-white border-r flex flex-col items-center py-6 space-y-8">
-        <img src="/static/favicon-brasfi.png" alt="Home" class="w-8 h-8" />
-        <img src="/static/dash2.png" alt="Dashboard" class="w-8 h-8" />
-        <img src="/static/trilha2.png" alt="Trilhas" class="w-8 h-8" />
-        <img src="/static/grupos2.png" alt="Grupos" class="w-8 h-8" />
-        <img src="/static/saida2.png" alt="Saída" class="w-8 h-8" />
+        <img src="/static/favicon-brasfi.png" alt="Home" class="w-8 h-8 cursor-pointer" />
+        <a href="/dashboard">
+            <img src="/static/dash2.png" alt="Dashboard" class="w-8 h-8 cursor-pointer" />
+        </a>
+        <a href="/trilhas/listar">
+            <img src="/static/trilha2.png" alt="Trilhas" class="w-8 h-8 cursor-pointer" />
+        </a>
+        <a href="/grupos/listar">
+            <img src="/static/grupos2.png" alt="Grupos" class="w-8 h-8 cursor-pointer" />
+        </a>
+        <!-- Ícone de logout -->
+        <a href="#" onclick="document.getElementById('logout-form').submit();">
+            <img src="/static/saida2.png" alt="Saída" class="w-8 h-8 cursor-pointer" />
+        </a>
+
+        <!-- Formulário invisível para fazer logout via POST -->
+        <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+
+
     </aside>
+
 
 
     <main class="flex-1 p-6 space-y-6">
