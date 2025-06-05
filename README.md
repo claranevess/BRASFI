@@ -51,6 +51,7 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
 </p>
 
 ## Tecnologias utilizadas
+<p align="center">
   ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
   ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=Spring&logoColor=white)
   ![Javascript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
@@ -62,6 +63,7 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
   ![Railway](https://img.shields.io/badge/Railway-000000?style=for-the-badge&logo=railway&logoColor=white)
   ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
   ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+</p>
 
 ## Contatos
 
