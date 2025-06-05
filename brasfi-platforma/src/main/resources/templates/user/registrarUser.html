@@ -14,12 +14,10 @@
 
 <div class="flex flex-col lg:flex-row h-screen bg-[#fafafa] overflow-hidden">
 
-    <!-- Lado esquerdo: Imagem -->
     <div class="lg:w-1/2 bg-cover bg-center lg:flex hidden items-center justify-center h-screen">
         <img src="/cadastro-banner.jpg" alt="Imagem decorativa" class="w-full mb-4" />
     </div>
 
-    <!-- Lado direito: Formulário -->
     <div class="lg:w-2/3 flex flex-col items-center justify-center bg-white h-screen p-6">
         <div class="w-full max-w-md">
 
@@ -29,11 +27,9 @@
                 <h1 class="font-bold text-3xl mb-8">Junte-se a BRASFI Conecta</h1>
             </div>
 
-            <!-- Formulário -->
             <form th:action="@{/registrar}" th:object="${user}" method="post" class="mt-8 w-full space-y-6">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Nome completo -->
                     <div>
                         <input
                                 type="text"
@@ -45,7 +41,6 @@
                         />
                     </div>
 
-                    <!-- Nome de usuário -->
                     <div>
                         <input
                                 type="text"
@@ -57,7 +52,6 @@
                         />
                     </div>
 
-                    <!-- E-mail -->
                     <div>
                         <input
                                 type="email"
@@ -69,7 +63,6 @@
                         />
                     </div>
 
-                    <!-- Telefone -->
                     <div>
                         <input
                                 type="text"
@@ -81,7 +74,6 @@
                         />
                     </div>
 
-                    <!-- Senha -->
                     <div class="relative">
                         <input
                                 type="password"
@@ -91,15 +83,17 @@
                                 class="placeholder-[#A1A1A1] w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black pr-10"
                                 required
                         />
-                        <img
-                                src="/imagens/eye-slash.svg"
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2 w-[24px] cursor-pointer"
-                                alt="Mostrar Senha"
-                                id="togglePassword"
-                        />
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 w-[24px] cursor-pointer toggle-password-icon" data-target-input="senha">
+                            <svg class="eye-open-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 18" fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 18C18.6274 18 24 10.9286 24 9C24 7.07143 18.6274 0 12 0C5.37258 0 0 7.07143 0 9C0 10.9286 5.37258 18 12 18ZM15.75 9C15.75 11.0711 14.0711 12.75 12 12.75C9.92893 12.75 8.25 11.0711 8.25 9C8.25 6.92893 9.92893 5.25 12 5.25C12.2589 5.25 12.5116 5.27623 12.7558 5.32619C14.4646 5.67586 15.75 7.18782 15.75 9Z" fill="#65A603"/>
+                            </svg>
+                            <svg class="eye-slash-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 20" fill="none">
+                                <path d="M16.185 17.368L13.764 14.9455C12.8278 15.2802 11.8157 15.3422 10.8456 15.1243C9.87554 14.9063 8.98729 14.4173 8.28423 13.7143C7.58117 13.0112 7.09221 12.123 6.87424 11.1529C6.65628 10.1828 6.71827 9.17074 7.053 8.2345L3.963 5.1445C1.407 7.417 0 10 0 10C0 10 4.5 18.25 12 18.25C13.4406 18.245 14.8649 17.9448 16.185 17.368ZM7.815 2.632C9.13508 2.05514 10.5594 1.75496 12 1.75C19.5 1.75 24 10 24 10C24 10 22.5915 12.5815 20.0385 14.857L16.9455 11.764C17.2802 10.8278 17.3422 9.81572 17.1243 8.84563C16.9063 7.87554 16.4173 6.98729 15.7143 6.28423C15.0112 5.58117 14.123 5.09221 13.1529 4.87424C12.1828 4.65628 11.1707 4.71827 10.2345 5.053L7.815 2.632Z" fill="#65A603"/>
+                                <path d="M8.28774 9.46924C8.20523 10.0457 8.25811 10.6335 8.44218 11.1859C8.62626 11.7384 8.93648 12.2404 9.34826 12.6522C9.76003 13.064 10.2621 13.3742 10.8145 13.5583C11.367 13.7424 11.9548 13.7952 12.5312 13.7127L8.28774 9.46924ZM15.7127 10.5312L11.4692 6.28624C12.0457 6.20373 12.6335 6.25661 13.1859 6.44068C13.7384 6.62476 14.2404 6.93498 14.6522 7.34676C15.064 7.75853 15.3742 8.26055 15.5583 8.81303C15.7424 9.36551 15.7952 9.95327 15.7127 10.5297V10.5312ZM20.4692 19.5312L2.46924 1.53124L3.53124 0.469238L21.5312 18.4692L20.4692 19.5312Z" fill="#65A603"/>
+                            </svg>
+                        </div>
                     </div>
 
-                    <!-- Confirmar senha -->
                     <div class="relative">
                         <input
                                 type="password"
@@ -109,28 +103,17 @@
                                 class="placeholder-[#A1A1A1] w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black pr-10"
                                 required
                         />
-                        <img
-                                src="/imagens/eye-slash.svg"
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2 w-[24px] cursor-pointer"
-                                alt="Mostrar Senha"
-                                onclick="toggleConfirmarSenha()"
-                        />
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 w-[24px] cursor-pointer toggle-password-icon" data-target-input="confirmarSenha">
+                            <svg class="eye-open-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 18" fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 18C18.6274 18 24 10.9286 24 9C24 7.07143 18.6274 0 12 0C5.37258 0 0 7.07143 0 9C0 10.9286 5.37258 18 12 18ZM15.75 9C15.75 11.0711 14.0711 12.75 12 12.75C9.92893 12.75 8.25 11.0711 8.25 9C8.25 6.92893 9.92893 5.25 12 5.25C12.2589 5.25 12.5116 5.27623 12.7558 5.32619C14.4646 5.67586 15.75 7.18782 15.75 9Z" fill="#65A603"/>
+                            </svg>
+                            <svg class="eye-slash-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 20" fill="none">
+                                <path d="M16.185 17.368L13.764 14.9455C12.8278 15.2802 11.8157 15.3422 10.8456 15.1243C9.87554 14.9063 8.98729 14.4173 8.28423 13.7143C7.58117 13.0112 7.09221 12.123 6.87424 11.1529C6.65628 10.1828 6.71827 9.17074 7.053 8.2345L3.963 5.1445C1.407 7.417 0 10 0 10C0 10 4.5 18.25 12 18.25C13.4406 18.245 14.8649 17.9448 16.185 17.368ZM7.815 2.632C9.13508 2.05514 10.5594 1.75496 12 1.75C19.5 1.75 24 10 24 10C24 10 22.5915 12.5815 20.0385 14.857L16.9455 11.764C17.2802 10.8278 17.3422 9.81572 17.1243 8.84563C16.9063 7.87554 16.4173 6.98729 15.7143 6.28423C15.0112 5.58117 14.123 5.09221 13.1529 4.87424C12.1828 4.65628 11.1707 4.71827 10.2345 5.053L7.815 2.632Z" fill="#65A603"/>
+                                <path d="M8.28774 9.46924C8.20523 10.0457 8.25811 10.6335 8.44218 11.1859C8.62626 11.7384 8.93648 12.2404 9.34826 12.6522C9.76003 13.064 10.2621 13.3742 10.8145 13.5583C11.367 13.7424 11.9548 13.7952 12.5312 13.7127L8.28774 9.46924ZM15.7127 10.5312L11.4692 6.28624C12.0457 6.20373 12.6335 6.25661 13.1859 6.44068C13.7384 6.62476 14.2404 6.93498 14.6522 7.34676C15.064 7.75853 15.3742 8.26055 15.5583 8.81303C15.7424 9.36551 15.7952 9.95327 15.7127 10.5297V10.5312ZM20.4692 19.5312L2.46924 1.53124L3.53124 0.469238L21.5312 18.4692L20.4692 19.5312Z" fill="#65A603"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Tipo de usuário -->
-<!--                <div>-->
-<!--                    <select-->
-<!--                            id="tipoUsuario"-->
-<!--                            th:field="*{tipoUsuario}"-->
-<!--                            class="w-full px-1 py-2 border-b border-[#4B5565] focus:outline-none text-black bg-white"-->
-<!--                            required-->
-<!--                    >-->
-<!--                        <option value="" disabled selected>Selecione a Função</option>-->
-<!--                        <option value="ADMINISTRADOR">Administrador</option>-->
-<!--                        <option value="ESTUDANTE">Estudante</option>-->
-<!--                    </select>-->
-<!--                </div>-->
 
                 <div class="flex items-center space-x-2">
                     <input
@@ -141,21 +124,21 @@
                             required
                     />
                     <label for="remember" class="text-sm font-normal text-[#4B5565]">
-                        Eu concordo com os <a href="/termos" class="underline text-black">Termos de Uso</a> e <a href="/privacidade" class="underline text-black">Política de Privacidade</a>.
+                        Eu concordo com os <a href="/termos" class="text-[#65A603] underline">Termos de Uso</a> e <a href="/privacidade" class="text-[#65A603] underline">Política de Privacidade</a>.
                     </label>
                 </div>
 
 
                 <button
                         type="submit"
-                        class="w-full px-1 py-2 mt-6 relative inline-flex items-center justify-center font-medium transition duration-300 ease-out bg-[#4D5061] border-2 border-[#4D5061] rounded-[12px] shadow-md hover:bg-[#3f4251] hover:shadow-lg text-white"
-                >
+                        class="w-full px-3 py-2 mt-6 relative inline-flex items-center justify-center font-medium transition duration-300 ease-out bg-[#65A603] border-2 border-[#65A603] rounded-[12px] shadow-md hover:bg-[#7abf11] hover:shadow-lg text-white">
+
                     <span>Cadastrar</span>
                 </button>
 
                 <p class="font-normal text-[#4B5565] text-base flex mt-3 items-center justify-center">
                     Já tem uma conta?
-                    <a href="/login" class="text-black text-base ml-1 font-normal underline">Entre aqui</a>
+                    <a href="/login" class="text-[#65A603] text-base ml-1 font-normal underline">Entre aqui</a>
                 </p>
             </form>
         </div>
@@ -164,14 +147,24 @@
 </div>
 
 <script>
-    // Script para toggle de senha (igual login)
-    const togglePassword = document.querySelector('#togglePassword');
-    const passwordInput = document.querySelector('#senha');
+    document.querySelectorAll('.toggle-password-icon').forEach(function(iconContainer) {
+        const passwordInputId = iconContainer.dataset.targetInput;
+        const passwordInput = document.getElementById(passwordInputId);
+        const eyeOpenIcon = iconContainer.querySelector('.eye-open-icon');
+        const eyeSlashIcon = iconContainer.querySelector('.eye-slash-icon');
 
-    togglePassword.addEventListener('click', () => {
-      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-      passwordInput.setAttribute('type', type);
-      togglePassword.src = type === 'password' ? '/imagens/eye-slash.svg' : '/imagens/eye.svg';
+        iconContainer.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            if (type === 'password') {
+                eyeOpenIcon.style.display = 'none';
+                eyeSlashIcon.style.display = 'block';
+            } else {
+                eyeOpenIcon.style.display = 'block';
+                eyeSlashIcon.style.display = 'none';
+            }
+        });
     });
 </script>
 
