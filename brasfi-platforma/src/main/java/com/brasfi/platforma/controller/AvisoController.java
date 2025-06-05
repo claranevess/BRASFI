@@ -18,4 +18,8 @@ public class AvisoController {
     public String mostrarDashboard(Model model) {
         return "visaoAdmQuadroAvisos";
     }
+    @GetMapping("/dashboard/estudante")
+    public String mostrarDashboardEstudante(Model model) {
+        return "visaoEstQuadroAvisos";
+    }
 }
