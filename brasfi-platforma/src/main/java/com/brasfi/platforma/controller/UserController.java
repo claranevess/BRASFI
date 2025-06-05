@@ -65,11 +65,6 @@ public class UserController {
         } else if (tipo == TipoUsuario.ADMINISTRADOR) {
             userService.atualizarTipoUsuario(userId, TipoUsuario.ADMINISTRADOR.name());
 
-
-            String emailDoAdmin = user.getEmail(); // Get the admin's email
-            geradorCodigoService.generateAndSaveRandomCode(emailDoAdmin);
-            System.out.println("==== UserController: Código de verificação gerado para o administrador " + emailDoAdmin + " ====");
-
             return "redirect:/validarCodigo?userId=" + user.getId();
         }
         return "redirect:/escolherCargo?userId=" + user.getId();
