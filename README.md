@@ -17,7 +17,7 @@ Ao promover uma rede de aprendizagem e troca, a BRASFI oferece um espaço onde o
 ###  🎓 Acesso a Aulas
 Assistir a vídeos educativos diretamente na plataforma.
 Marcar aulas como concluídas para acompanhar o progresso.
-### 🧭 Trilhas de Conhecimento
+###  🧭 Trilhas de Conhecimento
 Acessar trilhas com conteúdos organizados por tema.
 Criar trilhas reunindo aulas por assuntos específicos.
 Editar e excluir trilhas conforme necessário.
