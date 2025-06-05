@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +39,7 @@
             box-shadow: 0 0 0 2px #F59E0B;
         }
         .status-dot.completed {
-            background-color: #10B981;
+            background-color: #65a603;
             box-shadow: 0 0 0 2px #F59E0B;
         }
         .status-dot.pending {
@@ -54,7 +54,7 @@
             border-radius: 8px;
         }
         .lesson-card-content {
-            padding: 20px;
+            padding: 25px;
             padding-left: 60px;
             position: relative;
             z-index: 1;
@@ -78,7 +78,7 @@
             top: 24px;
         }
         .topic-card {
-            border: 1px solid #E5E7EB;
+            border: 1px solid grey;
             border-radius: 8px;
             padding: 12px 15px;
             margin-bottom: 10px;
@@ -130,8 +130,7 @@
     <aside class="w-64 bg-sidebar-bg p-6 shadow-lg flex flex-col justify-between fixed top-0 left-0 h-full z-30">
         <div>
             <div class="flex items-center mb-10">
-                <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16"></div>
-            </div>
+                <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">             </div>
             <nav>
                 <ul class="space-y-1">
                     <li class="mb-2">
@@ -224,11 +223,9 @@
                     </div>
                 </div>
 
-                <!-- Lista de Aulas com Timeline corrigida -->
                 <div class="timeline-container relative">
                     <div class="timeline-line"></div>
 
-                    <!-- Aula 1 - Concluída -->
                     <div class="relative mb-6">
                         <div class="status-dot completed">
                             <i class="fas fa-check text-white text-xs"></i>
@@ -249,7 +246,6 @@
                         </div>
                     </div>
 
-                    <!-- Aula 2 - Concluída -->
                     <div class="relative mb-6">
                         <div class="status-dot completed">
                             <i class="fas fa-check text-white text-xs"></i>
@@ -270,7 +266,6 @@
                         </div>
                     </div>
 
-                    <!-- Aula 3 - Pendente -->
                     <div class="relative mb-6">
                         <div class="status-dot pending"></div>
                         <div class="lesson-card">
@@ -289,7 +284,6 @@
                         </div>
                     </div>
 
-                    <!-- Aula 4 - Pendente -->
                     <div class="relative mb-6">
                         <div class="status-dot pending"></div>
                         <div class="lesson-card">
@@ -316,23 +310,23 @@
 
                     <div class="space-y-3">
                         <div class="topic-card">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-circle"></i>
                             <span class="text-sm text-medium-text">Conceitos fundamentais de finanças sustentáveis</span>
                         </div>
                         <div class="topic-card">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-circle"></i>
                             <span class="text-sm text-medium-text">Aplicação prática dos critérios ESG</span>
                         </div>
                         <div class="topic-card">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-circle"></i>
                             <span class="text-sm text-medium-text">Estratégias de investimento responsável</span>
                         </div>
                         <div class="topic-card">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-circle"></i>
                             <span class="text-sm text-medium-text">Métricas para mensurar impacto socioambiental</span>
                         </div>
                         <div class="topic-card">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-circle"></i>
                             <span class="text-sm text-medium-text">Tendências do mercado de finanças verdes</span>
                         </div>
                     </div>
