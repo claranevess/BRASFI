@@ -25,4 +25,4 @@ EXPOSE 8080
 # Comando para rodar a aplicação Spring Boot
 # A versão padrão para novos projetos Spring Boot é '0.0.1-SNAPSHOT'.
 # Ativa o perfil 'render' para o ambiente de produção
-CMD ["java", "-jar", "target/brasfi-platforma-00.1-SNAPSHOT.jar", "--spring.profiles.active=render"]
+CMD ["java", "-jar", "target/brasfi-platforma-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=render"]
