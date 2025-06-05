@@ -1,19 +1,19 @@
 package com.brasfi.platforma.dto;
 
-import com.brasfi.platforma.model.User; // Assuming User is in model package
+import com.brasfi.platforma.model.User;
 
 public class MemberDto {
     private Long id;
-    private String nome; // Assuming User has a 'nome' field
-    private String email; // Or any other field you want to display
+    private String nome;
+    private String email;
 
     public MemberDto(User user) {
         this.id = user.getId();
-        this.nome = user.getUsername(); // Or user.getNome() if you have a separate name field
-        this.email = user.getEmail(); // Assuming User has an email field
+        this.nome = user.getUsername();
+        this.email = user.getEmail();
     }
 
-    // Getters and setters (or use Lombok @Data)
+    // Getters and setters
     public Long getId() {
         return id;
     }
