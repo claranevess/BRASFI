@@ -36,6 +36,7 @@ public class VerificadorCodigoController {
     public ResponseEntity<String> validateVerificationCode(@RequestParam String email, @RequestParam String code) {
         try {
             boolean isValid = geradorCodigoService.validateCode(email, code);
+            System.out.println("==== Código Input: " + code + "====");
             if (isValid) {
                 return ResponseEntity.ok("Código validado com sucesso!");
             } else {

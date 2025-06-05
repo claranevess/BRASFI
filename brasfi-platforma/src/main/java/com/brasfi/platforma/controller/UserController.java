@@ -31,6 +31,7 @@ public class UserController {
     @GetMapping("/registrar")
     public String mostrarRegistroForm(Model model) {
         model.addAttribute("user", new User());
+        System.out.println("!!!!!!!! AQUI !!!!!!!");
         return "user/registrarUser";
     }
 
@@ -60,17 +61,19 @@ public class UserController {
         TipoUsuario tipo = TipoUsuario.valueOf(tipoUsuario.toUpperCase());
 
         if (tipo == TipoUsuario.ESTUDANTE) {
-            // Update the user's type without re-hashing the password
-            userService.atualizarTipoUsuario(userId, TipoUsuario.ESTUDANTE.name()); // Pass the name as string
-            // Consider if you need to persist the Estudante entity here, not just instantiate it
-            // If Estudante needs to be saved to its own table, you'll need an EstudanteService
-            // For now, based on your previous code, you just instantiate it, which won't save it.
-            // If `new Estudante(user)` is meant to save it, you'll need an EstudanteRepository and service.
-            // Assuming `new Estudante(user);` was just for conceptual representation.
+            userService.atualizarTipoUsuario(userId, TipoUsuario.ESTUDANTE.name());
             return "redirect:/";
         } else if (tipo == TipoUsuario.ADMINISTRADOR) {
-            // Update the user's type without re-hashing the password
-            userService.atualizarTipoUsuario(userId, TipoUsuario.ADMINISTRADOR.name()); // Pass the name as string
+            userService.atualizarTipoUsuario(userId, TipoUsuario.ADMINISTRADOR.name());
+
+            // ***************************************************************
+            // ADD THIS LINE TO GENERATE AND SAVE THE CODE FOR ADMINISTRATORS
+            // ***************************************************************
+            String emailDoAdmin = user.getEmail(); // Get the admin's email
+            geradorCodigoService.generateAndSaveRandomCode(emailDoAdmin);
+            System.out.println("==== UserController: Código de verificação gerado para o administrador " + emailDoAdmin + " ====");
+            // ***************************************************************
+
             return "redirect:/validarCodigo?userId=" + user.getId();
         }
         return "redirect:/escolherCargo?userId=" + user.getId();
@@ -79,6 +82,7 @@ public class UserController {
     @GetMapping("/validarCodigo")
     public String mostrarValidacaoCodigo(@RequestParam Long userId, @RequestParam(required = false) String error, Model model) {
         User user = userService.findById(userId);
+        System.out.println("!!!!!!!! GET VALIDAR CODIGO !!!!!!!");
         if (user == null) {
             return "redirect:/registrar"; // Tratar erro: usuário não encontrado
         }
@@ -93,21 +97,27 @@ public class UserController {
     public String validarCodigo(@RequestParam Long userId, @RequestParam String enteredCode, Model model) {
         User user = userService.findById(userId);
         if (user == null) {
+            System.out.println("==== UserController: Usuário NÃO encontrado com ID: " + userId + " ====");
             return "redirect:/registrar";
         }
 
-        String email = user.getEmail();
+        String emailDoUsuario = user.getEmail(); // Pega o email do user que está logado ou sendo validado
 
-        boolean isValid = geradorCodigoService.validateCode(email, enteredCode);
+        System.out.println("==== UserController: Tentando validar código ====");
+        System.out.println("==== UserId: " + userId + " ====");
+        System.out.println("==== Email do Usuário (da tabela users): '" + emailDoUsuario + "' ===="); // Aspas para ver espaços
+        System.out.println("==== Código Digitado: '" + enteredCode + "' ===="); // Aspas para ver espaços
+
+        boolean isValid = geradorCodigoService.validateCode(emailDoUsuario, enteredCode);
+        System.out.println("==== UserController: Resultado da validação (isValid): " + isValid + " ====");
 
         if (isValid) {
-            // If this is the final step for ADMIN and you just updated tipo_usuario previously,
-            // you might not need to save the user again here.
-            // If `new Administrador(user)` is meant to persist, you'll need an AdministradorService.
-            return "redirect:/"; // Código válido, redireciona para a home
+            return "redirect:/"; // Código válido
         } else {
             return "redirect:/validarCodigo?userId=" + userId + "&error=true";
         }
     }
+
+
 
 }

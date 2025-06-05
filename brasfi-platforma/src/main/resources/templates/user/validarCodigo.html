@@ -76,6 +76,7 @@
 
         <form th:action="@{/validarCodigo}" method="post">
             <input type="hidden" name="userId" th:value="${user.id}" />
+            <input type="hidden" name="enteredCode" id="fullCodeHiddenInput" value="" />
 
             <div class="flex justify-center gap-3 mb-8">
                 <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" name="digit1" />
@@ -102,6 +103,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         const inputs = document.querySelectorAll('.code-input');
         const continueButton = document.querySelector('.btn-continue');
+        // Pega a referência do campo hidden existente no HTML
+        const fullCodeHiddenInput = document.getElementById('fullCodeHiddenInput');
 
         const checkAllInputsFilled = () => {
             let allFilled = true;
@@ -113,13 +116,8 @@
                 fullCode += input.value;
             });
 
-            // Set the value of a hidden input named 'enteredCode'
-            let enteredCodeInput = document.createElement('input');
-            enteredCodeInput.type = 'hidden';
-            enteredCodeInput.name = 'enteredCode';
-            enteredCodeInput.value = fullCode;
-            document.querySelector('form').appendChild(enteredCodeInput);
-
+            // Atualiza o valor do campo hidden existente
+            fullCodeHiddenInput.value = fullCode;
 
             if (allFilled) {
                 continueButton.classList.add('active');
@@ -132,6 +130,7 @@
 
         inputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
+                // Filtra para garantir que apenas um dígito numérico é inserido
                 input.value = e.data ? e.data.replace(/[^0-9]/g, '').slice(0, 1) : '';
 
                 if (input.value !== '' && index < inputs.length - 1) {
@@ -143,24 +142,28 @@
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Backspace' && input.value === '' && index > 0) {
                     inputs[index - 1].focus();
-                    checkAllInputsFilled(); // Re-check button state after backspace
+                    checkAllInputsFilled();
                 }
             });
 
             input.addEventListener('focus', (e) => {
-                if (input.value === '0') {
-                    input.select();
-                }
+                // Comentado: Esta parte pode causar comportamento inesperado.
+                // Geralmente, 'select()' é usado para copiar/colar, não para digitação normal.
+                // Se o objetivo é apagar um '0' predefinido, considere outra lógica.
+                // if (input.value === '0') {
+                //     input.select();
+                // }
             });
 
             input.addEventListener('keypress', (e) => {
+                // Previne a digitação de caracteres que não são números
                 if (!/[0-9]/.test(e.key)) {
                     e.preventDefault();
                 }
             });
         });
 
-        // Initial check on load
+        // Verifica o estado inicial dos campos ao carregar a página
         checkAllInputsFilled();
     });
 </script>
