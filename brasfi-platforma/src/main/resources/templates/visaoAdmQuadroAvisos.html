@@ -13,29 +13,60 @@
 <div class="flex min-h-screen">
 
 
-    <aside class="w-20 bg-white border-r flex flex-col items-center py-6 space-y-8">
-        <img th:src="@{/static/favicon-brasfi.png}" alt="Home" class="w-8 h-8 cursor-pointer" />
+    <div class="w-64 bg-sidebar-bg p-6 shadow-md flex flex-col justify-between">
+        <div>
+            <div class="flex items-center mb-8">
+                <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">
+            </div>
+            <nav>
+                <ul>
+                    <li class="mb-2">
+                        <a th:href="@{/dashboard}"
+                           th:classappend="${#httpServletRequest.requestURI == '/dashboard'} ?
+                                       ' bg-[#65a603] text-white font-semibold' :
+                                       ' text-medium-gray-text hover:bg-gray-100 hover:text-dark-text'"
+                           class="flex items-center p-3 rounded-lg transition duration-200">
+                            <i class="fas fa-th-large mr-3 text-lg"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a th:href="@{/trilhas/listar}"
+                           th:classappend="${#httpServletRequest.requestURI == '/trilhas/listar'} ?
+                                       ' bg-[#65a603] text-white font-semibold' :
+                                       ' text-medium-gray-text hover:bg-gray-100 hover:text-dark-text'"
+                           class="flex items-center p-3 rounded-lg transition duration-200">
+                            <i class="fas fa-route mr-3 text-lg"></i> Trilhas
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a th:href="@{/grupo/listar}"
+                           th:classappend="${#httpServletRequest.requestURI == '/grupo/listar'} ?
+                                       ' bg-[#65a603] text-white font-semibold' :
+                                       ' text-medium-gray-text hover:bg-gray-100 hover:text-dark-text'"
+                           class="flex items-center p-3 rounded-lg transition duration-200">
+                            <i class="fas fa-users mr-3 text-lg"></i> Grupos
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#"
+                           class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
+                            <i class="fas fa-project-diagram mr-3 text-lg"></i> Projetos
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
-        <a href="/avisos/dashboard/adm">
-            <img th:src="@{/static/dash2.png}" alt="Dashboard" class="w-8 h-8 cursor-pointer" />
-        </a>
+        <div class="border-t border-gray-200 pt-4">
+            <form th:action="@{/logout}" method="post" class="w-full">
+                <button type="submit"
+                        class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-red-100 hover:text-red-600 transition duration-200 w-full">
+                    <i class="fas fa-sign-out-alt mr-3 text-lg"></i> Sair
+                </button>
+            </form>
+        </div>
+    </div>
 
-        <a href="/trilhas/listar">
-            <img th:src="@{/static/trilha2.png}" alt="Trilhas" class="w-8 h-8 cursor-pointer" />
-        </a>
-
-        <a href="/grupo/listar">
-            <img th:src="@{/static/grupos2.png}" alt="Grupos" class="w-8 h-8 cursor-pointer" />
-        </a>
-
-        <!-- Ícone de logout -->
-        <a href="#" onclick="document.getElementById('logout-form').submit();">
-            <img th:src="@{/static/saida2.png}" alt="Saída" class="w-8 h-8 cursor-pointer" />
-        </a>
-
-        <!-- Formulário invisível para fazer logout via POST -->
-        <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
-    </aside>
 
 
 
