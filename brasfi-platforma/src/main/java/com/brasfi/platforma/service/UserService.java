@@ -18,14 +18,12 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public void salvarUserComSenhaCriptografada(User user) {
+        user.setSenha(passwordEncoder.encode(user.getSenha())); // criptografa a senha
+        userRepository.save(user);
+    }
 
     public List<User> findAllUsers() {
         return userRepository.findAll();
-    }
-
-    public void salvarUser(User user) {
-        user.setSenha(passwordEncoder.encode(user.getSenha())); // criptografa a senha
-        userRepository.save(user);
     }
 
     public User atualizarTipoUsuario(Long userId, String tipoUsuario) {
