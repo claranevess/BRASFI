@@ -42,10 +42,7 @@ public class GrupoController {
 
     @Autowired
     private UserService userService;
-
-    /**
-     * DTO para receber dados do formulário do modal de criação de grupo.
-     */
+    
     public static class CriarGrupoModalDto {
         private String nome;
         private String descricao;
