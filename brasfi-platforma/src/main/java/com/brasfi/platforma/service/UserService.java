@@ -5,6 +5,7 @@ import com.brasfi.platforma.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +18,12 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public void salvarUserComSenhaCriptografada(User user) {
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void salvarUser(User user) {
         user.setSenha(passwordEncoder.encode(user.getSenha())); // criptografa a senha
         userRepository.save(user);
     }
