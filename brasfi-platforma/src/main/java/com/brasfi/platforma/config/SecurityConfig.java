@@ -20,12 +20,15 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/login",
                                 "/registrar",
+                                "/escolherCargo",
+                                "/validarCodigo",
+                                "/api/verification/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
                                 "/imagens/**",
                                 "/favicon.ico",
-                                "/exemplo.jpg",
+                                "/*.jpg",
                                 "/favicon-brasfi.png",
                                 "/h2-console/**",
                                 "/aulas/*/concluir" // permite PATCH para concluir aula

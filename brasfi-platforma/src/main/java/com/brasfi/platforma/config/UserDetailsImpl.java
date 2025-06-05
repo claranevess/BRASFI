@@ -10,35 +10,38 @@ import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user; // O seu objeto User personalizado
+    private final User user;
 
     public UserDetailsImpl(User user) {
         this.user = user;
     }
 
-    // Método para acessar o seu objeto User original
     public User getUser() {
         return user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Retorna as autoridades (papéis) do usuário.
-        // Assumindo que seu User tem um campo 'tipoUsuario' e que você quer mapeá-lo para um papel.
-        // Por exemplo, "ADMINISTRADOR" pode se tornar "ROLE_ADMINISTRADOR".
-        // É uma boa prática prefixar com "ROLE_" para usar com hasRole() no Spring Security.
-        String roleName = "ROLE_" + user.getTipoUsuario().toString().toUpperCase(); // Converte para maiúsculas e adiciona ROLE_
-        return Collections.singletonList(new SimpleGrantedAuthority(roleName));
+        if (user.getTipoUsuario() != null) {
+            String roleName = "ROLE_" + user.getTipoUsuario().toString().toUpperCase();
+            return Collections.singletonList(new SimpleGrantedAuthority(roleName));
+        } else {
+            // Se o TipoUsuario for nulo, isso indica um problema de dados ou lógica de registro.
+            // Para evitar NullPointerException durante a autenticação, podemos retornar uma role padrão
+            // ou logar um erro e retornar uma lista vazia/role de 'usuário não atribuído'.
+            System.err.println("ATENÇÃO: Usuário " + user.getUsername() + " possui TipoUsuario nulo. Atribuindo ROLE_DEFAULT.");
+            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_DEFAULT")); // OU Collections.emptyList();
+        }
     }
 
     @Override
     public String getPassword() {
-        return user.getSenha(); // Senha do seu objeto User
+        return user.getSenha();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername(); // Nome de usuário do seu objeto User
+        return user.getUsername();
     }
 
     @Override
@@ -58,6 +61,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true; // Implemente a lógica real se tiver habilitação de conta
+        return true;
     }
 }
