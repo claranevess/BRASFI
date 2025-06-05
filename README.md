@@ -62,7 +62,7 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
   <br>
   ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-1D3C73?style=for-the-badge&logoColor=white)
   ![Git](https://img.shields.io/badge/git-FFB300?style=for-the-badge&logoColor=white)
-  ![Railway](https://img.shields.io/badge/Railway-437312?style=for-the-badge&logoColor=white)
+  ![Render](https://img.shields.io/badge/Render-2F3241?style=for-the-badge&logo=render&logoColor=white)
   ![Figma](https://img.shields.io/badge/Figma-FFB300?style=for-the-badge&logoColor=white)
   ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-437312?style=for-the-badge&logoColor=white)
   <br><br>
