@@ -45,7 +45,7 @@
             opacity: 1;
             transform: scale(1) translateY(0);
         }
-         /* Estilização para select múltiplo se não usar Select2/TomSelect */
+        /* Estilização para select múltiplo se não usar Select2/TomSelect */
         select[multiple] {
             min-height: 100px; /* Para dar mais espaço visual */
             background-image: none; /* Remover setas de dropdown padrão em selects múltiplos */
@@ -548,12 +548,12 @@
         function closeCriarGrupoModal() {
             console.log('Função closeCriarGrupoModal FOI CHAMADA!');
             if (criarGrupoModalEl && criarGrupoModalContentEl) {
-                 criarGrupoModalContentEl.classList.remove('scale-100', 'opacity-100');
-                 criarGrupoModalContentEl.classList.add('scale-95', 'opacity-0');
-                 setTimeout(() => {
+                criarGrupoModalContentEl.classList.remove('scale-100', 'opacity-100');
+                criarGrupoModalContentEl.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
                     criarGrupoModalEl.classList.add('hidden');
                     console.log('Classe "hidden" ADICIONADA ao criarGrupoModalEl após delay.');
-                 }, 300);
+                }, 300);
             }  else {
                 console.error('ERRO: criarGrupoModalEl ou criarGrupoModalContentEl não foram encontrados ao tentar fechar o modal!');
             }
@@ -592,7 +592,7 @@
                 const descricao = formCriarGrupoEl.elements.descricao.value.trim();
                 let membrosIds = [];
                 if (grupoMembrosModalSelectEl) {
-                     membrosIds = Array.from(grupoMembrosModalSelectEl.selectedOptions).map(option => option.value);
+                    membrosIds = Array.from(grupoMembrosModalSelectEl.selectedOptions).map(option => option.value);
                 }
                 if (!nome) {
                     if(grupoNomeModalInputEl) grupoNomeModalInputEl.classList.add('border-red-500','focus:ring-red-500');
@@ -626,13 +626,13 @@
                         setTimeout(() => window.location.reload(), 1800);
                     } else {
                         const errorMsg = responseData.message || `Erro ${response.status}: Não foi possível criar o grupo.`;
-                         if(criarGrupoModalAlertPlaceholderEl) {
-                             criarGrupoModalAlertPlaceholderEl.innerHTML = `
+                        if(criarGrupoModalAlertPlaceholderEl) {
+                            criarGrupoModalAlertPlaceholderEl.innerHTML = `
                                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
                                     <p class="font-bold">Falha na Criação</p>
                                     <p>${errorMsg}</p>
                                 </div>`;
-                         } else { showToast(errorMsg, 'error'); }
+                        } else { showToast(errorMsg, 'error'); }
                     }
                 } catch (error) {
                     console.error('Erro na requisição AJAX:', error);
@@ -644,8 +644,8 @@
                             </div>`;
                     } else { showToast('Erro de comunicação ao tentar criar o grupo.', 'error'); }
                 } finally {
-                     btnSalvarGrupoModalEl.disabled = false;
-                     btnSalvarGrupoModalEl.innerHTML = originalButtonHtml;
+                    btnSalvarGrupoModalEl.disabled = false;
+                    btnSalvarGrupoModalEl.innerHTML = originalButtonHtml;
                 }
             });
         } else {
