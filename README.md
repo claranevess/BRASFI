@@ -40,7 +40,7 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
 ## 🧷 Links importantes
 <p align="center">
   <a href="https://exemplo.com/link1" target="_blank">
-    <img src="https://img.shields.io/badge/Google Sites%20a%20Plataforma-FFB300?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Acessar a Plataforma">
+    <img src="https://img.shields.io/badge/Google Sites-FFB300?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Acessar a Plataforma">
   </a>
   <a href="https://exemplo.com/link2" target="_blank">
     <img src="https://img.shields.io/badge/Site do projeto-437312?style=for-the-badge&logo=bookstack&logoColor=white" alt="Documentação">
