@@ -14,10 +14,10 @@ Ao promover uma rede de aprendizagem e troca, a BRASFI oferece um espaço onde o
 
 # 🚀 Funcionalidades da Plataforma
 
-###  🎓 Acesso a Aulas
+### 🎓 Acesso a Aulas
 Assistir a vídeos educativos diretamente na plataforma.
 Marcar aulas como concluídas para acompanhar o progresso.
-###  🧭 Trilhas de Conhecimento
+### 🧭 Trilhas de Conhecimento
 Acessar trilhas com conteúdos organizados por tema.
 Criar trilhas reunindo aulas por assuntos específicos.
 Editar e excluir trilhas conforme necessário.
@@ -36,3 +36,16 @@ Pesquisar usuários participantes com barra de busca.
 # 🌱 Transforme conhecimento em ação
 
 Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e aprendizado sustentável.
+
+## 🧷 Links importantes
+<p align="center">
+  <a href="https://exemplo.com/link1" target="_blank">
+    <img src="https://img.shields.io/badge/Google Sites%20a%20Plataforma-FFB300?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Acessar a Plataforma">
+  </a>
+  <a href="https://exemplo.com/link2" target="_blank">
+    <img src="https://img.shields.io/badge/Site do projeto-437312?style=for-the-badge&logo=bookstack&logoColor=white" alt="Documentação">
+  </a>
+  <a href="https://exemplo.com/link3" target="_blank">
+    <img src="https://img.shields.io/badge/Figma-1D3C73?style=for-the-badge&logo=github&logoColor=white" alt="Contribuir">
+  </a>
+</p>
