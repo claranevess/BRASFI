@@ -59,10 +59,4 @@ public class UserController {
         model.addAttribute("user", new User());
         return "user/validarCodigo";
     }
-
-
-
-
-
-
 }
