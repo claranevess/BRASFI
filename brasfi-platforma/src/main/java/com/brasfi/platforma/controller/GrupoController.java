@@ -1,28 +1,22 @@
 package com.brasfi.platforma.controller;
 
-import com.brasfi.platforma.dto.MemberDto; // Certifique-se que este DTO existe e é usado corretamente
+import com.brasfi.platforma.dto.MemberDto;
 import com.brasfi.platforma.model.Grupo;
 import com.brasfi.platforma.model.User;
 import com.brasfi.platforma.model.TipoUsuario;
 import com.brasfi.platforma.model.SolicitacaoAcesso;
-// Removido GrupoRepository se não for usado diretamente
-// import com.brasfi.platforma.repository.GrupoRepository;
 import com.brasfi.platforma.repository.GrupoRepository;
 import com.brasfi.platforma.service.GrupoService;
 import com.brasfi.platforma.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-// Removido SecurityContextHolder se Authentication é injetado
-// import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
@@ -42,7 +36,7 @@ public class GrupoController {
 
     @Autowired
     private UserService userService;
-    
+
     public static class CriarGrupoModalDto {
         private String nome;
         private String descricao;
