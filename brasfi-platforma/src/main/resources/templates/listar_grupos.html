@@ -379,7 +379,6 @@
 
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
     let currentGroupMembers = [];
     let toastTimeout;
 
@@ -483,7 +482,6 @@
             memberSearchInput.addEventListener('keyup', searchMembers);
         }
 
-        // --- DEFINIÇÕES PARA O MODAL DE CRIAR GRUPO ---
         const criarGrupoModalEl = document.getElementById('criarGrupoModal');
         const criarGrupoModalContentEl = document.getElementById('criarGrupoModalContent');
         const openCriarGrupoModalBtnEl = document.getElementById('openCriarGrupoModalBtn');
@@ -495,8 +493,6 @@
         const grupoMembrosModalSelectEl = document.getElementById('grupoMembrosModal');
         const grupoNomeModalErrorEl = document.getElementById('grupoNomeModalError');
         const criarGrupoModalAlertPlaceholderEl = document.getElementById('criarGrupoModalAlertPlaceholder');
-
-        // LOGS INICIAIS PARA VERIFICAR SE OS ELEMENTOS DO MODAL FORAM ENCONTRADOS
         console.log('Botão "Novo Grupo" (openCriarGrupoModalBtnEl):', openCriarGrupoModalBtnEl);
         console.log('Elemento Principal do Modal (criarGrupoModalEl):', criarGrupoModalEl);
         console.log('Elemento de Conteúdo do Modal (criarGrupoModalContentEl):', criarGrupoModalContentEl);
