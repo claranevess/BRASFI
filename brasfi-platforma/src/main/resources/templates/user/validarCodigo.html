@@ -146,15 +146,6 @@
                 }
             });
 
-            input.addEventListener('focus', (e) => {
-                // Comentado: Esta parte pode causar comportamento inesperado.
-                // Geralmente, 'select()' é usado para copiar/colar, não para digitação normal.
-                // Se o objetivo é apagar um '0' predefinido, considere outra lógica.
-                // if (input.value === '0') {
-                //     input.select();
-                // }
-            });
-
             input.addEventListener('keypress', (e) => {
                 // Previne a digitação de caracteres que não são números
                 if (!/[0-9]/.test(e.key)) {

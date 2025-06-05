@@ -16,23 +16,20 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // This method is for initial saving or when password needs to be changed
     public void salvarUserComSenhaCriptografada(User user) {
         user.setSenha(passwordEncoder.encode(user.getSenha())); // criptografa a senha
         userRepository.save(user);
     }
 
-    // This method is for updating user details WITHOUT touching the password
     public User atualizarTipoUsuario(Long userId, String tipoUsuario) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setTipoUsuario(com.brasfi.platforma.model.TipoUsuario.valueOf(tipoUsuario.toUpperCase()));
-            return userRepository.save(user); // Save the updated user
+            return userRepository.save(user);
         }
-        return null; // Or throw an exception
+        return null;
     }
-
 
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
@@ -41,6 +38,6 @@ public class UserService {
 
     public User findById(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
-        return userOptional.orElse(null); // Retorna o User se presente, senão retorna null
+        return userOptional.orElse(null);
     }
 }

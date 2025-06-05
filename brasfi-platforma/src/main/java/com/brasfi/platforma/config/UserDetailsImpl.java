@@ -26,11 +26,8 @@ public class UserDetailsImpl implements UserDetails {
             String roleName = "ROLE_" + user.getTipoUsuario().toString().toUpperCase();
             return Collections.singletonList(new SimpleGrantedAuthority(roleName));
         } else {
-            // Se o TipoUsuario for nulo, isso indica um problema de dados ou lógica de registro.
-            // Para evitar NullPointerException durante a autenticação, podemos retornar uma role padrão
-            // ou logar um erro e retornar uma lista vazia/role de 'usuário não atribuído'.
             System.err.println("ATENÇÃO: Usuário " + user.getUsername() + " possui TipoUsuario nulo. Atribuindo ROLE_DEFAULT.");
-            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_DEFAULT")); // OU Collections.emptyList();
+            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_DEFAULT"));
         }
     }
 

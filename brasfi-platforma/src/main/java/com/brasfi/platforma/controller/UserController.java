@@ -31,13 +31,12 @@ public class UserController {
     @GetMapping("/registrar")
     public String mostrarRegistroForm(Model model) {
         model.addAttribute("user", new User());
-        System.out.println("!!!!!!!! AQUI !!!!!!!");
         return "user/registrarUser";
     }
 
     @PostMapping("/registrar")
     public String registrarUser(User user, Model model) {
-        userService.salvarUserComSenhaCriptografada(user); // Use the method that hashes the password
+        userService.salvarUserComSenhaCriptografada(user);
         model.addAttribute("user", user);
         return "redirect:/escolherCargo?userId=" + user.getId();
     }
@@ -45,7 +44,7 @@ public class UserController {
     @GetMapping("/escolherCargo")
     public String mostrarEscolhaCargo(@RequestParam Long userId, Model model) {
         // Busca o usuário recém-criado pelo ID
-        User user = userService.findById(userId); // Você precisará de um método findById no seu UserService
+        User user = userService.findById(userId);
         model.addAttribute("user", user);
         return "user/escolherCargo";
     }
@@ -66,13 +65,10 @@ public class UserController {
         } else if (tipo == TipoUsuario.ADMINISTRADOR) {
             userService.atualizarTipoUsuario(userId, TipoUsuario.ADMINISTRADOR.name());
 
-            // ***************************************************************
-            // ADD THIS LINE TO GENERATE AND SAVE THE CODE FOR ADMINISTRATORS
-            // ***************************************************************
+
             String emailDoAdmin = user.getEmail(); // Get the admin's email
             geradorCodigoService.generateAndSaveRandomCode(emailDoAdmin);
             System.out.println("==== UserController: Código de verificação gerado para o administrador " + emailDoAdmin + " ====");
-            // ***************************************************************
 
             return "redirect:/validarCodigo?userId=" + user.getId();
         }
@@ -105,8 +101,8 @@ public class UserController {
 
         System.out.println("==== UserController: Tentando validar código ====");
         System.out.println("==== UserId: " + userId + " ====");
-        System.out.println("==== Email do Usuário (da tabela users): '" + emailDoUsuario + "' ===="); // Aspas para ver espaços
-        System.out.println("==== Código Digitado: '" + enteredCode + "' ===="); // Aspas para ver espaços
+        System.out.println("==== Email do Usuário (da tabela users): '" + emailDoUsuario + "' ====");
+        System.out.println("==== Código Digitado: '" + enteredCode + "' ====");
 
         boolean isValid = geradorCodigoService.validateCode(emailDoUsuario, enteredCode);
         System.out.println("==== UserController: Resultado da validação (isValid): " + isValid + " ====");
