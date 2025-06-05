@@ -68,7 +68,7 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
   <br><br>
 </div>
 
-## Contatos
+## Contribuidores
 
 ### Ciência da Computação
 - **Nina França** - <a href="mailto:nhffbs@cesar.school">📧</a> - <a href="https://www.linkedin.com/in/ninafran%C3%A7afernandes/"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="20"></a>
@@ -85,8 +85,3 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
 - **Maria Alice Lacerda** - <a href="mailto:malca@cesar.school">📧</a> - <a href="https://www.linkedin.com/in/malcaart/"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="20"></a>
 - **Joana Pereira** - <a href="mailto:jfps@cesar.school">📧</a> - <a href="https://www.linkedin.com/in/joana-flora-pereira-spanudarkis-16a30428a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="20"></a>
 - **Vítor Cesar** - <a href="mailto:vcsa@cesar.school">📧</a> - <a href="http://linkedin.com/in/vítor-césar-andrade-3088a72bb"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="20"></a>
-
-## Contribuidores
-<a href="https://github.com/claranevess/BRASFI/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=claranevess/BRASFI" />
-</a>
