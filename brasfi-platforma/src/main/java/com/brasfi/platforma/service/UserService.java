@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional; // Importe Optional
 
 @Service
@@ -17,6 +18,10 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
 
     public void salvarUser(User user) {
         user.setSenha(passwordEncoder.encode(user.getSenha())); // criptografa a senha
