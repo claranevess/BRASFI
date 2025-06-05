@@ -102,7 +102,7 @@ public class AulaController {
         }
 
         model.addAttribute("mensagem", "Aula salva com sucesso!");
-        return "redirect:/aulas/detalhe/" + aulaSalva.getId();
+        return "redirect:/trilhas/listar";
     }
 
 

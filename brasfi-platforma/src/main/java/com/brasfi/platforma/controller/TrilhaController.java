@@ -3,7 +3,10 @@ package com.brasfi.platforma.controller;
 import com.brasfi.platforma.config.UserDetailsImpl;
 import com.brasfi.platforma.model.Aula;
 import com.brasfi.platforma.model.EixoTematico;
+import com.brasfi.platforma.model.Material;
 import com.brasfi.platforma.model.Trilha;
+import com.brasfi.platforma.repository.MaterialRepository;
+import com.brasfi.platforma.service.AulaService;
 import com.brasfi.platforma.service.TrilhaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,7 +21,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Controller
@@ -28,45 +34,105 @@ public class TrilhaController {
     @Autowired
     private TrilhaService trilhaService;
 
+    @Autowired
+    private AulaService aulaService;
+
+    @Autowired
+    private MaterialRepository materialRepository;
+
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    // Exibe o formulário
     @GetMapping("/registrar")
     public String mostrarRegistroTrilhaForm(Model model) {
         model.addAttribute("trilha", new Trilha());
         return "trilha/registrarTrilha";
     }
 
-    // Processa o envio
     @PostMapping("/registrar")
     public String registrarTrilha(
             @ModelAttribute Trilha trilha,
             @RequestParam("duracaoInput") String duracaoStr,
-            @RequestParam("capaFile") MultipartFile capaFile
+            @RequestParam("capaFile") MultipartFile capaFile,
+            @RequestParam(value = "aulaTitulo", required = false) String aulaTitulo,
+            @RequestParam(value = "linkAula", required = false) String linkAula,
+            @RequestParam(value = "descricaoAula", required = false) String descricaoAula,
+            @RequestParam(value = "documentosApoio", required = false) MultipartFile[] documentosApoio,
+            @RequestParam(value = "linkApoio", required = false) String[] linkApoioAulas // Renamed for clarity vs. method param
     ) throws IOException {
-        // Converte "01:30" para double 1.5
         double duracao = parseDuracao(duracaoStr);
         trilha.setDuracao(duracao);
-
-        // Salva arquivo
         if (capaFile != null && !capaFile.isEmpty()) {
             String nomeArquivo = System.currentTimeMillis() + "_" + capaFile.getOriginalFilename();
-
             Path pastaUploads = Paths.get(uploadDir).toAbsolutePath().normalize();
             Files.createDirectories(pastaUploads);
-
             Path destino = pastaUploads.resolve(nomeArquivo);
             capaFile.transferTo(destino.toFile());
-
             trilha.setCapa("/" + uploadDir + "/" + nomeArquivo);
         }
+        if (trilha.getAulas() == null) {
+            trilha.setAulas(new ArrayList<>());
+        }
+        Trilha trilhaSalva = trilhaService.salvarTrilha(trilha);
 
-        trilhaService.salvarTrilha(trilha);
+        if (aulaTitulo != null && !aulaTitulo.trim().isEmpty()) {
+            Aula novaAula = new Aula();
+            novaAula.setTitulo(aulaTitulo);
+            novaAula.setLink(linkAula);
+            novaAula.setDescricao(descricaoAula);
+
+            if (novaAula.getTrilhas() == null) {
+                novaAula.setTrilhas(new ArrayList<>());
+            }
+            if (novaAula.getMateriais() == null) {
+                novaAula.setMateriais(new ArrayList<>());
+            }
+            novaAula.getTrilhas().add(trilhaSalva);
+
+            trilhaSalva.getAulas().add(novaAula);
+
+            Aula aulaSalva = aulaService.salvarAula(novaAula);
+
+            if (documentosApoio != null && documentosApoio.length > 0) {
+                for (MultipartFile arquivo : documentosApoio) {
+                    if (arquivo != null && !arquivo.isEmpty()) {
+                        try {
+                            String nomeOriginal = arquivo.getOriginalFilename();
+                            String aulaMaterialUploadDir = uploadDir + "/aulas/";
+                            Path pastaUploadsAula = Paths.get(aulaMaterialUploadDir).toAbsolutePath().normalize();
+                            Files.createDirectories(pastaUploadsAula);
+
+                            Path destino = pastaUploadsAula.resolve(nomeOriginal);
+                            arquivo.transferTo(destino.toFile());
+
+                            Material material = new Material();
+                            material.setNomeOriginal(nomeOriginal);
+                            material.setCaminhoArquivo("/" + aulaMaterialUploadDir + nomeOriginal);
+                            material.setAula(aulaSalva);
+                            materialRepository.save(material);
+                            System.out.println("DEBUG: Arquivo de aula salvo: " + nomeOriginal);
+                        } catch (IOException e) {
+                            System.err.println("ERRO: Falha ao salvar o arquivo de apoio da aula '" + arquivo.getOriginalFilename() + "': " + e.getMessage());
+                        }
+                    }
+                }
+            }
+
+            if (linkApoioAulas != null && linkApoioAulas.length > 0) {
+                for (String link : linkApoioAulas) {
+                    if (link != null && !link.isBlank()) {
+                        Material material = new Material();
+                        material.setLinkApoio(link.trim());
+                        material.setAula(aulaSalva);
+                        materialRepository.save(material);
+                        System.out.println("DEBUG: Link de aula salvo: " + link.trim());
+                    }
+                }
+            }
+        }
         return "redirect:/trilhas/listar";
     }
 
-    // Ajustado para interpretar "hh:mm"
     private double parseDuracao(String duracaoStr) {
         if (duracaoStr == null || duracaoStr.isEmpty()) {
             throw new IllegalArgumentException("O campo de duração está vazio ou nulo.");
@@ -89,30 +155,27 @@ public class TrilhaController {
     public String mostrarEditarTrilhaForm(@RequestParam("id") Long id, Model model) {
         Trilha trilha = trilhaService.buscarPorId(id);
 
-        // Converte double para "hh:mm" para popular o time picker
-        double duracao = trilha.getDuracao(); // pega o valor primitivo
+        double duracao = trilha.getDuracao();
         int horas = (int) duracao;
         int minutos = (int) Math.round((duracao - horas) * 60);
         String duracaoStr = String.format("%02d:%02d", horas, minutos);
 
         model.addAttribute("trilha", trilha);
-        model.addAttribute("duracaoInput", duracaoStr); // envia pra preencher o input hidden
+        model.addAttribute("duracaoInput", duracaoStr);
 
         return "trilha/editarTrilha";
     }
-
 
     @PostMapping("/editar")
     public String editarTrilha(
             @ModelAttribute Trilha trilha,
             @RequestParam("duracaoInput") String duracaoStr,
             @RequestParam(value = "capaFile", required = false) MultipartFile capaFile
-            ) throws IOException {
-        // Converte "hh:mm" para double
+    ) throws IOException {
+
         double duracao = parseDuracao(duracaoStr);
         trilha.setDuracao(duracao);
 
-        // Se uma nova imagem for enviada, substitui
         if (capaFile != null && !capaFile.isEmpty()) {
             String nomeArquivo = System.currentTimeMillis() + "_" + capaFile.getOriginalFilename();
 
@@ -124,7 +187,6 @@ public class TrilhaController {
 
             trilha.setCapa("/" + uploadDir + "/" + nomeArquivo);
         } else {
-            // Preserva a capa existente se não houver nova imagem
             Trilha trilhaExistente = trilhaService.buscarPorId(trilha.getId());
             trilha.setCapa(trilhaExistente.getCapa());
         }
@@ -138,34 +200,24 @@ public class TrilhaController {
         List<Trilha> trilhas = trilhaService.listaTrilhas();
         model.addAttribute("trilhas", trilhas);
 
-        // Obtenha a autenticação do contexto de segurança
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Verifique se o usuário está autenticado e não é um AnonymousAuthenticationToken
-        // (que é um token padrão para usuários não logados, mas ainda um Authentication)
         if (authentication != null && authentication.isAuthenticated() &&
                 !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
 
-            // Obtenha o principal (que agora é o seu UserDetailsImpl)
             Object principal = authentication.getPrincipal();
 
-            String cargoUsuario = "CONVIDADO"; // Valor padrão caso algo dê errado ou não seja seu UserDetailsImpl
+            String cargoUsuario = "CONVIDADO";
 
-            // Verifique se o principal é uma instância do seu UserDetailsImpl
             if (principal instanceof UserDetailsImpl) {
                 UserDetailsImpl userDetails = (UserDetailsImpl) principal;
-                // Acesse o seu objeto User encapsulado e então o tipoUsuario
                 cargoUsuario = userDetails.getUser().getTipoUsuario().toString();
             } else {
-                // Caso o principal seja de outro tipo (ex: String para o username padrão)
-                // Isso pode acontecer em testes ou configurações customizadas.
-                // Aqui você pode logar um aviso ou definir um cargo padrão.
                 System.out.println("Principal não é UserDetailsImpl, tipo: " + principal.getClass().getName());
             }
 
             model.addAttribute("cargoUsuario", cargoUsuario);
         } else {
-            // Usuário não autenticado ou token anônimo
             model.addAttribute("cargoUsuario", "CONVIDADO");
         }
 
@@ -174,10 +226,8 @@ public class TrilhaController {
 
     @GetMapping("/criar-modal")
     public String getCriarTrilhaModal(Model model) {
-        // Preenche o model com os dados necessários para o formulário dentro do modal
-        model.addAttribute("trilha", new Trilha()); // Objeto vazio para o formulário de criação
-        model.addAttribute("eixosTematicos", EixoTematico.values()); // Para popular o eixo-picker
-        // O duracaoInput pode ser vazio inicialmente para um novo registro
+        model.addAttribute("trilha", new Trilha());
+        model.addAttribute("eixosTematicos", EixoTematico.values());
         model.addAttribute("duracaoInput", "");
         return "trilha/registrarTrilha";
     }
@@ -186,15 +236,14 @@ public class TrilhaController {
     public String getEditarTrilhaModal(@PathVariable("id") Long id, Model model) {
         Trilha trilha = trilhaService.buscarPorId(id);
 
-        // Converte double para "hh:mm" para popular o time picker
-        double duracao = trilha.getDuracao(); // pega o valor primitivo
+        double duracao = trilha.getDuracao();
         int horas = (int) duracao;
         int minutos = (int) Math.round((duracao - horas) * 60);
         String duracaoStr = String.format("%02d:%02d", horas, minutos);
 
         model.addAttribute("trilha", trilha);
-        model.addAttribute("duracaoInput", duracaoStr); // envia pra preencher o input hidden
-        model.addAttribute("eixosTematicos", EixoTematico.values()); // Para popular o eixo-picker, se necessário no fragmento
+        model.addAttribute("duracaoInput", duracaoStr);
+        model.addAttribute("eixosTematicos", EixoTematico.values());
 
         return "trilha/editarTrilha :: modalContent";
     }
@@ -203,7 +252,7 @@ public class TrilhaController {
     public String mostrarConfirmacao(@PathVariable("id") Long id, Model model) {
         Trilha trilha = trilhaService.buscarPorId(id);
         model.addAttribute("trilha", trilha);
-        return "trilha/deletarTrilha :: modalContent"; // THIS IS IMPORTANT
+        return "trilha/deletarTrilha :: modalContent";
     }
 
     @PostMapping("/deletar")
@@ -213,18 +262,11 @@ public class TrilhaController {
     }
 
 
-    @GetMapping("/adicionar-aula") // Ou o endpoint que renderiza esta view
+    @GetMapping("/adicionar-aula")
     public String showAddAulaModal(Model model) {
-        // 1. Obtenha todas as trilhas do seu serviço/repositório
         List<Trilha> todasAsTrilhas = trilhaService.listaTrilhas();
-
-        // 2. Adicione a lista de trilhas ao modelo (para ser acessível pelo Thymeleaf)
         model.addAttribute("trilhas", todasAsTrilhas);
-
-        // 3. Adicione um objeto 'aula' vazio para o formulário (se você estiver usando th:object="${aula}")
-        model.addAttribute("aula", new Aula()); // Ajuste para o caminho da sua classe Aula
-
-        // Retorne o nome do seu template HTML (sem a extensão .html)
+        model.addAttribute("aula", new Aula());
         return "aula/adicionarAula :: modalContent";
     }
 
