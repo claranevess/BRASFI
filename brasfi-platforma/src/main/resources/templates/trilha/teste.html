@@ -1,0 +1,29 @@
+<div class="border border-[#65A603] p-4 rounded-lg flex flex-col">
+    <label for="link" class="flex text-lg items-center text-gray-700 font-medium mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
+            <path d="M10.0811 19.2147C15.0091 19.2147 19.004 15.2198 19.004 10.2918C19.004 5.36379 15.0091 1.36887 10.0811 1.36887C5.15312 1.36887 1.1582 5.36379 1.1582 10.2918C1.1582 15.2198 5.15312 19.2147 10.0811 19.2147Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8.29688 6.72261L13.6506 10.2918L8.29688 13.8609V6.72261Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Anexar link da aula
+    </label>
+    <input type="url" id="link" th:field="*{link}" placeholder="Copie e cole aqui..."
+           class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4">
+    <label class="text-gray-700 font-medium mb-2">Pré-visualização</label>
+    <div id="videoPreviewContainer" class="flex-grow w-full bg-gray-200 rounded-md flex items-center justify-center relative video-preview-placeholder" style="min-height: 180px;">
+    </div>
+</div>
+
+<div class="border border-green-600 p-4 rounded-lg flex flex-col">
+    <label for="linkAula" class="flex text-lg items-center text-gray-700 font-medium mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
+            <path d="M10.0811 19.2147C15.0091 19.2147 19.004 15.2198 19.004 10.2918C19.004 5.36379 15.0091 1.36887 10.0811 1.36887C5.15312 1.36887 1.1582 5.36379 1.1582 10.2918C1.1582 15.2198 5.15312 19.2147 10.0811 19.2147Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8.29688 6.72261L13.6506 10.2918L8.29688 13.8609V6.72261Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Link da Aula
+    </label>
+    <input type="url" id="linkAula" name="linkAula" placeholder="Cole o link do vídeo..."
+           class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4">
+    <div id="videoPreviewContainer" class="w-full bg-gray-200 rounded-md flex items-center justify-center relative" style="min-height: 180px;">
+        <span class="text-gray-500">Pré-visualização</span>
+    </div>
+</div>
