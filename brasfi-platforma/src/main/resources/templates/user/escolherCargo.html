@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom CSS for button styling if Tailwind doesn't have the exact green */
         .btn-primary {
             background-color: #65A603;
             color: white;
@@ -34,7 +33,6 @@
 <body class="m-0 p-0 bg-[#fafafa] flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
 
 <header class="w-full flex justify-between items-center px-4 py-3 absolute top-2 left-0">
-<!--    seta de voltar-->
     <div class="flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500 cursor-pointer">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -56,11 +54,15 @@
         <h1 class="font-bold text-2xl mb-8">Qual o seu papel na BRASFI?</h1>
 
         <div class="flex gap-3">
-            <form th:action="@{/login}" method="post">
+            <form th:action="@{/escolherCargo}" method="post">
+                <input type="hidden" name="userId" th:value="${user.id}" />
+                <input type="hidden" name="tipoUsuario" value="ESTUDANTE" />
                 <button type="submit" class="btn-primary">Sou membro BRASFI</button>
             </form>
 
-            <form th:action="@{/validarCodigo}" method="post">
+            <form th:action="@{/escolherCargo}" method="post">
+                <input type="hidden" name="userId" th:value="${user.id}" />
+                <input type="hidden" name="tipoUsuario" value="ADMINISTRADOR" />
                 <button type="submit" class="btn-secondary">Sou Administrador</button>
             </form>
         </div>

@@ -31,37 +31,36 @@ public class GeradorCodigoService {
 
         CodigoVerificacao verificationCode = new CodigoVerificacao(email, generatedCode, createdAt, expiresAt);
         codigoVerficacaoRepository.save(verificationCode); // Salva no banco de dados
+        System.out.println("==== Código Gerado ====");
+        System.out.println("==== Código : " + verificationCode + "====");
 
         return generatedCode;
     }
 
-    // Novo método para validar o código
     public boolean validateCode(String email, String code) {
+        System.out.println("==== GeradorCodigoService: validateCode chamado com Email: '" + email + "', Código: '" + code + "' ====");
         Optional<CodigoVerificacao> storedCodeOpt = codigoVerficacaoRepository.findByEmailAndCode(email, code);
 
         if (storedCodeOpt.isEmpty()) {
+            System.out.println("==== GeradorCodigoService: Código NÃO ENCONTRADO no banco para Email: '" + email + "' e Código: '" + code + "' ====");
             return false; // Código não encontrado
         }
 
         CodigoVerificacao storedCode = storedCodeOpt.get();
 
-        // 1. Verifica se o código não foi usado (opcional, mas recomendado)
         if (storedCode.isUsed()) {
+            System.out.println("==== GeradorCodigoService: Código já foi USADO para Email: '" + email + "', Código: '" + code + "' ====");
             return false;
         }
 
-        // 2. Verifica se o código não expirou
         if (LocalDateTime.now().isAfter(storedCode.getExpiresAt())) {
-            // Opcional: marcar como usado ou remover o código expirado
-            // storedCode.setUsed(true);
-            // verificationCodeRepository.save(storedCode);
+            System.out.println("==== GeradorCodigoService: Código EXPIRADO para Email: '" + email + "', Código: '" + code + "' (Expira em: " + storedCode.getExpiresAt() + ", Agora: " + LocalDateTime.now() + ") ====");
             return false; // Código expirado
         }
 
-        // Se chegou aqui, o código é válido. Marque como usado para evitar reutilização.
         storedCode.setUsed(true);
         codigoVerficacaoRepository.save(storedCode);
-
+        System.out.println("==== GeradorCodigoService: Código VALIDADO com SUCESSO para Email: '" + email + "', Código: '" + code + "' ====");
         return true;
     }
 }

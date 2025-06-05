@@ -10,32 +10,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom CSS for button styling if Tailwind doesn't have the exact green */
-
         .btn-continue {
-            background-color: #E0E0E0; /* Gray as per prototype */
+            background-color: #E0E0E0;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.25rem;
             font-weight: 500;
-            cursor: not-allowed; /* Default cursor for disabled state */
+            cursor: not-allowed;
             border: none;
             width: 100%;
             transition: background-color 0.3s ease, cursor 0.3s ease;
         }
 
-        .btn-continue.active { /* Class for active (green) state */
+        .btn-continue.active {
             background-color: #65A603;
             cursor: pointer;
         }
 
-        .btn-continue.active:hover { /* Hover for active state */
-            background-color: #558B2F; /* Slightly darker green on hover */
+        .btn-continue.active:hover {
+            background-color: #558B2F;
         }
 
-
         .code-input {
-            width: 5rem; /* Adjust size as needed for square appearance */
+            width: 5rem;
             height: 3rem;
             text-align: center;
             font-size: 1.5rem;
@@ -45,14 +42,18 @@
             outline: none;
         }
         .code-input:focus {
-            border-color: #65A603; /* Green border on focus */
+            border-color: #65A603;
+        }
+        .error-message {
+            color: red;
+            margin-top: 1rem;
+            text-align: center;
         }
     </style>
 </head>
 <body class="m-0 p-0 bg-[#fafafa] flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
 
 <header class="w-full flex justify-between items-center px-4 py-3 absolute top-2 left-0">
-    <!--    seta de voltar-->
     <div class="flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500 cursor-pointer">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -73,16 +74,23 @@
         <p class="font-normal text-lg text-[#444444] mb-2">Só falta um passo!</p>
         <h1 class="font-bold text-2xl mb-8">Insira o código</h1>
 
-        <div class="flex justify-center gap-3 mb-8">
-            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
-            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
-            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
-            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
-            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
-            <input type="text" maxlength="1" class="code-input" value="0" pattern="[0-9]" inputmode="numeric" />
-        </div>
+        <form th:action="@{/validarCodigo}" method="post">
+            <input type="hidden" name="userId" th:value="${user.id}" />
+            <input type="hidden" name="enteredCode" id="fullCodeHiddenInput" value="" />
 
-        <button type="button" class="btn-continue mb-4">Continuar</button>
+            <div class="flex justify-center gap-3 mb-8">
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" name="digit1" />
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" name="digit2" />
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" name="digit3" />
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" name="digit4" />
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" name="digit5" />
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" name="digit6" />
+            </div>
+
+            <p th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></p>
+
+            <button type="submit" class="btn-continue mb-4" disabled>Continuar</button>
+        </form>
 
         <div class="flex flex-grow items-center justify-center">
             <div class="text-center mb-8">
@@ -95,19 +103,21 @@
     document.addEventListener('DOMContentLoaded', () => {
         const inputs = document.querySelectorAll('.code-input');
         const continueButton = document.querySelector('.btn-continue');
-
-        // Initialize all inputs with '0'
-        inputs.forEach(input => {
-            input.value = '0';
-        });
+        // Pega a referência do campo hidden existente no HTML
+        const fullCodeHiddenInput = document.getElementById('fullCodeHiddenInput');
 
         const checkAllInputsFilled = () => {
             let allFilled = true;
+            let fullCode = '';
             inputs.forEach(input => {
-                if (input.value === '' || input.value === '0') { // Consider '0' as not "filled" for activation
+                if (input.value === '') {
                     allFilled = false;
                 }
+                fullCode += input.value;
             });
+
+            // Atualiza o valor do campo hidden existente
+            fullCodeHiddenInput.value = fullCode;
 
             if (allFilled) {
                 continueButton.classList.add('active');
@@ -120,7 +130,7 @@
 
         inputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
-                // Ensure only single digit integer input
+                // Filtra para garantir que apenas um dígito numérico é inserido
                 input.value = e.data ? e.data.replace(/[^0-9]/g, '').slice(0, 1) : '';
 
                 if (input.value !== '' && index < inputs.length - 1) {
@@ -132,25 +142,19 @@
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Backspace' && input.value === '' && index > 0) {
                     inputs[index - 1].focus();
+                    checkAllInputsFilled();
                 }
             });
 
-            // Handle focus and select '0' when input is clicked/focused
-            input.addEventListener('focus', (e) => {
-                if (input.value === '0') {
-                    input.select();
-                }
-            });
-
-            // Prevent default behavior for non-numeric input if typed
             input.addEventListener('keypress', (e) => {
+                // Previne a digitação de caracteres que não são números
                 if (!/[0-9]/.test(e.key)) {
                     e.preventDefault();
                 }
             });
         });
 
-        // Initial check on load
+        // Verifica o estado inicial dos campos ao carregar a página
         checkAllInputsFilled();
     });
 </script>
