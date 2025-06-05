@@ -176,49 +176,52 @@
 
                 <div th:each="trilha : ${trilhas}"
                      class="bg-white p-4 rounded-xl shadow-md relative trilha-card"
-                     th:data-eixo="${trilha.eixoTematico != null ? trilha.eixoTematico.displayValue : 'N/A'}"> <div th:style="'background-image: url(' + ${trilha.capa ?: 'https://via.placeholder.com/150'} + ')'"
-                                                                                                                    class="h-32 bg-gray-200 rounded-lg mb-4 bg-cover bg-center"></div>
+                     th:data-eixo="${trilha.eixoTematico != null ? trilha.eixoTematico.displayValue : 'N/A'}">
+                    <a th:href="@{/trilhas/{id}(id=${trilha.id})}" class="block w-full h-full">
+                        <div th:style="'background-image: url(' + ${trilha.capa ?: 'https://via.placeholder.com/150'} + ')'"
+                             class="h-32 bg-gray-200 rounded-lg mb-4 bg-cover bg-center"></div>
 
-                    <div class="flex justify-between items-center mb-2">
-                            <span th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.displayValue : 'N/A'}"
-                                  th:style="${trilha.eixoTematico == 'EMPREENDEDORISMO' ? 'background-color: #FFD700; color: #333;' : (trilha.eixoTematico == 'FINANCAS' ? 'background-color: #ADD8E6; color: #333;' : (trilha.eixoTematico == 'LIDERANCA' ? 'background-color: #90EE90; color: #333;' : 'background-color: #e0e0e0; color: #555;'))}"
-                                  class="text-xs px-3 py-1 rounded-full font-semibold"></span>
-                        <div class="flex items-center text-yellow-500 text-sm">★★★★☆<span class="text-xs text-gray-500 ml-1">(123)</span></div>
-                    </div>
+                        <div class="flex justify-between items-center mb-2">
+            <span th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.displayValue : 'N/A'}"
+                  th:style="${trilha.eixoTematico == 'EMPREENDEDORISMO' ? 'background-color: #FFD700; color: #333;' : (trilha.eixoTematico == 'FINANCAS' ? 'background-color: #ADD8E6; color: #333;' : (trilha.eixoTematico == 'LIDERANCA' ? 'background-color: #90EE90; color: #333;' : 'background-color: #e0e0e0; color: #555;'))}"
+                  class="text-xs px-3 py-1 rounded-full font-semibold"></span>
+                            <div class="flex items-center text-yellow-500 text-sm">★★★★☆<span class="text-xs text-gray-500 ml-1">(123)</span></div>
+                        </div>
 
-                    <div class="flex justify-between items-center relative mb-1">
-                        <h2 th:text="${trilha.titulo}" class="font-semibold text-base flex-grow pr-2"></h2>
-                        <div class="relative">
-                            <button th:id="'kebab-menu-btn-' + ${trilha.id}"
-                                    class="text-gray-500 hover:text-gray-800 px-2 py-1 rounded-full transition-colors"
-                                    onclick="toggleKebabMenu(this, event)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                                </svg>
+                        <div class="flex justify-between items-center relative mb-1">
+                            <h2 th:text="${trilha.titulo}" class="font-semibold text-base flex-grow pr-2"></h2>
+                        </div>
+
+                        <p th:text="${trilha.descricao}" class="text-sm text-gray-600"></p>
+                    </a>
+                    <div class="absolute top-4 right-4">
+                        <button th:id="'kebab-menu-btn-' + ${trilha.id}"
+                                class="text-gray-500 hover:text-gray-800 px-2 py-1 rounded-full transition-colors"
+                                onclick="toggleKebabMenu(this, event)">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                            </svg>
+                        </button>
+                        <div th:id="'kebab-menu-' + ${trilha.id}"
+                             class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-md hidden z-10 w-32 overflow-hidden">
+                            <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                                    th:data-trilha-id="${trilha.id}"
+                                    th:data-trilha-titulo="${trilha.titulo}"
+                                    th:data-trilha-descricao="${trilha.descricao}"
+                                    th:data-trilha-eixo="${trilha.eixoTematico}"
+                                    th:data-trilha-duracao="${duracaoInput}"
+                                    th:data-trilha-topicos="${trilha.topicosDeAprendizado}"
+                                    onclick="openEditTrilhaModal(this)">
+                                Editar
                             </button>
-                            <div th:id="'kebab-menu-' + ${trilha.id}"
-                                 class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-md hidden z-10 w-32 overflow-hidden">
-                                <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                                        th:data-trilha-id="${trilha.id}"
-                                        th:data-trilha-titulo="${trilha.titulo}"
-                                        th:data-trilha-descricao="${trilha.descricao}"
-                                        th:data-trilha-eixo="${trilha.eixoTematico}"
-                                        th:data-trilha-duracao="${duracaoInput}"
-                                        th:data-trilha-topicos="${trilha.topicosDeAprendizado}"
-                                        onclick="openEditTrilhaModal(this)">
-                                    Editar
-                                </button>
-                                <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 transition-colors"
-                                        th:data-trilha-id="${trilha.id}"
-                                        th:data-trilha-titulo="${trilha.titulo}"
-                                        onclick="abrirDeletarModal(this.dataset.trilhaId, this.dataset.trilhaTitulo)">
-                                    Deletar
-                                </button>
-                            </div>
+                            <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 transition-colors"
+                                    th:data-trilha-id="${trilha.id}"
+                                    th:data-trilha-titulo="${trilha.titulo}"
+                                    onclick="abrirDeletarModal(this.dataset.trilhaId, this.dataset.trilhaTitulo)">
+                                Deletar
+                            </button>
                         </div>
                     </div>
-
-                    <p th:text="${trilha.descricao}" class="text-sm text-gray-600"></p>
                 </div>
 
             </div>

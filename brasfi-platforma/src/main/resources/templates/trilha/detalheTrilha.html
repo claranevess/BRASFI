@@ -78,8 +78,10 @@
                             <h3 class="font-semibold text-lg text-gray-800" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h3>
                             <p class="text-sm text-gray-600 mt-1" th:text="${aula.descricao}">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
                             <div class="text-right mt-3 text-sm text-gray-600 flex items-center justify-end gap-1">
-                                <a th:href="${aula.link}" class="hover:underline font-medium">Acessar</a>
-                                <span>↗</span>
+                                <a th:href="@{/aulas/detalhe/{id}(id=${aula.id})}" class="hover:underline font-medium">
+                                    Acessar
+                                    <span>↗</span>
+                                </a>
                             </div>
                         </div>
                     </div>
