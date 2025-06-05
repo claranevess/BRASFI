@@ -14,26 +14,29 @@
 
 
     <aside class="w-20 bg-white border-r flex flex-col items-center py-6 space-y-8">
-        <img src="/static/favicon-brasfi.png" alt="Home" class="w-8 h-8 cursor-pointer" />
+        <img th:src="@{/static/favicon-brasfi.png}" alt="Home" class="w-8 h-8 cursor-pointer" />
+
         <a href="/dashboard">
-            <img src="/static/dash2.png" alt="Dashboard" class="w-8 h-8 cursor-pointer" />
+            <img th:src="@{/static/dash2.png}" alt="Dashboard" class="w-8 h-8 cursor-pointer" />
         </a>
+
         <a href="/trilhas/listar">
-            <img src="/static/trilha2.png" alt="Trilhas" class="w-8 h-8 cursor-pointer" />
+            <img th:src="@{/static/trilha2.png}" alt="Trilhas" class="w-8 h-8 cursor-pointer" />
         </a>
+
         <a href="/grupos/listar">
-            <img src="/static/grupos2.png" alt="Grupos" class="w-8 h-8 cursor-pointer" />
+            <img th:src="@{/static/grupos2.png}" alt="Grupos" class="w-8 h-8 cursor-pointer" />
         </a>
+
         <!-- Ícone de logout -->
         <a href="#" onclick="document.getElementById('logout-form').submit();">
-            <img src="/static/saida2.png" alt="Saída" class="w-8 h-8 cursor-pointer" />
+            <img th:src="@{/static/saida2.png}" alt="Saída" class="w-8 h-8 cursor-pointer" />
         </a>
 
         <!-- Formulário invisível para fazer logout via POST -->
         <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
-
-
     </aside>
+
 
 
 
