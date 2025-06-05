@@ -13,9 +13,11 @@
 
 
     <aside class="w-20 bg-white border-r flex flex-col items-center py-6 space-y-8">
-        <span class="material-icons text-gray-600 text-3xl">home</span>
-        <span class="material-icons text-gray-600 text-3xl">school</span>
-        <span class="material-icons text-gray-600 text-3xl">bar_chart</span>
+        <img src="/static/favicon-brasfi.png" alt="Home" class="w-8 h-8" />
+        <img src="/static/dash2.png" alt="Dashboard" class="w-8 h-8" />
+        <img src="/static/trilha2.png" alt="Trilhas" class="w-8 h-8" />
+        <img src="/static/grupos2.png" alt="Grupos" class="w-8 h-8" />
+        <img src="/static/saida2.png" alt="Saída" class="w-8 h-8" />
     </aside>
 
 
@@ -23,11 +25,11 @@
 
 
         <div class="flex justify-between items-center">
-            <input type="text" placeholder="Pesquisar na BRASFI Conecta"
+            <input type="text" placeholder="Pesquise na plataforma..."
                    class="w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" />
             <div class="flex items-center space-x-4">
-                <span class="material-icons text-gray-600 text-2xl cursor-pointer">notifications</span>
-                <span class="material-icons text-gray-600 text-2xl cursor-pointer">help_outline</span>
+                <img src="/static/notif2.png" alt="Notificações" class="w-6 h-6 cursor-pointer" />
+                <img src="/static/config2.png" alt="Configurações" class="w-6 h-6 cursor-pointer" />
                 <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm font-semibold">U</div>
             </div>
         </div>
@@ -42,7 +44,9 @@
                 </p>
                 <button class="mt-2 px-4 py-1 text-sm bg-[#65A603] text-white rounded">Explorar trilhas</button>
             </div>
-            <div class="w-40 h-24 bg-gray-200 rounded"></div>
+            <div class="w-40 h-24 rounded flex items-center justify-center">
+                <img src="/static/prancheta.png" alt="prancheta 11" class="max-w-full max-h-full" />
+            </div>
         </div>
 
 
@@ -58,7 +62,9 @@
                     <div class="w-full bg-gray-200 rounded h-2">
                         <div class="bg-green-500 h-2 rounded" style="width: 50%"></div>
                     </div>
-                    <p class="text-xs text-gray-500">Progresso: 50%</p>
+                    <p class="text-xs text-gray-500">
+                        Progresso: <span class="font-bold text-black">50%</span>
+                    </p>
                 </div>
 
                 <div class="bg-white p-4 rounded shadow space-y-2">
@@ -67,7 +73,9 @@
                     <div class="w-full bg-gray-200 rounded h-2">
                         <div class="bg-green-500 h-2 rounded" style="width: 50%"></div>
                     </div>
-                    <p class="text-xs text-gray-500">Progresso: 70%</p>
+                    <p class="text-xs text-gray-500">
+                        Progresso: <span class="font-bold text-black">70%</span>
+                    </p>
                 </div>
             </div>
 
