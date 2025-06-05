@@ -42,8 +42,8 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
   <a href="https://exemplo.com/link1" target="_blank">
     <img src="https://img.shields.io/badge/Google Sites-FFB300?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Acessar a Plataforma">
   </a>
-  <a href="https://exemplo.com/link2" target="_blank">
-    <img src="https://img.shields.io/badge/Site do projeto-437312?style=for-the-badge&logo=bookstack&logoColor=white" alt="Documentação">
+  <a href="https://brasfi-conecta.onrender.com" target="_blank">
+    <img src="https://img.shields.io/badge/Site do projeto-437312?style=for-the-badge&logo=bookstack&logoColor=white" alt="Site do Projeto">
   </a>
   <a href="https://exemplo.com/link3" target="_blank">
     <img src="https://img.shields.io/badge/Figma-1D3C73?style=for-the-badge&logo=github&logoColor=white" alt="Contribuir">
