@@ -32,6 +32,7 @@ public class GrupoService {
         return userRepository.findByUsername(username).orElse(null);
     }
 
+    // Método salvarComCriador (já existente no seu código)
     @Transactional
     public void salvarComCriador(Grupo grupo, User criador) {
         if (grupo.getMembros() == null) {
@@ -51,6 +52,36 @@ public class GrupoService {
         }
         grupoRepository.save(grupo);
     }
+
+    @Transactional
+    public Grupo salvarComCriadorEMembros(Grupo grupo, User criador, List<Long> membrosIds) {
+        if (grupo.getMembros() == null) {
+            grupo.setMembros(new ArrayList<>());
+        }
+        if (grupo.getMembros().stream().noneMatch(membro -> membro.getId().equals(criador.getId()))) {
+            grupo.getMembros().add(criador);
+        }
+        if (grupo.getAdminsId() == null) {
+            grupo.setAdminsId(new ArrayList<>());
+        }
+        if (!grupo.getAdminsId().contains(criador.getId())) {
+            grupo.getAdminsId().add(criador.getId());
+        }
+
+        if (membrosIds != null && !membrosIds.isEmpty()) {
+            for (Long membroId : membrosIds) {
+                if (!membroId.equals(criador.getId())) {
+                    User membroParaAdicionar = userRepository.findById(membroId)
+                            .orElseThrow(() -> new RuntimeException("Usuário com ID " + membroId + " não encontrado ao tentar adicionar ao grupo."));
+                    if (grupo.getMembros().stream().noneMatch(m -> m.getId().equals(membroParaAdicionar.getId()))) {
+                        grupo.getMembros().add(membroParaAdicionar);
+                    }
+                }
+            }
+        }
+        return grupoRepository.save(grupo); // Retorna o grupo salvo (útil para pegar o ID)
+    }
+
 
     @Transactional
     public void entrarGrupo(Long grupoId, Long usuarioId) {
@@ -75,7 +106,7 @@ public class GrupoService {
                 });
             }
         } else {
-            throw new RuntimeException("Grupo or User not found for ID: " + grupoId + ", " + usuarioId);
+            throw new RuntimeException("Grupo ou Usuário não encontrado para ID: " + grupoId + ", " + usuarioId);
         }
     }
 
@@ -103,9 +134,10 @@ public class GrupoService {
             novaSolicitacao.setGrupo(grupo);
             novaSolicitacao.setSolicitante(solicitante);
             novaSolicitacao.setStatus(SolicitacaoAcesso.StatusSolicitacao.PENDENTE);
+            novaSolicitacao.setDataSolicitacao(LocalDateTime.now()); // É bom registrar a data da solicitação
             solicitacaoAcessoRepository.save(novaSolicitacao);
         } else {
-            throw new RuntimeException("Grupo or Solicitante not found.");
+            throw new RuntimeException("Grupo ou Solicitante não encontrado.");
         }
     }
 
@@ -151,8 +183,15 @@ public class GrupoService {
         return grupoRepository.findByMembros_Id(userId);
     }
 
+    public Optional<Grupo> findById(Long id) {
+        return grupoRepository.findById(id);
+    }
+
     public List<Grupo> findGruposNotJoinedByUserId(Long userId) {
         List<Grupo> allGrupos = grupoRepository.findAll();
+        if (userId == null) {
+            return allGrupos;
+        }
         return allGrupos.stream()
                 .filter(grupo -> {
                     if (grupo.getMembros() == null) {

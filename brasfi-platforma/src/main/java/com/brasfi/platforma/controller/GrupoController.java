@@ -8,19 +8,19 @@ import com.brasfi.platforma.model.SolicitacaoAcesso;
 import com.brasfi.platforma.repository.GrupoRepository;
 import com.brasfi.platforma.service.GrupoService;
 import com.brasfi.platforma.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; 
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,16 +37,32 @@ public class GrupoController {
     @Autowired
     private UserService userService;
 
+    public static class CriarGrupoModalDto {
+        private String nome;
+        private String descricao;
+        private List<Long> membrosIds;
+
+        // Getters
+        public String getNome() { return nome; }
+        public String getDescricao() { return descricao; }
+        public List<Long> getMembrosIds() { return membrosIds; }
+
+        // Setters
+        public void setNome(String nome) { this.nome = nome; }
+        public void setDescricao(String descricao) { this.descricao = descricao; }
+        public void setMembrosIds(List<Long> membrosIds) { this.membrosIds = membrosIds; }
+    }
+
     @GetMapping("/listar")
-    public String listarGrupos(Model model){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    public String listarGrupos(Model model, Authentication authentication){
         User currentUser = null;
         List<Grupo> myGroups = new ArrayList<>();
         List<Grupo> exploreGroups = new ArrayList<>();
         List<SolicitacaoAcesso> pendingSolicitacoes = new ArrayList<>();
+        List<User> allUsersForModal = Collections.emptyList();
 
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            String username = auth.getName();
+        if (authentication != null && authentication.isAuthenticated() && !authentication.getPrincipal().equals("anonymousUser")) {
+            String username = authentication.getName();
             currentUser = userService.getUserByUsername(username);
             model.addAttribute("currentUser", currentUser);
 
@@ -55,75 +71,74 @@ public class GrupoController {
 
                 if (currentUser.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
                     pendingSolicitacoes = grupoService.findAllPendingSolicitacoes();
-                    model.addAttribute("pendingSolicitacoes", pendingSolicitacoes);
-                    exploreGroups = new ArrayList<>();
+                    allUsersForModal = userService.findAllUsers();
                 } else {
                     exploreGroups = grupoService.findGruposNotJoinedByUserId(currentUser.getId());
                 }
             }
         } else {
-            exploreGroups = grupoRepository.findAll();
+            exploreGroups = grupoService.findGruposNotJoinedByUserId(null);
         }
 
         model.addAttribute("myGroups", myGroups);
         model.addAttribute("exploreGroups", exploreGroups);
+        model.addAttribute("pendingSolicitacoes", pendingSolicitacoes);
+        model.addAttribute("allUsersForModal", allUsersForModal);
+        model.addAttribute("newGrupoDto", new CriarGrupoModalDto());
 
         return "listar_grupos";
     }
 
-    @GetMapping("/criar_grupo")
-    public String criarGrupo(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
+    @PostMapping("/criar_grupo_modal")
+    @ResponseBody
+    public ResponseEntity<?> salvarGrupoViaModal(@RequestBody CriarGrupoModalDto grupoDto, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Usuário não autenticado."));
+        }
+        String username = authentication.getName();
         User criador = userService.getUserByUsername(username);
 
-        if (criador == null || criador.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
-            throw new AccessDeniedException("Apenas mentores podem criar grupos.");
+        if (criador == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Detalhes do usuário criador não encontrados."));
         }
 
-        model.addAttribute("grupo", new Grupo());
-        return "criar_grupo";
-    }
-
-    @PostMapping("/criar_grupo")
-    public String salvarGrupo(@ModelAttribute Grupo grupo, RedirectAttributes redirectAttributes) { 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        User criador = userService.getUserByUsername(username);
-
-        if (criador == null || criador.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
-            throw new AccessDeniedException("Apenas mentores podem criar grupos.");
+        if (criador.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Apenas administradores podem criar grupos."));
         }
+        if (grupoDto.getNome() == null || grupoDto.getNome().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "O nome do grupo é obrigatório."));
+        }
+
+        Grupo grupo = new Grupo();
+        grupo.setNome(grupoDto.getNome().trim());
+        grupo.setDescricao(grupoDto.getDescricao() != null ? grupoDto.getDescricao().trim() : null);
 
         try {
-            grupoService.salvarComCriador(grupo, criador);
-            redirectAttributes.addFlashAttribute("successMessage", "Grupo criado com sucesso!"); 
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar grupo: " + e.getMessage()); 
-            System.err.println("Erro ao criar grupo: " + e.getMessage());
+            Grupo grupoSalvo = grupoService.salvarComCriadorEMembros(grupo, criador, grupoDto.getMembrosIds());
+            return ResponseEntity.ok(Map.of("message", "Grupo '" + grupoSalvo.getNome() + "' criado com sucesso!", "grupoId", grupoSalvo.getId()));
+        } catch (RuntimeException e) {
+            System.err.println("Erro ao criar grupo via modal: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Erro interno ao tentar criar o grupo: " + e.getMessage()));
         }
-
-        return "redirect:/grupo/listar";
     }
 
     @PostMapping("/solicitar_acesso/{id}")
     public String solicitarAcesso(@PathVariable("id") Long grupoId,
-                                  RedirectAttributes redirectAttributes) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = null;
-
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            String username = auth.getName();
-            currentUser = userService.getUserByUsername(username);
-        }
-
-        if (currentUser == null) {
+                                  RedirectAttributes redirectAttributes, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
             redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para solicitar acesso.");
+            return "redirect:/login";
+        }
+        User currentUser = userService.getUserByUsername(authentication.getName());
+        if (currentUser == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Usuário não encontrado.");
             return "redirect:/login";
         }
 
         if (currentUser.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Mentores não solicitam acesso a grupos dessa forma.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Administradores não solicitam acesso a grupos dessa forma.");
             return "redirect:/grupo/listar";
         }
 
@@ -140,43 +155,35 @@ public class GrupoController {
     }
 
     @PostMapping("/aceitar_solicitacao/{solicitacaoId}")
-    public String aceitarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId, RedirectAttributes redirectAttributes) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User adminUser = null;
-
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            String username = auth.getName();
-            adminUser = userService.getUserByUsername(username);
+    public String aceitarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId, RedirectAttributes redirectAttributes, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            throw new AccessDeniedException("Acesso negado.");
         }
-
+        User adminUser = userService.getUserByUsername(authentication.getName());
         if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
-            throw new AccessDeniedException("Apenas mentores podem aceitar solicitações.");
+            throw new AccessDeniedException("Apenas administradores podem aceitar solicitações.");
         }
 
         try {
             grupoService.aceitarSolicitacao(solicitacaoId, adminUser);
-            redirectAttributes.addFlashAttribute("successMessage", "Solicitação aceita com sucesso!");
+            redirectAttributes.addFlashAttribute("successMessage", "Solicitação aceita com sucesso! Usuário adicionado ao grupo.");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao aceitar solicitação.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao processar a aceitação da solicitação.");
             System.err.println("Erro ao aceitar solicitação " + solicitacaoId + ": " + e.getMessage());
         }
         return "redirect:/grupo/listar";
     }
 
     @PostMapping("/recusar_solicitacao/{solicitacaoId}")
-    public String recusarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId, RedirectAttributes redirectAttributes) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User adminUser = null;
-
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            String username = auth.getName();
-            adminUser = userService.getUserByUsername(username);
+    public String recusarSolicitacao(@PathVariable("solicitacaoId") Long solicitacaoId, RedirectAttributes redirectAttributes, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            throw new AccessDeniedException("Acesso negado.");
         }
-
+        User adminUser = userService.getUserByUsername(authentication.getName());
         if (adminUser == null || adminUser.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
-            throw new AccessDeniedException("Apenas mentores podem recusar solicitações.");
+            throw new AccessDeniedException("Apenas administradores podem recusar solicitações.");
         }
 
         try {
@@ -185,33 +192,30 @@ public class GrupoController {
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao recusar solicitação.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao processar a recusa da solicitação.");
             System.err.println("Erro ao recusar solicitação " + solicitacaoId + ": " + e.getMessage());
         }
         return "redirect:/grupo/listar";
     }
 
     @PostMapping("/entrar/{id}")
-    public String entrarGrupo(@PathVariable("id") Long grupoId, RedirectAttributes redirectAttributes) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = null;
-
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            String username = auth.getName();
-            currentUser = userService.getUserByUsername(username);
+    public String entrarGrupo(@PathVariable("id") Long grupoId, RedirectAttributes redirectAttributes, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para entrar em um grupo.");
+            return "redirect:/login";
+        }
+        User currentUser = userService.getUserByUsername(authentication.getName());
+        if (currentUser == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Usuário não encontrado.");
+            return "redirect:/login";
         }
 
-        if (currentUser != null) {
-            try {
-                grupoService.entrarGrupo(grupoId, currentUser.getId());
-                redirectAttributes.addFlashAttribute("successMessage", "Você entrou no grupo com sucesso!");
-            } catch (RuntimeException e) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao entrar no grupo: " + e.getMessage());
-                System.err.println("Error entering group " + grupoId + " by user " + currentUser.getId() + ": " + e.getMessage());
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para entrar em um grupo.");
-            return "redirect:/login?error=notLoggedIn";
+        try {
+            grupoService.entrarGrupo(grupoId, currentUser.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "Você entrou no grupo com sucesso!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao entrar no grupo: " + e.getMessage());
+            System.err.println("Error entering group " + grupoId + " by user " + currentUser.getId() + ": " + e.getMessage());
         }
         return "redirect:/grupo/listar";
     }
@@ -219,11 +223,14 @@ public class GrupoController {
     @GetMapping("/{id}/membros")
     @ResponseBody
     public ResponseEntity<List<MemberDto>> getGroupMembers(@PathVariable("id") Long grupoId) {
-        Optional<Grupo> optionalGrupo = grupoRepository.findById(grupoId);
+        Optional<Grupo> optionalGrupo = grupoService.findById(grupoId);
         if (optionalGrupo.isPresent()) {
             Grupo grupo = optionalGrupo.get();
+            if (grupo.getMembros() == null) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
             List<MemberDto> members = grupo.getMembros().stream()
-                    .map(MemberDto::new)
+                    .map(user -> new MemberDto(user)) // Passa o objeto User
                     .collect(Collectors.toList());
             return ResponseEntity.ok(members);
         } else {
