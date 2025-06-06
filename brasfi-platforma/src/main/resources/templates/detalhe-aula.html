@@ -7,6 +7,7 @@
     <title>Detalhe da Aula</title>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <style>
         /* Optional: Custom scrollbar for better appearance */
         ::-webkit-scrollbar {
@@ -33,6 +34,19 @@
                     colors: {
                         'brasfi-green-dark': '#437312', // For the main comment section background
                         'brasfi-green-light': '#65A603', // For Aula Title and Materiais disponíveis
+                        'brasfi-green': '#65a603', /* Added for sidebar */
+                        'brasfi-green-darker': '#528402', /* Added for sidebar */
+                        'brasfi-blue': '#1d3c73', /* Added for sidebar */
+                        'page-bg': '#F7F8FC', /* Added for sidebar */
+                        'sidebar-bg': '#FFFFFF', /* Added for sidebar */
+                        'card-bg': '#FFFFFF', /* Added for sidebar */
+                        'dark-text': '#1F2937', /* Added for sidebar */
+                        'medium-text': '#4B5563', /* Added for sidebar */
+                        'light-text': '#6B7280', /* Added for sidebar */
+                        'input-border': '#D1D5DB', /* Added for sidebar */
+                        'line-gray': '#D1D5DB', /* Added for sidebar */
+                        'success-green': '#10B981', /* Added for sidebar */
+                        'pending-yellow': '#F59E0B', /* Added for sidebar */
                     }
                 }
             }
@@ -42,20 +56,43 @@
 <body class="bg-gray-100 font-sans">
 
 <div class="flex min-h-screen">
-    <aside class="w-64 bg-white shadow-md p-6 space-y-4">
-        <div class="mb-6">
-            <img src="/path/to/logo.png" alt="BRASFI Conecta" class="h-8" />
+    <aside class="w-64 bg-sidebar-bg p-6 shadow-lg flex flex-col justify-between fixed top-0 left-0 h-full z-30">
+        <div>
+            <div class="flex items-center mb-10">
+                <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">
+            </div>
+            <nav>
+                <ul class="space-y-1">
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-th-large mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg bg-brasfi-green text-white font-semibold transition group">
+                            <i class="fas fa-route mr-3 text-lg w-5 text-center text-white"></i>
+                            <span class="text-sm font-semibold">Trilhas</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-users mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Grupos</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-project-diagram mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Projetos</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        <nav class="space-y-2">
-            <a href="#" class="block text-gray-700 font-semibold bg-gray-100 px-4 py-2 rounded">Trilhas</a>
-            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Dashboard</a>
-            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Grupos</a>
-            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Projetos</a>
-        </nav>
     </aside>
 
-    <main class="flex-1 p-8">
-        <input type="hidden" id="aulaId" th:value="${aula.id}">
+    <main class="flex-1 p-8 ml-64"> <input type="hidden" id="aulaId" th:value="${aula.id}">
         <div class="flex justify-between items-center mb-6">
             <nav class="text-sm text-gray-600 space-x-1">
                 <a th:href="@{/trilhas/listar}" class="text-gray-600 hover:text-gray-500">Trilhas</a>
