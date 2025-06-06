@@ -675,6 +675,7 @@
         membersListElement.innerHTML = '<li class="text-center text-gray-500 p-4">Carregando membros...</li>';
         try {
             const response = await fetch(/*[[@{'/grupo/'}]]*/'/grupo/' + groupId + '/membros');
+            console.log("Attempting to fetch from URL:", url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

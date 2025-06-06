@@ -39,13 +39,13 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
 
 ## 🧷 Links importantes
 <p align="center">
-  <a href="https://exemplo.com/link1" target="_blank">
+  <a href="https://sites.google.com/cesar.school/projetos-3-g5/in%C3%ADcio" target="_blank">
     <img src="https://img.shields.io/badge/Google Sites-FFB300?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Acessar a Plataforma">
   </a>
   <a href="https://brasfi-conecta.onrender.com" target="_blank">
     <img src="https://img.shields.io/badge/Site do projeto-437312?style=for-the-badge&logo=bookstack&logoColor=white" alt="Site do Projeto">
   </a>
-  <a href="https://exemplo.com/link3" target="_blank">
+  <a href="https://www.figma.com/design/m4yVnKpFuSBvszR7hiVyre/Prot%C3%B3tipo-Portal-Edu-BRASFI-Conecta?node-id=0-1&p=f&t=VxTRnBfflAP4FjUZ-0" target="_blank">
     <img src="https://img.shields.io/badge/Figma-1D3C73?style=for-the-badge&logo=github&logoColor=white" alt="Contribuir">
   </a>
 </p>

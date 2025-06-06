@@ -1,15 +1,14 @@
 <div id="modalEditarTrilha" th:fragment="modalContent" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white w-full max-w-xl min-w-[980px] mx-auto rounded-lg shadow-lg relative max-h-[80vh] flex flex-col">
-
-        <div class="py-8 px-6 sticky top-0 z-10 bg-white">
-            <h2 class="text-3xl font-semibold">Editar Trilha</h2>
+    <div class="bg-white w-full max-w-4xl mx-auto rounded-lg shadow-lg relative max-h-[90vh] flex flex-col">
+        <div class="py-5 px-6 border-b sticky top-0 bg-white z-10">
+            <h2 class="text-2xl font-semibold">Editar Trilha</h2>
         </div>
 
         <div class="p-6 overflow-y-auto flex-grow">
             <form id="editarTrilhaForm" th:action="@{/trilhas/editar}" th:object="${trilha}" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{id}" />
 
-                <div class="mb-4">
+                <div class="mb-6">
                     <div class="flex items-center justify-center w-full">
                         <label for="dropzone-file" class="relative flex flex-col items-center justify-center w-full h-48 border-2 border-[#437312] rounded-lg cursor-pointer bg-[#437312] hover:bg-[#5a991a]">
                         <div class="flex flex-col items-center justify-center pt-5 pb-6"></div>
@@ -26,12 +25,12 @@
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <input placeholder="Digite o nome da trilha..." type="text" id="tituloTrilha" th:field="*{titulo}" class="w-full border-b-2 border-gray-300 rounded p-2 focus:border-blue-500 focus:ring-0 outline-none font-semibold text-xl" />
+                <div class="mb-6">
+                    <input placeholder="Digite o nome da trilha..." type="text" id="tituloTrilha" th:field="*{titulo}" class="w-full border-b-2 border-gray-300 rounded p-2 focus:ring-0 outline-none font-semibold text-xl" />
                 </div>
 
-                <div class="flex gap-4 min-h-[280px]">
-                    <div class="w-1/2">
+                <div class="flex flex-col md:flex-row gap-6 mb-8">
+                    <div class="w-full md:w-1/2 space-y-4">
                         <div class="mb-4">
                             <div class="flex gap-4 items-start">
                                 <label class="w-60 flex items-center gap-2 text-left cursor-pointer pt-2">
@@ -42,7 +41,7 @@
                                     </svg>
                                     Eixo Temático
                                 </label>
-                                <div class="relative">
+                                <div class="flex-grow relative">
                                     <button id="togglePickerEixo" type="button"
                                             class="flex items-center gap-2 bg-white border border-[#437312] rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left w-full">
                                         <span id="buttonTextEixo" class="text-gray-700">Selecionar...</span>
@@ -71,14 +70,14 @@
                                     </svg>
                                     Duração
                                 </label>
-                                <div class="relative">
+                                <div class="flex-grow relative">
                                     <button id="togglePicker" type="button"
                                             class="flex items-center gap-2 bg-white border border-[#437312] rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left">
                                         <span id="buttonText" class="text-gray-700">Selecionar...</span>
                                         <span class="text-sm">▼</span>
                                     </button>
                                     <div id="timepicker"
-                                         class="hidden w-[284px] absolute mt-2 bg-white p-4 rounded-xl shadow-lg z-30"
+                                         class="hidden w-full absolute mt-2 bg-white p-4 rounded-xl shadow-lg z-30"
                                          onclick="event.stopPropagation()">
                                         <div class="flex gap-3 relative">
                                             <div class="time-overlay hour"></div>
@@ -101,7 +100,7 @@
                                     <path d="M4 12l10 0"/>
                                     <path d="M4 18l14 0"/>
                                 </svg>
-                                Descrição
+                                Descrição da Trilha
                             </label>
                             <textarea id="descricao" th:field="*{descricao}" placeholder="Conte um pouco sobre a trilha..." class="block w-full border border-[#437312] rounded p-4 resize-none" rows="4"></textarea>
                         </div>
@@ -206,11 +205,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="flex justify-center mt-6">
+                        <button type="button" id="addAulaBtn"
+                                class="px-6 py-2 bg-[#437312] text-white rounded-md font-semibold hover:bg-[#5a991a] focus:outline-none focus:ring-2 focus:ring-green-500">
+                            Adicionar Outra Aula
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
-
-
         <div class="p-4 bg-gray-50 border-t border-gray-200 rounded-b-lg sticky bottom-0 z-10">
             <div class="flex justify-end space-x-4 mt-8">
                 <button type="button" id="closeModal" class="px-10 py-2 border border-red-500 text-red-500 rounded-md font-bold hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400">
@@ -223,4 +226,3 @@
         </div>
     </div>
 </div>
-

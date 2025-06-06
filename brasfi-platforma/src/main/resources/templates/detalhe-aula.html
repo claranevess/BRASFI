@@ -7,7 +7,243 @@
     <title>Detalhe da Aula</title>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F7F8FC;
+        }
+        .timeline-container {
+            position: relative;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 30px;
+            top: -20px;
+            bottom: -20px;
+            width: 3px;
+            background-color: #D1D5DB;
+            z-index: 5;
+        }
+        .status-dot {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            z-index: 10;
+            position: absolute;
+            left: 18px;
+            top: 20px;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #F59E0B;
+        }
+        .status-dot.completed {
+            background-color: #65a603;
+            box-shadow: 0 0 0 2px #F59E0B;
+        }
+        .status-dot.pending {
+            background-color: white;
+            box-shadow: 0 0 0 2px #F59E0B; /* Pending color */
+        }
+        .lesson-card {
+            transition: all 0.3s ease;
+            border: 1px solid #E5E7EB;
+            position: relative;
+            overflow: hidden;
+            background-color: white;
+            border-radius: 8px;
+        }
+        .lesson-card-content {
+            padding: 25px;
+            padding-left: 60px;
+            position: relative;
+            z-index: 1;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 45px;
+            background-color: white;
+            z-index: 2;
+        }
+        .lesson-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .sidebar-sticky {
+            position: sticky;
+            top: 24px;
+        }
+        .topic-card {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: white;
+            transition: all 0.2s ease;
+        }
+        .topic-card:hover {
+            border-color: #65a603;
+            transform: translateX(3px);
+        }
+        .topic-card i {
+            color: #65a603;
+            margin-right: 10px;
+            font-size: 8px; /* Adjusted size for circle dot */
+            vertical-align: middle;
+        }
+        .counters-container {
+            display: flex;
+            margin-left: auto;
+            gap: 12px;
+        }
+        /* Style for the completion message (kept but hidden by modal logic) */
+        .completion-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's above everything else */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px); /* Initial state for animation */
+            opacity: 0; /* Initial state for animation */
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0); /* Final state for animation */
+            opacity: 1; /* Final state for animation */
+        }
+
+        .modal-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1F2937; /* Dark text */
+            margin-bottom: 10px;
+        }
+
+        .modal-message {
+            font-size: 16px;
+            color: #4B5563; /* Medium text */
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .modal-rating {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .modal-rating i {
+            color: #F59E0B; /* Pending yellow - used for active stars */
+            font-size: 32px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .modal-rating i:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-button {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none; /* Ensure no default button border */
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .modal-button.primary {
+            background-color: #65a603; /* Brasfi Green */
+            color: white;
+        }
+
+        .modal-button.primary:hover {
+            background-color: #528402; /* Brasfi Green Darker */
+        }
+
+        .modal-button.secondary {
+            background-color: #E5E7EB; /* Light gray */
+            color: #4B5563; /* Medium text */
+        }
+
+        .modal-button.secondary:hover {
+            background-color: #D1D5DB; /* Input border gray */
+        }
+
+        /* Custom CSS for custom Tailwind colors to ensure they work without JIT compilation in browser */
+        .text-brasfi-green {
+            color: #65a603 !important; /* Added !important for guaranteed override */
+        }
+        .text-success-green { /* Kept in case it's used elsewhere and needed */
+            color: #10B981;
+        }
+        .bg-brasfi-green {
+            background-color: #65a603;
+        }
+        .bg-brasfi-green-dark {
+            background-color: #437312;
+        }
+        .bg-brasfi-green-light {
+            background-color: #65A603;
+        }
+
         /* Optional: Custom scrollbar for better appearance */
         ::-webkit-scrollbar {
             width: 8px;
@@ -27,10 +263,24 @@
         }
     </style>
     <script>
+        // Only keep colors that are specifically used as utility classes if not directly in CSS
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
+                        'brasfi-green': '#65a603', // Keep here for cases like bg-brasfi-green
+                        'brasfi-green-darker': '#528402',
+                        'brasfi-blue': '#1d3c73',
+                        'page-bg': '#F7F8FC',
+                        'sidebar-bg': '#FFFFFF',
+                        'card-bg': '#FFFFFF',
+                        'dark-text': '#1F2937',
+                        'medium-text': '#4B5563',
+                        'light-text': '#6B7280',
+                        'input-border': '#D1D5DB',
+                        'line-gray': '#D1D5DB',
+                        'success-green': '#10B981', // Kept here as it's defined in your palette
+                        'pending-yellow': '#F59E0B',
                         'brasfi-green-dark': '#437312', // For the main comment section background
                         'brasfi-green-light': '#65A603', // For Aula Title and Materiais disponíveis
                     }
@@ -39,125 +289,164 @@
         }
     </script>
 </head>
-<body class="bg-gray-100 font-sans">
-
-<div class="flex min-h-screen">
-    <aside class="w-64 bg-white shadow-md p-6 space-y-4">
-        <div class="mb-6">
-            <img src="/path/to/logo.png" alt="BRASFI Conecta" class="h-8" />
-        </div>
-        <nav class="space-y-2">
-            <a href="#" class="block text-gray-700 font-semibold bg-gray-100 px-4 py-2 rounded">Trilhas</a>
-            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Dashboard</a>
-            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Grupos</a>
-            <a href="#" class="block text-gray-600 hover:bg-gray-100 px-4 py-2 rounded">Projetos</a>
-        </nav>
-    </aside>
-
-    <main class="flex-1 p-8">
-        <input type="hidden" id="aulaId" th:value="${aula.id}">
-        <div class="flex justify-between items-center mb-6">
-            <nav class="text-sm text-gray-600 space-x-1">
-                <span>Trilhas</span> >
-                <span>Fundamentos de Finanças Sustentáveis</span> >
-                <span class="font-semibold text-brasfi-green-light" th:text="${aula.titulo}">Nome da Aula</span>
-            </nav>
-            <div class="flex items-center space-x-2">
-                <div class="text-sm text-gray-600">Usuário</div>
-                <img src="/path/to/user-icon.svg" class="w-6 h-6" alt="Ícone do usuário" />
+<body class="bg-page-bg min-h-screen">
+<div class="flex">
+    <aside class="w-64 bg-sidebar-bg p-6 shadow-lg flex flex-col justify-between fixed top-0 left-0 h-full z-30">
+        <div>
+            <div class="flex items-center mb-10">
+                <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">
             </div>
-        </div>
-
-        <div class="flex flex-col lg:flex-row gap-8 items-start">
-            <div class="flex-1">
-                <div class="aspect-video bg-gray-200 rounded mb-6 overflow-hidden">
-                    <iframe class="w-full h-full"
-                            th:src="'https://www.youtube.com/embed/' + ${videoCode}"
-                            frameborder="0" allowfullscreen></iframe>
-                </div>
-
-                <h1 class="text-2xl font-bold mb-2" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h1>
-                <p class="text-gray-700 mb-4" th:text="${aula.descricao}">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
-                </p>
-
-                <div class="flex items-center space-x-4 mb-6">
-                    <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-blue-600">
-                        <span>👍</span><span>Gostei</span>
-                    </button>
-                    <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-red-600">
-                        <span>👎</span><span>Não gostei</span>
-                    </button>
-                    <div class="flex items-center text-sm text-gray-700 space-x-2">
-                        <input type="checkbox" id="aulaConcluida" class="accent-green-600" onchange="marcarComoConcluida()" />
-                        <label for="aulaConcluida" class="text-sm">Aula concluída?</label>
-                    </div>
-                    <div id="modalConcluida" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
-                        <div class="bg-white rounded-lg shadow-lg p-6 text-center w-full max-w-md">
-                            <div class="flex justify-center mb-4">
-                                <div class="bg-gray-700 text-white rounded-full p-3">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-                                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h2 class="text-xl font-bold mb-2">Muito bem!</h2>
-                            <p class="text-gray-600 mb-4">Você marcou esta aula como concluída. Gostaria de avaliá-la? Sua opinião é muito importante!</p>
-                            <div class="flex justify-center gap-4">
-                                <button class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Gostei</button>
-                                <button class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Não gostei</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-brasfi-green-dark rounded-lg shadow-md mt-6 p-4">
-                    <h2 class="text-lg font-semibold text-white mb-4">Comentários</h2>
-
-                    <div class="bg-white rounded-lg p-3 mb-4 flex items-center space-x-3">
-                        <img src="/path/to/user-avatar.png" alt="Avatar" class="w-8 h-8 rounded-full" />
-                        <textarea id="newCommentText"
-                                  class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 resize-none overflow-hidden"
-                                  rows="1"
-                                  placeholder="Deixe seu comentário ou faça perguntas..."
-                                  oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
-                        <button onclick="postComment()"
-                                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 self-end ml-2">
-                            Comentar
-                        </button>
-                    </div>
-
-                    <div id="commentsList" class="space-y-4">
-                        <div class="text-white text-center py-4" id="loadingComments">Carregando comentários...</div>
-                    </div>
-                </div>
-
-            </div>
-
-            <aside class="w-full lg:w-72 bg-brasfi-green-light rounded-lg p-4 space-y-4 shadow-md self-start">
-                <h2 class="text-lg font-semibold text-white">Materiais disponíveis</h2>
-
-                <ul class="space-y-2 list-none">
-                    <li th:each="material : ${aula.materiais}">
-                        <div th:if="${material.linkApoio != null}">
-                            <a th:href="${material.linkApoio}" target="_blank"
-                               class="block text-white hover:underline text-sm">
-                                🔗 <span th:text="${material.linkApoio}">Link</span>
-                            </a>
-                        </div>
-
-                        <div th:if="${material.caminhoArquivo != null}">
-                            <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank"
-                               class="block text-white hover:underline text-sm">
-                                📄 <span th:text="${material.nomeOriginal}">PDF Slide Apresentação</span>
-                            </a>
-                        </div>
+            <nav>
+                <ul class="space-y-1">
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-th-large mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg bg-brasfi-green text-white font-semibold transition group">
+                            <i class="fas fa-route mr-3 text-lg w-5 text-center text-white"></i>
+                            <span class="text-sm font-semibold">Trilhas</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-users mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Grupos</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-project-diagram mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Projetos</span>
+                        </a>
                     </li>
                 </ul>
-            </aside>
+            </nav>
         </div>
-    </main>
+    </aside>
+
+    <div class="flex-1 ml-64"> <header class="bg-white p-4 flex items-center justify-between shadow-sm sticky top-0 z-20">
+        <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-96">
+            <i class="fas fa-search text-gray-400 mr-3"></i>
+            <input type="text" placeholder="Pesquise na plataforma..." class="bg-transparent outline-none text-gray-700 w-full" />
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+            </button>
+            <button class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-cog text-xl"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <img src="https://via.placeholder.com/32" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-brasfi-green" />
+                <div class="flex flex-col items-start"> <span class="text-sm font-medium text-gray-700">Jéssica</span>
+                    <span class="text-xs text-gray-500">Estudante</span> </div>
+            </div>
+        </div>
+    </header>
+        <main class="flex-1 p-8">
+            <input type="hidden" id="aulaId" th:value="${aula.id}">
+            <div class="flex justify-between items-center mb-6">
+                <nav class="text-sm text-gray-600 space-x-1">
+                    <a th:href="@{/trilhas/listar}" class="text-gray-600 hover:text-gray-500">Todas as Trilhas</a>
+                    <span> > </span>
+                    <a th:href="@{/trilhas/{id}(id=${aula.trilhas[0].id})}" class="text-gray-600 hover:text-gray-500" th:text="${aula.trilhas[0].titulo}">Fundamentos de Finanças Sustentáveis</a>
+                    <span> > </span>
+                    <span class="font-semibold text-brasfi-green-light" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</span>
+                </nav>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 items-start">
+                <div class="flex-1">
+                    <div class="aspect-video bg-gray-200 rounded mb-6 overflow-hidden">
+                        <iframe class="w-full h-full"
+                                th:src="'https://www.youtube.com/embed/' + ${videoCode}"
+                                frameborder="0" allowfullscreen></iframe>
+                    </div>
+
+                    <h1 class="text-2xl font-bold mb-2" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h1>
+                    <p class="text-gray-700 mb-4" th:text="${aula.descricao}">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+                    </p>
+
+                    <div class="flex items-center space-x-4 mb-6">
+                        <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-blue-600">
+                            <span>👍</span><span>Gostei</span>
+                        </button>
+                        <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-red-600">
+                            <span>👎</span><span>Não gostei</span>
+                        </button>
+                        <div class="flex items-center text-sm text-gray-700 space-x-2">
+                            <input type="checkbox" id="aulaConcluida" class="accent-green-600" onchange="marcarComoConcluida()" />
+                            <label for="aulaConcluida" class="text-sm">Aula concluída?</label>
+                        </div>
+                        <div id="modalConcluida" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+                            <div class="bg-white rounded-xl shadow-lg p-8 text-center w-full max-w-sm">
+                                <div class="flex justify-center mb-6">
+                                    <i class="fas fa-check-circle modal-icon text-brasfi-green"></i> </div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-2">Muito bem!</h2>
+                                <p class="text-gray-600 text-base mb-6">Você marcou esta aula como concluída. Gostaria de avaliá-la? Sua opinião é muito importante!</p>
+                                <div class="flex justify-center gap-4">
+                                    <button class="flex items-center px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition duration-200 ease-in-out">
+                                        <i class="far fa-thumbs-up mr-2"></i><span>Gostei</span>
+                                    </button>
+                                    <button class="flex items-center px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition duration-200 ease-in-out">
+                                        <i class="far fa-thumbs-down mr-2"></i><span>Não gostei</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-brasfi-green-dark rounded-lg shadow-md mt-6 p-4">
+                        <h2 class="text-lg font-semibold text-white mb-4">Comentários</h2>
+
+                        <div class="bg-white rounded-lg p-3 mb-4 flex items-center space-x-3">
+                            <img src="/path/to/user-avatar.png" alt="Avatar" class="w-8 h-8 rounded-full" />
+                            <textarea id="newCommentText"
+                                      class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 resize-none overflow-hidden"
+                                      rows="1"
+                                      placeholder="Deixe seu comentário ou faça perguntas..."
+                                      oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+                            <button onclick="postComment()"
+                                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 self-end ml-2">
+                                Comentar
+                            </button>
+                        </div>
+
+                        <div id="commentsList" class="space-y-4">
+                            <div class="text-white text-center py-4" id="loadingComments">Carregando comentários...</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <aside class="w-full lg:w-72 bg-brasfi-green-light rounded-lg p-4 space-y-4 shadow-md self-start">
+                    <h2 class="text-lg font-semibold text-white">Materiais disponíveis</h2>
+
+                    <ul class="space-y-2 list-none">
+                        <li th:each="material : ${aula.materiais}">
+                            <div th:if="${material.linkApoio != null}">
+                                <a th:href="${material.linkApoio}" target="_blank"
+                                   class="block text-white hover:underline text-sm">
+                                    🔗 <span th:text="${material.linkApoio}">Link</span>
+                                </a>
+                            </div>
+
+                            <div th:if="${material.caminhoArquivo != null}">
+                                <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank"
+                                   class="block text-white hover:underline text-sm">
+                                    📄 <span th:text="${material.nomeOriginal}">PDF Slide Apresentação</span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+        </main>
+    </div>
 </div>
 
 </body>
