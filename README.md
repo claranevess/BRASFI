@@ -50,7 +50,25 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
   </a>
 </p>
 
-## 🚀 Tecnologias Utilizadas
+##  💻 Como Abrir o Projeto BRASFI a partir do GitHub
+
+### 1. Clone o repositório
+Abra seu terminal e execute o comando:
+```bash
+git clone https://github.com/gabsvelozo/WitchsJourney.git
+```
+2. Abra a pasta da BRASFI na sua IDE de preferência.
+3. Execute a aplicação, localize a classe principal chamada:
+```bash
+BrasfiPlatformaApplication
+```
+4. Após a aplicação estar rodando, abra o navegador e vá até:
+```bash
+http://localhost:8080
+```
+5. Na página inicial, você pode se cadastrar e acessar a plataforma conforme seu perfil de usuário
+
+## 🧩 Tecnologias Utilizadas
 
 <div align="center">
 
