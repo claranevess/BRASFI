@@ -26,11 +26,11 @@
 
         <div class="relative flex items-center">
             <input
-                    type="email"
+                    type="email" id="emailInput" required
                     placeholder="Digite o email..."
                     class="italic p-4 border border-[#65A603] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7dc215]focus:border-transparent w-full pr-28"
             />
-            <button
+            <button onclick="sendCode()"
                     class="absolute right-0 mr-2 px-4 py-2 bg-[#65A603] text-white font-semibold rounded-lg shadow-md hover:bg-[#7dc215] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
             >
                 Convidar
