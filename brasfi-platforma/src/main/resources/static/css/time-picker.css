@@ -37,6 +37,7 @@
   opacity: 1;
   font-weight: 600;
   font-size: 1.05rem;
+  color: white;
 }
 
 /* Espaçador para centralizar o scroll */
@@ -50,7 +51,7 @@
   top: 50%;
   width: calc(50% - 4px); /* reduz um pouquinho para dar espaço */
   height: 50px;
-  background: rgba(200, 200, 200, 0.25);
+  background: #65A603;
   border-radius: 0.75rem;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);

@@ -10,9 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
         .avatar-group > img {
             margin-left: -8px; /* Overlap avatars */
             border: 2px solid white; /* Border for avatars */
@@ -22,12 +19,14 @@
         }
 
         .tab-button.active {
-            border-bottom: 2px solid #007bff; /* Custom blue for active tab */
-            color: #007bff;
+            /* CORRIGIDO para usar o novo verde */
+            border-bottom: 2px solid #65a603;
+            color: #65a603;
         }
 
         :root {
-            --color-brasfi-blue: #007bff; /* Example, adjust to exact blue from logo */
+            /* CORRIGIDO para usar o novo verde */
+            --color-brasfi-blue: #65a603;
             --color-gray-bg: #f8f8f8;
             --color-medium-gray: #777;
             --color-dark-gray: #333;
@@ -54,7 +53,9 @@
             theme: {
                 extend: {
                     colors: {
-                        'brasfi-blue': '#007bff',
+                        // CORRIGIDO para usar o novo verde
+                        'brasfi-blue': '#65a603',
+                        'brasfi-blue-darker': '#528402', // Tom mais escuro do novo verde
                         'light-bg': '#f8f8f8',
                         'soft-gray': '#f0f2f5',
                         'medium-gray-text': '#777',
@@ -62,45 +63,44 @@
                         'sidebar-bg': '#ffffff',
                         'card-bg': '#ffffff',
                         'tab-inactive': '#999',
-                        'tab-active': '#007bff',
+                        // 'tab-active' será controlado pela classe .active e CSS customizado acima
                         'button-hover': '#e0e0e0',
-                        'button-primary': '#007bff',
-                        'button-primary-hover': '#0056b3',
+                        // 'button-primary' e 'button-primary-hover' usarão 'brasfi-blue' e 'brasfi-blue-darker'
                         'input-border': '#ddd',
-                        'shadow-light': 'rgba(0,0,0,0.05)'
+                        'shadow-light': 'rgba(0,0,0,0.05)',
+                        'success-green': '#10B981',
+                        'error-red': '#EF4444',
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="flex min-h-screen bg-white">
+<body class="flex min-h-screen bg-gray-100 font-sans">
 
 <div class="w-64 bg-sidebar-bg p-6 shadow-md flex flex-col justify-between">
     <div>
         <div class="flex items-center mb-8">
-            <img src="/static/iconebrasfi.png" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">
-        </div>
+            <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">        </div>
         <nav>
             <ul>
                 <li class="mb-2">
-                    <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-black-text transition duration-200">
-                        <i class="fas fa-th-large mr-3 text-lg"></i> Dashboard
+                    <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
+                         Dashboard
                     </a>
+                </li>
+                <li class="mb-2">
+                    <a href="/trilhas/listar" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
+                        Trilhas
+                    </a>
+                </li>
+                <li class="mb-2"> <a class="flex items-center p-3 rounded-lg bg-[#65a603] text-white font-semibold transition duration-200">
+                    Grupos
+                </a>
                 </li>
                 <li class="mb-2">
                     <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
-                        <i class="fas fa-route mr-3 text-lg"></i> Trilhas
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="#" class="flex items-center p-3 rounded-lg bg-[#65a603] text-white font-semibold transition duration-200">
-                        <i class="fas fa-users mr-3 text-lg text-white"></i> Grupos
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
-                        <i class="fas fa-project-diagram mr-3 text-lg"></i> Projetos
+                        Projetos
                     </a>
                 </li>
             </ul>
@@ -119,7 +119,7 @@
     <div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-3">
     </div>
 
-    <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm mb-8 sticky top-0 z-40">
+    <div class="flex justify-between items-center p-5 rounded-xl mb-8 sticky top-0 z-40">
         <div class="relative flex-1 mr-4">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
             <input type="text" placeholder="Pesquise na plataforma..." class="w-full pl-12 pr-4 py-3 rounded-lg border border-input-border focus:outline-none focus:ring-1 focus:ring-brasfi-blue">
@@ -152,17 +152,21 @@
 
             <div class="flex justify-between items-center mb-6 pb-2">
                 <div class="flex border-b border-gray-200 pb-2">
-                    <button class="tab-button active pb-3 px-4 text-tab-active font-medium transition duration-200 mr-4">Todos</button>
+                    <button class="tab-button active pb-3 px-4 font-medium transition duration-200 mr-4">Todos</button>
                     <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Fixados</button>
                     <button class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200 mr-4">Não lidos</button>
                     <button th:if="${currentUser != null and currentUser.tipoUsuario == T(com.brasfi.platforma.model.TipoUsuario).ADMINISTRADOR}"
                             class="tab-button pb-3 px-4 text-tab-inactive hover:text-dark-text transition duration-200">Solicitações</button>
                 </div>
 
-                <div sec:authorize="hasRole('ADMINISTRADOR')">
-                    <button id="openCriarGrupoModalBtn" type="button" class="flex items-center px-5 py-2 bg-brasfi-blue text-white rounded-lg hover:bg-button-primary-hover transition duration-200">
-                        <i class="fas fa-plus mr-2"></i> Novo Grupo
-                    </button>
+                <div class="flex justify-between items-start mb-6 pb-2">
+                    <div class="flex border-b border-gray-200 pb-2">
+                    </div>
+                    <div sec:authorize="hasRole('ADMINISTRADOR')">
+                        <button id="openCriarGrupoModalBtn" type="button" class="flex items-center px-5 py-1 bg-brasfi-blue text-white rounded-lg hover:bg-brasfi-blue-darker transition duration-200">
+                            <i class="fas fa-plus mr-2"></i> Novo Grupo
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -218,6 +222,9 @@
                         <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300 transition duration-200">
                             <i class="fas fa-bookmark mr-1"></i> Fixar
                         </button>
+                        <a href="/chat" class="flex items-center px-5 py-1 bg-brasfi-blue text-white rounded-lg hover:bg-brasfi-blue-darker transition duration-200">
+                            Abrir
+                        </a>
                     </div>
                 </div>
                 <div th:if="${#lists.isEmpty(myGroups)}" class="text-center text-gray-500 py-8">
@@ -246,7 +253,7 @@
                     </div>
                     <p th:text="${grupo.descricao}" class="text-sm text-medium-gray-text mb-4 line-clamp-3" th:title="${grupo.descricao}"></p>
                     <form th:if="${currentUser != null and currentUser.tipoUsuario != T(com.brasfi.platforma.model.TipoUsuario).ADMINISTRADOR}" th:action="@{'/grupo/solicitar_acesso/' + ${grupo.id}}" method="post" style="display:inline;">
-                        <button type="submit" class="px-5 py-2 bg-brasfi-blue text-white rounded-lg hover:bg-button-primary-hover transition duration-200 text-sm">
+                        <button type="submit" class="px-5 py-2 bg-brasfi-blue text-white rounded-lg hover:bg-brasfi-blue-darker transition duration-200 text-sm">
                             Solicitar acesso
                         </button>
                     </form>
@@ -270,7 +277,7 @@
                 <div th:each="solicitacao : ${pendingSolicitacoes}" class="solicitation-card bg-light-bg p-4 rounded-lg border border-gray-200 shadow-sm relative">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="text-lg font-semibold text-dark-text">
-                            <span th:text="'#' + ${solicitacao.grupo.nome}">#Nome do Grupo</span>
+                            <span class="text-brasfi-blue" th:text="'#' + ${solicitacao.grupo.nome}">#Nome do Grupo</span>
                         </h3>
                         <div class="flex items-center text-sm text-gray-600">
                             <i class="fas fa-user-circle mr-1"></i>
@@ -283,12 +290,12 @@
                     </p>
                     <div class="mt-4 flex justify-end space-x-2">
                         <form th:action="@{'/grupo/aceitar_solicitacao/' + ${solicitacao.id}}" method="post" style="display:inline;">
-                            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md text-sm hover:bg-green-600 transition duration-200">
+                            <button type="submit" class="px-4 py-2 bg-success-green text-white rounded-md text-sm hover:bg-green-600 transition duration-200">
                                 Aceitar
                             </button>
                         </form>
                         <form th:action="@{'/grupo/recusar_solicitacao/' + ${solicitacao.id}}" method="post" style="display:inline;">
-                            <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 transition duration-200">
+                            <button type="submit" class="px-4 py-2 bg-error-red text-white rounded-md text-sm hover:bg-red-600 transition duration-200">
                                 Recusar
                             </button>
                         </form>
@@ -310,7 +317,7 @@
             </button>
         </div>
         <div class="mb-4">
-            <h4 id="modalGroupTitle" class="text-lg font-semibold text-gray-700 mb-1"></h4>
+            <h4 id="modalGroupTitle" class="text-lg font-semibold text-brasfi-blue mb-1"></h4>
             <p id="modalGroupDescription" class="text-sm text-gray-600 mb-3"></p>
             <div class="relative">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
@@ -367,7 +374,7 @@
                     <button type="button" id="cancelCriarGrupoModalBtn" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition duration-150">
                         Cancelar
                     </button>
-                    <button type="button" id="btnSalvarGrupoModal" class="px-5 py-2.5 text-sm font-medium text-white bg-brasfi-blue rounded-lg hover:bg-button-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brasfi-blue transition duration-150 flex items-center justify-center">
+                    <button type="button" id="btnSalvarGrupoModal" class="px-5 py-2.5 text-sm font-medium text-white bg-brasfi-blue rounded-lg hover:bg-brasfi-blue-darker focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brasfi-blue transition duration-150 flex items-center justify-center">
                         <i class="fas fa-plus mr-2"></i> Criar Grupo
                     </button>
                 </div>
@@ -378,6 +385,7 @@
 
 
 <script th:inline="javascript">
+    /*<![CDATA[*/
     let currentGroupMembers = [];
     let toastTimeout;
 
@@ -397,13 +405,13 @@
         );
         let iconHtml = '';
         if (type === 'success') {
-            toastElement.classList.add('bg-green-500', 'text-white');
+            toastElement.classList.add('bg-success-green', 'text-white'); // Usando cor do Tailwind config
             iconHtml = '<i class="fas fa-check-circle mr-3 text-xl"></i>';
         } else if (type === 'error') {
-            toastElement.classList.add('bg-red-600', 'text-white');
+            toastElement.classList.add('bg-error-red', 'text-white'); // Usando cor do Tailwind config
             iconHtml = '<i class="fas fa-exclamation-circle mr-3 text-xl"></i>';
-        } else {
-            toastElement.classList.add('bg-blue-500', 'text-white');
+        } else { // info or default
+            toastElement.classList.add('bg-brasfi-blue', 'text-white'); // CORRIGIDO: Usando brasfi-blue (que agora é verde)
             iconHtml = '<i class="fas fa-info-circle mr-3 text-xl"></i>';
         }
         toastElement.innerHTML = iconHtml + '<span>' + message + '</span>';
@@ -667,6 +675,7 @@
         membersListElement.innerHTML = '<li class="text-center text-gray-500 p-4">Carregando membros...</li>';
         try {
             const response = await fetch(/*[[@{'/grupo/'}]]*/'/grupo/' + groupId + '/membros');
+            console.log("Attempting to fetch from URL:", url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -691,10 +700,10 @@
                 const initials = member.nome ? member.nome.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : (member.username ? member.username.substring(0,1).toUpperCase() : '?');
                 listItem.innerHTML = `
                         <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-semibold object-cover">
-                           <span class="math-inline">\{initials\}
-</div\>
-<div\>
-<span class\="text\-gray\-800 font\-medium"\></span>{member.nome || member.username || 'Nome não disponível'}</span>
+                           ${initials}
+                        </div>
+                        <div>
+                            <span class="text-gray-800 font-medium">${member.nome || member.username || 'Nome não disponível'}</span>
                             <span class="block text-gray-500 text-xs">${member.email || ''}</span>
                         </div>
                     `;
