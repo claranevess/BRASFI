@@ -9,13 +9,7 @@
                 <div class="mb-6">
                     <div class="flex items-center justify-center w-full">
                         <label for="dropzone-file" class="relative flex flex-col items-center justify-center w-full h-48 border-2 border-[#437312] rounded-lg cursor-pointer bg-[#437312] hover:bg-[#5a991a]">
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-<!--                                <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16" stroke="#437312">-->
-<!--                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>-->
-<!--                                </svg>-->
-<!--                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Clique para fazer upload</span> ou arraste</p>-->
-<!--                                <p class="text-xs text-gray-500">PNG ou JPG (MAX. 800x400px)</p>-->
-                            </div>
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6"></div>
                             <span class="absolute bottom-4 right-4 flex items-center gap-1 bg-[#FFFFFF] font-light text-[#437312] px-3 py-1 rounded hover:bg-blue-700">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#437312" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/>
@@ -101,7 +95,7 @@
                                 Descrição da Trilha
                             </label>
                             <textarea id="descricaoTrilha" th:field="*{descricao}" placeholder="Conte um pouco sobre a trilha..."
-                                      class="block w-full h-32 border border-[#437312] rounded p-4 resize-none"></textarea>
+                                      class="block w-full border border-[#437312] rounded p-4 resize-none" rows="4"></textarea>
                         </div>
                     </div>
 
@@ -120,7 +114,7 @@
                                 Tópicos de Aprendizado
                             </label>
                             <textarea id="topicosDeAprendizado" th:field="*{topicosDeAprendizado}" rows="9" placeholder="Digite o que será aprendido..."
-                                      class="block w-full h-32 border border-[#437312] rounded p-4 resize-none"></textarea>
+                                      class="block w-full border border-[#437312] rounded p-4 resize-none"></textarea>
                         </div>
                     </div>
                 </div>
@@ -147,7 +141,7 @@
                             </div>
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                                <div class="border border-green-600 p-4 rounded-lg flex flex-col">
+                                <div class="border border-[#65A603] p-4 rounded-lg flex flex-col">
                                     <label for="linkAula-0" class="flex text-lg items-center text-gray-700 font-medium mb-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
                                             <path d="M10.0811 19.2147C15.0091 19.2147 19.004 15.2198 19.004 10.2918C19.004 5.36379 15.0091 1.36887 10.0811 1.36887C5.15312 1.36887 1.1582 5.36379 1.1582 10.2918C1.1582 15.2198 5.15312 19.2147 10.0811 19.2147Z" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -162,7 +156,7 @@
                                 </div>
                                 </div>
 
-                                <div class="border border-green-600 p-4 rounded-lg flex flex-col">
+                                <div class="border border-[#65A603] p-4 rounded-lg flex flex-col">
                                     <label for="descricaoAula-0" class="flex text-lg items-center text-gray-700 font-medium mb-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-600" viewBox="0 0 19 15" fill="none">
                                             <path d="M14.0885 13.0421H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -177,7 +171,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-6 border border-green-600 p-4 rounded-lg">
+                            <div class="mt-6 border border-[#65A603] p-4 rounded-lg">
                                 <div class="text-gray-700 text-lg font-medium mb-4 flex justify-between items-center">
                                     <div class="flex items-baseline mb-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-2" viewBox="0 0 20 21" fill="none">
@@ -185,30 +179,37 @@
                                         </svg>
                                         <span>Materiais de Apoio</span>
                                     </div>
-                                    <button type="button" class="add-material-btn px-3 py-1 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600 text-sm">
-                                        + Material
-                                    </button>
+<!--                                    <button type="button" class="add-material-btn px-3 py-1 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600 text-sm">-->
+<!--                                        + Material-->
+<!--                                    </button>-->
                                 </div>
                                 <p class="text-sm text-gray-500 font-normal">Anexe materiais complementares para esta aula</p>
 
                                 <div class="materiais-aula-container space-y-4 mt-4">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 material-bloco" data-material-index="0">
-                                        <div>
-                                            <label for="material-linkApoio-0-0" class="block text-gray-600 text-sm font-semibold mb-1">Links Externos</label>
-                                            <input type="url" id="material-linkApoio-0-0" name="aulas[0].materiais[0].linkApoio" placeholder="https://..."
-                                                   class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                                    <div class="material-bloco" data-material-index="0">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="flex flex-col">
+                                                <label for="material-linkApoio-0-0" class="block text-gray-600 text-sm font-semibold mb-1">Links Externos</label>
+                                                <input type="url" id="material-linkApoio-0-0" name="aulas[0].materiais[0].linkApoio" placeholder="https://..."
+                                                       class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                                            </div>
+
+                                            <div class="flex flex-col">
+                                                <label for="material-documento-0-0" class="block text-gray-600 text-sm font-semibold mb-1">Documentos</label>
+                                                <label class="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:text-blue-800">
+                                                    <div class="flex items-baseline mb-1 text-[#444444] hover:text-gray-800 cursor-pointer text-sm font-light">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-4 mr-1" viewBox="0 0 14 14" fill="none">
+                                                            <path d="M12.7624 8.87225V11.5161C12.7624 11.8667 12.6232 12.2029 12.3753 12.4508C12.1274 12.6987 11.7911 12.838 11.4405 12.838H2.18715C1.83655 12.838 1.50032 12.6987 1.25241 12.4508C1.00451 12.2029 0.865234 11.8667 0.865234 11.5161V8.87225" stroke="#444444" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            <path d="M10.1183 4.24576L6.81357 0.940979L3.50879 4.24576" stroke="#444444" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            <path d="M6.81348 0.940979V8.87245" stroke="#444444" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </svg>
+                                                        Fazer Upload de Arquivos
+                                                    </div>
+                                                    <input type="file" id="material-documento-0-0" name="aulas[0].materiais[0].documento" class="hidden">
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label for="material-documento-0-0" class="block text-gray-600 text-sm font-semibold mb-1">Documentos</label>
-                                            <label class="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:text-blue-800">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="#437312">
-                                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                                                </svg>
-                                                <span>Upload de Arquivos</span>
-                                                <input type="file" id="material-documento-0-0" name="aulas[0].materiais[0].documento" class="hidden">
-                                            </label>
-                                        </div>
-                                        <button type="button" class="remove-material-btn col-span-2 text-red-500 hover:text-red-700 hidden">Remover Material</button>
+                                        <button type="button" class="remove-material-btn col-span-2 text-red-500 hover:text-red-700 hidden mt-2">Remover Material</button>
                                     </div>
                                 </div>
                             </div>
@@ -216,8 +217,8 @@
                     </div>
                     <div class="flex justify-center mt-6">
                         <button type="button" id="addAulaBtn"
-                                class="px-6 py-2 bg-[#437312] text-white rounded-md font-semibold hover:bg-[#5a991a] focus:outline-none focus:ring-2 focus:ring-green-500">
-                            Adicionar Outra Aula
+                                class="px-6 py-2 bg-[#65A603] text-white rounded-md font-semibold hover:bg-[#5a991a] focus:outline-none focus:ring-2 focus:ring-green-500">
+                            + Adicionar Aula
                         </button>
                     </div>
                 </div>
