@@ -225,19 +225,6 @@
         .modal-button.secondary:hover {
             background-color: #D1D5DB; /* Input border gray */
         }
-
-        /* Styles for when evaluation is disabled */
-        .modal-rating.disabled i {
-            cursor: default;
-            color: #D1D5DB; /* Lighter gray for disabled stars */
-        }
-        .modal-button.primary.disabled {
-            background-color: #A0AEC0; /* Gray out button */
-            cursor: default;
-        }
-        .modal-button.primary.disabled:hover {
-            background-color: #A0AEC0; /* Keep gray on hover */
-        }
     </style>
     <script>
         tailwind.config = {
@@ -444,62 +431,36 @@
     </div>
 </div>
 
-<script th:inline="javascript">
-    const trilhaTitulo = /*[[${trilha.titulo}]]*/ 'Trilha'; // Default to 'Trilha' in case of null
+<script>
     document.addEventListener('DOMContentLoaded', () => {
-        const trilhaId = /*[[${trilha.id}]]*/ null; // Get trilha.id from Thymeleaf
         const completedLessonsSpan = document.getElementById('completedLessonsCount');
         const totalLessonsSpan = document.getElementById('totalLessonsCount');
-        const completionMessage = document.getElementById('completionMessage');
+        const completionMessage = document.getElementById('completionMessage'); // Keep for previous text message if desired, or remove
         const completionModal = document.getElementById('completionModal');
         const evaluateNowButton = document.getElementById('evaluateNowButton');
         const evaluateLaterButton = document.getElementById('evaluateLaterButton');
         const modalRatingStars = document.getElementById('modalRatingStars');
-        const modalTitle = completionModal.querySelector('.modal-title');
-        const modalMessage = completionModal.querySelector('.modal-message');
 
         let completedLessonsCount = 0;
         const totalLessons = parseInt(totalLessonsSpan.textContent);
-        let selectedRating = 0;
-
-        // Check if trilha has already been rated
-        const trilhaRatedKey = `trilha_${trilhaId}_rated`;
-        let isTrilhaAlreadyRated = localStorage.getItem(trilhaRatedKey) === 'true';
+        let selectedRating = 0; // To store the user's selected rating
 
         // Function to update the completed lessons counter and show/hide modal
         function updateCompletionStatus() {
             completedLessonsSpan.textContent = completedLessonsCount;
 
             if (completedLessonsCount === totalLessons && totalLessons > 0) {
+                // Ensure the previous text message is hidden
                 if (completionMessage) {
                     completionMessage.style.display = 'none';
                 }
-
-                if (isTrilhaAlreadyRated) {
-                    // If already rated, don't show the modal for evaluation
-                    completionModal.classList.remove('active');
-                } else {
-                    // Show the modal for evaluation
-                    completionModal.classList.add('active');
-                    // Reset modal for new evaluation
-                    selectedRating = 0; // Reset rating
-                    Array.from(modalRatingStars.children).forEach(star => {
-                        star.classList.remove('fas');
-                        star.classList.add('far');
-                        star.style.color = '#F59E0B'; // Reset star color
-                        star.style.cursor = 'pointer'; // Reset cursor
-                    });
-                    evaluateNowButton.classList.remove('disabled');
-                    evaluateNowButton.disabled = false;
-                    modalMessage.textContent = `Você completou todas as aulas de "${trilhaTitulo}". Deseja avaliar a trilha?`;
-                    modalTitle.textContent = "Muito bem!"; // Reset title
-                }
-
+                completionModal.classList.add('active'); // Show the modal
             } else {
+                // Ensure both are hidden if not all lessons are complete
                 if (completionMessage) {
                     completionMessage.style.display = 'none';
                 }
-                completionModal.classList.remove('active'); // Hide the modal if not all lessons are complete
+                completionModal.classList.remove('active'); // Hide the modal
             }
         }
 
@@ -535,23 +496,23 @@
                     completedLessonsCount++;
                     localStorage.setItem(`lesson_${currentLessonId}_completed`, 'true');
                 }
-                updateCompletionStatus();
+                updateCompletionStatus(); // Call this function after each click
             });
         });
 
         // Handle rating stars interaction
-        if (modalRatingStars) {
+        if (modalRatingStars) { // Check if modalRatingStars exists before adding event listener
             modalRatingStars.addEventListener('click', (event) => {
-                // Only allow rating if not already rated and the clicked element is an icon
-                if (event.target.tagName === 'I' && !isTrilhaAlreadyRated) {
+                if (event.target.tagName === 'I') {
                     const clickedValue = parseInt(event.target.dataset.value);
                     selectedRating = clickedValue;
 
+                    // Update star visuals
                     Array.from(modalRatingStars.children).forEach(star => {
                         const starValue = parseInt(star.dataset.value);
                         if (starValue <= selectedRating) {
-                            star.classList.remove('far');
-                            star.classList.add('fas');
+                            star.classList.remove('far'); // Empty star
+                            star.classList.add('fas');    // Filled star
                         } else {
                             star.classList.remove('fas');
                             star.classList.add('far');
@@ -562,33 +523,39 @@
         }
 
         // Handle "Avaliar agora" button click
-        if (evaluateNowButton) {
+        if (evaluateNowButton) { // Check if button exists
             evaluateNowButton.addEventListener('click', () => {
-                if (!isTrilhaAlreadyRated && selectedRating > 0) { // Only allow rating if not already rated and a rating is selected
-                    console.log(`User rated the trilha (ID: ${trilhaId}): ${selectedRating} stars.`);
+                if (selectedRating > 0) {
+                    // Here you would typically send the rating to your backend
+                    console.log(`User rated the trilha: ${selectedRating} stars.`);
                     alert(`Obrigado por avaliar com ${selectedRating} estrela(s)!`);
-                    completionModal.classList.remove('active');
-
-                    // Mark trilha as rated in localStorage
-                    localStorage.setItem(trilhaRatedKey, 'true');
-                    isTrilhaAlreadyRated = true; // Update flag
-                } else if (isTrilhaAlreadyRated) {
-                    alert('Você já avaliou esta trilha.');
+                    completionModal.classList.remove('active'); // Hide the modal
+                    // Optionally, disable rating for this trilha in localStorage
+                    // Make sure to correctly pass trilha.id from Thymeleaf here
+                    // For demonstration, using a placeholder, replace with actual ID:
+                    localStorage.setItem(`trilha_[[${trilha.id}]]_rated`, 'true');
                 } else {
                     alert('Por favor, selecione uma avaliação de estrelas.');
                 }
             });
         }
 
+
         // Handle "Avaliar depois" button click
-        if (evaluateLaterButton) {
+        if (evaluateLaterButton) { // Check if button exists
             evaluateLaterButton.addEventListener('click', () => {
-                completionModal.classList.remove('active');
+                completionModal.classList.remove('active'); // Just hide the modal
             });
         }
 
         // Initial update when the page loads
         updateCompletionStatus();
+
+        // Optional: Prevent modal from showing if already rated (if you implement the localStorage part)
+        // This part needs the trilha.id to be dynamically inserted by Thymeleaf as well.
+        // if (localStorage.getItem(`trilha_[[${trilha.id}]]_rated`) === 'true') {
+        //     completionModal.classList.remove('active');
+        // }
     });
 </script>
 </body>
