@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trilha de Finanças Sustentáveis</title>
+    <title th:text="${trilha.titulo}"></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -40,10 +40,11 @@
         }
         .status-dot.completed {
             background-color: #65a603;
-            box-shadow: 0 0 0 2px #F59E0B;
+            box-shadow: 0 0 0 2px #65a603; /* Changed to brasfi-green for completed */
         }
         .status-dot.pending {
             background-color: white;
+            box-shadow: 0 0 0 2px #F59E0B; /* Pending color */
         }
         .lesson-card {
             transition: all 0.3s ease;
@@ -78,7 +79,7 @@
             top: 24px;
         }
         .topic-card {
-            border: 1px solid grey;
+            border: 1px solid #E5E7EB; /* Changed from grey to input-border */
             border-radius: 8px;
             padding: 12px 15px;
             margin-bottom: 10px;
@@ -92,13 +93,14 @@
         .topic-card i {
             color: #65a603;
             margin-right: 10px;
+            font-size: 8px; /* Adjusted size for circle dot */
+            vertical-align: middle;
         }
         .counters-container {
             display: flex;
             margin-left: auto;
             gap: 12px;
         }
-
     </style>
     <script>
         tailwind.config = {
@@ -126,11 +128,11 @@
 </head>
 <body class="bg-page-bg min-h-screen">
 <div class="flex">
-    <!-- Sidebar -->
     <aside class="w-64 bg-sidebar-bg p-6 shadow-lg flex flex-col justify-between fixed top-0 left-0 h-full z-30">
         <div>
             <div class="flex items-center mb-10">
-                <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">             </div>
+                <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">
+            </div>
             <nav>
                 <ul class="space-y-1">
                     <li class="mb-2">
@@ -168,7 +170,6 @@
         </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="flex-1 p-8 overflow-y-auto ml-64">
         <header class="flex justify-between items-center mb-8">
             <div class="relative flex-1 max-w-lg">
@@ -190,27 +191,29 @@
 
         <div class="flex gap-8 mb-10">
             <div class="w-2/3">
-                <a href="#" class="text-light-text hover:text-dark-text flex items-center mb-4 text-sm font-medium">
+                <a href="/trilhas/listar" class="text-light-text hover:text-dark-text flex items-center mb-4 text-sm font-medium">
                     <i class="fas fa-arrow-left mr-2"></i> Todas as Trilhas
                 </a>
-                <h1 class="text-4xl font-extrabold text-dark-text leading-tight mb-3">
+                <h1 class="text-4xl font-extrabold text-dark-text leading-tight mb-3" th:text="${trilha.titulo}">
                     Fundamentos de Finanças Sustentáveis
                 </h1>
-                <p class="text-medium-text mb-5 text-base">
+                <p class="text-medium-text mb-5 text-base" th:text="${trilha.descricao}">
                     Aprenda os conceitos essenciais de finanças sustentáveis, ESG e investimento consciente para gerar impacto positivo.
                 </p>
                 <div class="flex items-center text-sm text-medium-text">
                     <span class="text-yellow-400 mr-1.5 flex items-center">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
                     </span>
-                    <span class="mr-4 font-medium">4.0 (32)</span>
-                    <!-- Alteração aqui: badge "Finanças" com azul (#1268a7) e texto branco -->
-                    <span class="bg-[#1268a7] text-white px-3 py-1 rounded-full text-xs font-semibold mr-4">Finanças</span>
-                    <span class="text-dark-text font-semibold">Duração: <span class="font-normal">3hrs</span></span>
+                    <span class="mr-4 font-medium" th:text="'(' + (${trilha.inscritos != null ? trilha.inscritos.size() : 0}) + ')'">4.0 (32)</span>
+                    <span class="bg-[#1268a7] text-white px-3 py-1 rounded-full text-xs font-semibold mr-4" th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.name() : 'SEM EIXO'}">Finanças</span>
+                    <span class="text-dark-text font-semibold">Duração: <span class="font-normal" th:text="${#numbers.formatDecimal(trilha.duracao, 1, 0) + 'hrs'}">3hrs</span></span>
                 </div>
             </div>
             <div class="w-1/3 flex-shrink-0">
-                <div class="bg-gray-200 border-2 border-dashed rounded-xl w-full h-48"></div>
+                <div th:if="${trilha.capa != null and !trilha.capa.isEmpty()}" class="rounded-xl w-full h-48 bg-cover bg-center" th:style="'background-image: url(' + ${trilha.capa} + ')'"></div>
+                <div th:unless="${trilha.capa != null and !trilha.capa.isEmpty()}" class="bg-gray-200 border-2 border-dashed rounded-xl w-full h-48 flex items-center justify-center text-gray-500">
+                    Capa da Trilha
+                </div>
             </div>
         </div>
 
@@ -219,88 +222,44 @@
                 <div class="flex items-center gap-4 mb-8">
                     <h2 class="text-2xl font-bold text-dark-text">Aulas</h2>
                     <div class="counters-container">
-                        <span class="bg-brasfi-blue text-white text-xs px-2.5 py-1 rounded-full font-medium">26 totais</span>
-                        <span class="bg-brasfi-green text-white text-xs px-2.5 py-1 rounded-full font-medium">✓ 2 concluídas</span>
+                        <span class="bg-brasfi-blue text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                            <span th:text="${aulas != null ? aulas.size() : 0}">26</span> totais
+                        </span>
+                        <span class="bg-brasfi-green text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                            ✓ <span id="completedLessonsCount">0</span> concluídas
+                        </span>
                     </div>
                 </div>
 
                 <div class="timeline-container relative">
                     <div class="timeline-line"></div>
 
-                    <div class="relative mb-6">
-                        <div class="status-dot completed">
-                            <i class="fas fa-check text-white text-xs"></i>
-                        </div>
-                        <div class="lesson-card">
-                            <div class="lesson-card-content">
-                                <h3 class="text-lg font-bold text-dark-text">O que são Finanças Sustentáveis?</h3>
-                                <p class="text-sm text-medium-text mt-1">
-                                    Entenda o conceito de finanças sustentáveis e sua importância no contexto atual dos mercados financeiros.
-                                </p>
-                                <div class="card-divider"></div>
-                                <div class="text-right">
-                                    <a href="#" class="text-brasfi-green font-semibold text-sm hover:underline flex items-center justify-end gap-1">
-                                        Acessar <i class="fas fa-arrow-right text-xs"></i>
-                                    </a>
+                    <th:block th:each="aula, iterStat : ${aulas}">
+                        <div class="relative mb-6">
+                            <div th:classappend="${iterStat.index < 2 ? 'completed' : 'pending'}"
+                                 class="status-dot"
+                                 th:data-lesson-id="${aula.id}">
+                                <i th:if="${iterStat.index < 2}" class="fas fa-check text-white text-xs"></i>
+                            </div>
+                            <div class="lesson-card">
+                                <div class="lesson-card-content">
+                                    <h3 class="text-lg font-bold text-dark-text" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h3>
+                                    <p class="text-sm text-medium-text mt-1" th:text="${aula.descricao}">
+                                        Entenda o conceito de finanças sustentáveis e sua importância no contexto atual dos mercados financeiros.
+                                    </p>
+                                    <div class="card-divider"></div>
+                                    <div class="text-right">
+                                        <a th:href="@{/aulas/detalhe/{id}(id=${aula.id})}" class="text-brasfi-green font-semibold text-sm hover:underline flex items-center justify-end gap-1">
+                                            Acessar <i class="fas fa-arrow-right text-xs"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </th:block>
 
-                    <div class="relative mb-6">
-                        <div class="status-dot completed">
-                            <i class="fas fa-check text-white text-xs"></i>
-                        </div>
-                        <div class="lesson-card">
-                            <div class="lesson-card-content">
-                                <h3 class="text-lg font-bold text-dark-text">ESG na Prática</h3>
-                                <p class="text-sm text-medium-text mt-1">
-                                    Como os critérios Ambientais, Sociais e de Governança estão transformando o mercado financeiro.
-                                </p>
-                                <div class="card-divider"></div>
-                                <div class="text-right">
-                                    <a href="#" class="text-brasfi-green font-semibold text-sm hover:underline flex items-center justify-end gap-1">
-                                        Acessar <i class="fas fa-arrow-right text-xs"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative mb-6">
-                        <div class="status-dot pending"></div>
-                        <div class="lesson-card">
-                            <div class="lesson-card-content">
-                                <h3 class="text-lg font-bold text-dark-text">Investimento Consciente</h3>
-                                <p class="text-sm text-medium-text mt-1">
-                                    Estratégias para investir de forma responsável, considerando o impacto social e ambiental.
-                                </p>
-                                <div class="card-divider"></div>
-                                <div class="text-right">
-                                    <a href="#" class="text-brasfi-green font-semibold text-sm hover:underline flex items-center justify-end gap-1">
-                                        Acessar <i class="fas fa-arrow-right text-xs"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative mb-6">
-                        <div class="status-dot pending"></div>
-                        <div class="lesson-card">
-                            <div class="lesson-card-content">
-                                <h3 class="text-lg font-bold text-dark-text">Métricas de Impacto</h3>
-                                <p class="text-sm text-medium-text mt-1">
-                                    Como medir e reportar o impacto social e ambiental dos investimentos sustentáveis.
-                                </p>
-                                <div class="card-divider"></div>
-                                <div class="text-right">
-                                    <a href="#" class="text-brasfi-green font-semibold text-sm hover:underline flex items-center justify-end gap-1">
-                                        Acessar <i class="fas fa-arrow-right text-xs"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                    <div th:if="${aulas.isEmpty()}" class="text-gray-500 text-center py-4">
+                        Nenhuma aula cadastrada para esta trilha ainda.
                     </div>
                 </div>
             </div>
@@ -310,25 +269,14 @@
                     <h3 class="text-xl font-semibold mb-4 text-dark-text">O que você vai aprender nesta trilha:</h3>
 
                     <div class="space-y-3">
-                        <div class="topic-card">
-                            <i class="fas fa-circle"></i>
-                            <span class="text-sm text-medium-text">Conceitos fundamentais de finanças sustentáveis</span>
-                        </div>
-                        <div class="topic-card">
-                            <i class="fas fa-circle"></i>
-                            <span class="text-sm text-medium-text">Aplicação prática dos critérios ESG</span>
-                        </div>
-                        <div class="topic-card">
-                            <i class="fas fa-circle"></i>
-                            <span class="text-sm text-medium-text">Estratégias de investimento responsável</span>
-                        </div>
-                        <div class="topic-card">
-                            <i class="fas fa-circle"></i>
-                            <span class="text-sm text-medium-text">Métricas para mensurar impacto socioambiental</span>
-                        </div>
-                        <div class="topic-card">
-                            <i class="fas fa-circle"></i>
-                            <span class="text-sm text-medium-text">Tendências do mercado de finanças verdes</span>
+                        <th:block th:each="topico : ${trilha.topicosDeAprendizado != null and !trilha.topicosDeAprendizado.isEmpty() ? trilha.topicosDeAprendizado.split('\n') : null}">
+                            <div class="topic-card">
+                                <i class="fas fa-circle"></i>
+                                <span class="text-sm text-medium-text" th:text="${topico}">Conceitos fundamentais de finanças sustentáveis</span>
+                            </div>
+                        </th:block>
+                        <div th:if="${trilha.topicosDeAprendizado == null or trilha.topicosDeAprendizado.isEmpty()}" class="topic-card">
+                            <span class="text-sm text-medium-text">Nenhum tópico de aprendizado especificado.</span>
                         </div>
                     </div>
                 </div>
@@ -338,12 +286,30 @@
 </div>
 
 <script>
-    document.querySelectorAll('.status-dot.pending').forEach(dot => {
-        dot.addEventListener('click', function() {
-            this.classList.remove('pending');
-            this.classList.add('completed');
-            this.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
+    document.addEventListener('DOMContentLoaded', () => {
+        const completedLessonsSpan = document.getElementById('completedLessonsCount');
+        let completedLessonsCount = 0;
+
+        document.querySelectorAll('.status-dot').forEach(dot => {
+            if (dot.classList.contains('completed')) {
+                completedLessonsCount++;
+            }
+
+            dot.addEventListener('click', function() {
+                const isCompleted = this.classList.contains('completed');
+                if (isCompleted) {
+                    // If already completed, do nothing or allow toggling back to pending if desired
+                    // For now, it stays completed if clicked when completed
+                } else {
+                    this.classList.remove('pending');
+                    this.classList.add('completed');
+                    this.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
+                    completedLessonsCount++;
+                    completedLessonsSpan.textContent = completedLessonsCount;
+                }
+            });
         });
+        completedLessonsSpan.textContent = completedLessonsCount; // Initialize count on load
     });
 </script>
 </body>
