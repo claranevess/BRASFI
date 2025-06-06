@@ -327,110 +327,125 @@
         </div>
     </aside>
 
-    <div class="flex-1 ml-64"> <main class="flex-1 p-8">
-        <input type="hidden" id="aulaId" th:value="${aula.id}">
-        <div class="flex justify-between items-center mb-6">
-            <nav class="text-sm text-gray-600 space-x-1">
-                <a th:href="@{/trilhas/listar}" class="text-gray-600 hover:text-gray-500">Trilhas</a>
-                <span> > </span>
-                <a th:href="@{/trilhas/{id}(id=${aula.trilhas[0].id})}" class="text-gray-600 hover:text-gray-500" th:text="${aula.trilhas[0].titulo}">Fundamentos de Finanças Sustentáveis</a>
-                <span> > </span>
-                <span class="font-semibold text-brasfi-green-light" th:text="${aula.titulo}">Nome da Aula</span>
-            </nav>
+    <div class="flex-1 ml-64"> <header class="bg-white p-4 flex items-center justify-between shadow-sm sticky top-0 z-20">
+        <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-96">
+            <i class="fas fa-search text-gray-400 mr-3"></i>
+            <input type="text" placeholder="Pesquise na plataforma..." class="bg-transparent outline-none text-gray-700 w-full" />
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+            </button>
+            <button class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-cog text-xl"></i>
+            </button>
             <div class="flex items-center space-x-2">
-                <div class="text-sm text-gray-600">Usuário</div>
-                <img src="/path/to/user-icon.svg" class="w-6 h-6" alt="Ícone do usuário" />
+                <img src="https://via.placeholder.com/32" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-brasfi-green" />
+                <div class="flex flex-col items-start"> <span class="text-sm font-medium text-gray-700">Jéssica</span>
+                    <span class="text-xs text-gray-500">Estudante</span> </div>
             </div>
         </div>
+    </header>
+        <main class="flex-1 p-8">
+            <input type="hidden" id="aulaId" th:value="${aula.id}">
+            <div class="flex justify-between items-center mb-6">
+                <nav class="text-sm text-gray-600 space-x-1">
+                    <a th:href="@{/trilhas/listar}" class="text-gray-600 hover:text-gray-500">Todas as Trilhas</a>
+                    <span> > </span>
+                    <a th:href="@{/trilhas/{id}(id=${aula.trilhas[0].id})}" class="text-gray-600 hover:text-gray-500" th:text="${aula.trilhas[0].titulo}">Fundamentos de Finanças Sustentáveis</a>
+                    <span> > </span>
+                    <span class="font-semibold text-brasfi-green-light" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</span>
+                </nav>
+            </div>
 
-        <div class="flex flex-col lg:flex-row gap-8 items-start">
-            <div class="flex-1">
-                <div class="aspect-video bg-gray-200 rounded mb-6 overflow-hidden">
-                    <iframe class="w-full h-full"
-                            th:src="'https://www.youtube.com/embed/' + ${videoCode}"
-                            frameborder="0" allowfullscreen></iframe>
-                </div>
-
-                <h1 class="text-2xl font-bold mb-2" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h1>
-                <p class="text-gray-700 mb-4" th:text="${aula.descricao}">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
-                </p>
-
-                <div class="flex items-center space-x-4 mb-6">
-                    <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-blue-600">
-                        <span>👍</span><span>Gostei</span>
-                    </button>
-                    <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-red-600">
-                        <span>👎</span><span>Não gostei</span>
-                    </button>
-                    <div class="flex items-center text-sm text-gray-700 space-x-2">
-                        <input type="checkbox" id="aulaConcluida" class="accent-green-600" onchange="marcarComoConcluida()" />
-                        <label for="aulaConcluida" class="text-sm">Aula concluída?</label>
+            <div class="flex flex-col lg:flex-row gap-8 items-start">
+                <div class="flex-1">
+                    <div class="aspect-video bg-gray-200 rounded mb-6 overflow-hidden">
+                        <iframe class="w-full h-full"
+                                th:src="'https://www.youtube.com/embed/' + ${videoCode}"
+                                frameborder="0" allowfullscreen></iframe>
                     </div>
-                    <div id="modalConcluida" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
-                        <div class="bg-white rounded-xl shadow-lg p-8 text-center w-full max-w-sm">
-                            <div class="flex justify-center mb-6">
-                                <i class="fas fa-check-circle modal-icon text-brasfi-green"></i> </div>
-                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Muito bem!</h2>
-                            <p class="text-gray-600 text-base mb-6">Você marcou esta aula como concluída. Gostaria de avaliá-la? Sua opinião é muito importante!</p>
-                            <div class="flex justify-center gap-4">
-                                <button class="flex items-center px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition duration-200 ease-in-out">
-                                    <i class="far fa-thumbs-up mr-2"></i><span>Gostei</span>
-                                </button>
-                                <button class="flex items-center px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition duration-200 ease-in-out">
-                                    <i class="far fa-thumbs-down mr-2"></i><span>Não gostei</span>
-                                </button>
+
+                    <h1 class="text-2xl font-bold mb-2" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h1>
+                    <p class="text-gray-700 mb-4" th:text="${aula.descricao}">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+                    </p>
+
+                    <div class="flex items-center space-x-4 mb-6">
+                        <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-blue-600">
+                            <span>👍</span><span>Gostei</span>
+                        </button>
+                        <button class="flex items-center space-x-1 text-sm text-gray-700 hover:text-red-600">
+                            <span>👎</span><span>Não gostei</span>
+                        </button>
+                        <div class="flex items-center text-sm text-gray-700 space-x-2">
+                            <input type="checkbox" id="aulaConcluida" class="accent-green-600" onchange="marcarComoConcluida()" />
+                            <label for="aulaConcluida" class="text-sm">Aula concluída?</label>
+                        </div>
+                        <div id="modalConcluida" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+                            <div class="bg-white rounded-xl shadow-lg p-8 text-center w-full max-w-sm">
+                                <div class="flex justify-center mb-6">
+                                    <i class="fas fa-check-circle modal-icon text-brasfi-green"></i> </div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-2">Muito bem!</h2>
+                                <p class="text-gray-600 text-base mb-6">Você marcou esta aula como concluída. Gostaria de avaliá-la? Sua opinião é muito importante!</p>
+                                <div class="flex justify-center gap-4">
+                                    <button class="flex items-center px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition duration-200 ease-in-out">
+                                        <i class="far fa-thumbs-up mr-2"></i><span>Gostei</span>
+                                    </button>
+                                    <button class="flex items-center px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition duration-200 ease-in-out">
+                                        <i class="far fa-thumbs-down mr-2"></i><span>Não gostei</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="bg-brasfi-green-dark rounded-lg shadow-md mt-6 p-4">
-                    <h2 class="text-lg font-semibold text-white mb-4">Comentários</h2>
+                    <div class="bg-brasfi-green-dark rounded-lg shadow-md mt-6 p-4">
+                        <h2 class="text-lg font-semibold text-white mb-4">Comentários</h2>
 
-                    <div class="bg-white rounded-lg p-3 mb-4 flex items-center space-x-3">
-                        <img src="/path/to/user-avatar.png" alt="Avatar" class="w-8 h-8 rounded-full" />
-                        <textarea id="newCommentText"
-                                  class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 resize-none overflow-hidden"
-                                  rows="1"
-                                  placeholder="Deixe seu comentário ou faça perguntas..."
-                                  oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
-                        <button onclick="postComment()"
-                                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 self-end ml-2">
-                            Comentar
-                        </button>
+                        <div class="bg-white rounded-lg p-3 mb-4 flex items-center space-x-3">
+                            <img src="/path/to/user-avatar.png" alt="Avatar" class="w-8 h-8 rounded-full" />
+                            <textarea id="newCommentText"
+                                      class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 resize-none overflow-hidden"
+                                      rows="1"
+                                      placeholder="Deixe seu comentário ou faça perguntas..."
+                                      oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+                            <button onclick="postComment()"
+                                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 self-end ml-2">
+                                Comentar
+                            </button>
+                        </div>
+
+                        <div id="commentsList" class="space-y-4">
+                            <div class="text-white text-center py-4" id="loadingComments">Carregando comentários...</div>
+                        </div>
                     </div>
 
-                    <div id="commentsList" class="space-y-4">
-                        <div class="text-white text-center py-4" id="loadingComments">Carregando comentários...</div>
-                    </div>
                 </div>
 
+                <aside class="w-full lg:w-72 bg-brasfi-green-light rounded-lg p-4 space-y-4 shadow-md self-start">
+                    <h2 class="text-lg font-semibold text-white">Materiais disponíveis</h2>
+
+                    <ul class="space-y-2 list-none">
+                        <li th:each="material : ${aula.materiais}">
+                            <div th:if="${material.linkApoio != null}">
+                                <a th:href="${material.linkApoio}" target="_blank"
+                                   class="block text-white hover:underline text-sm">
+                                    🔗 <span th:text="${material.linkApoio}">Link</span>
+                                </a>
+                            </div>
+
+                            <div th:if="${material.caminhoArquivo != null}">
+                                <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank"
+                                   class="block text-white hover:underline text-sm">
+                                    📄 <span th:text="${material.nomeOriginal}">PDF Slide Apresentação</span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </aside>
             </div>
-
-            <aside class="w-full lg:w-72 bg-brasfi-green-light rounded-lg p-4 space-y-4 shadow-md self-start">
-                <h2 class="text-lg font-semibold text-white">Materiais disponíveis</h2>
-
-                <ul class="space-y-2 list-none">
-                    <li th:each="material : ${aula.materiais}">
-                        <div th:if="${material.linkApoio != null}">
-                            <a th:href="${material.linkApoio}" target="_blank"
-                               class="block text-white hover:underline text-sm">
-                                🔗 <span th:text="${material.linkApoio}">Link</span>
-                            </a>
-                        </div>
-
-                        <div th:if="${material.caminhoArquivo != null}">
-                            <a th:href="@{'/uploads/' + ${material.caminhoArquivo}}" target="_blank"
-                               class="block text-white hover:underline text-sm">
-                                📄 <span th:text="${material.nomeOriginal}">PDF Slide Apresentação</span>
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-            </aside>
-        </div>
-    </main>
+        </main>
     </div>
 </div>
 
