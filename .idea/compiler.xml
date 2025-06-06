@@ -10,11 +10,9 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
+        <module name="brasfi-platforma" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="brasfi-platforma" target="21" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
