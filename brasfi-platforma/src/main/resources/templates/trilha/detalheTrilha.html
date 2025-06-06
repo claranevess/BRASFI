@@ -1,127 +1,316 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${trilha.titulo}"></title>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F7F8FC;
+        }
+        .timeline-container {
+            position: relative;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 30px;
+            top: -20px;
+            bottom: -20px;
+            width: 3px;
+            background-color: #D1D5DB;
+            z-index: 5;
+        }
+        .status-dot {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            z-index: 10;
+            position: absolute;
+            left: 18px;
+            top: 20px;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #F59E0B;
+        }
+        .status-dot.completed {
+            background-color: #65a603;
+            box-shadow: 0 0 0 2px #65a603; /* Changed to brasfi-green for completed */
+        }
+        .status-dot.pending {
+            background-color: white;
+            box-shadow: 0 0 0 2px #F59E0B; /* Pending color */
+        }
+        .lesson-card {
+            transition: all 0.3s ease;
+            border: 1px solid #E5E7EB;
+            position: relative;
+            overflow: hidden;
+            background-color: white;
+            border-radius: 8px;
+        }
+        .lesson-card-content {
+            padding: 25px;
+            padding-left: 60px;
+            position: relative;
+            z-index: 1;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 45px;
+            background-color: white;
+            z-index: 2;
+        }
+        .lesson-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .sidebar-sticky {
+            position: sticky;
+            top: 24px;
+        }
+        .topic-card {
+            border: 1px solid #E5E7EB; /* Changed from grey to input-border */
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: white;
+            transition: all 0.2s ease;
+        }
+        .topic-card:hover {
+            border-color: #65a603;
+            transform: translateX(3px);
+        }
+        .topic-card i {
+            color: #65a603;
+            margin-right: 10px;
+            font-size: 8px; /* Adjusted size for circle dot */
+            vertical-align: middle;
+        }
+        .counters-container {
+            display: flex;
+            margin-left: auto;
+            gap: 12px;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brasfi-green': '#65a603',
+                        'brasfi-green-darker': '#528402',
+                        'brasfi-blue': '#1d3c73',
+                        'page-bg': '#F7F8FC',
+                        'sidebar-bg': '#FFFFFF',
+                        'card-bg': '#FFFFFF',
+                        'dark-text': '#1F2937',
+                        'medium-text': '#4B5563',
+                        'light-text': '#6B7280',
+                        'input-border': '#D1D5DB',
+                        'line-gray': '#D1D5DB',
+                        'success-green': '#10B981',
+                        'pending-yellow': '#F59E0B',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-100 flex h-screen">
-
-<aside class="w-60 bg-gray-200 p-6 flex flex-col gap-6">
-    <div class="flex items-center mb-8">
-        <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">        </div>
-    <nav>
-        <ul>
-            <li class="mb-2">
-                <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
-                    <i class="fas fa-th-large mr-3 text-lg"></i> Dashboard
-                </a>
-            </li>
-            <li class="mb-2">
-            <li class="mb-2"> <a href="#" class="flex items-center p-3 rounded-lg bg-[#65a603] text-white font-semibold transition duration-200">
-                    <i class="fas fa-route mr-3 text-lg"></i> Trilhas
-                </a>
-            </li>
-            <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
-                <i class="fas fa-users mr-3 text-lg text-white"></i> Grupos
-            </a>
-            </li>
-            <li class="mb-2">
-                <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
-                    <i class="fas fa-project-diagram mr-3 text-lg"></i> Projetos
-                </a>
-            </li>
-        </ul>
-    </nav>
-</aside>
-
-<main class="flex-1 p-6 overflow-y-auto">
-    <div class="flex justify-between items-center mb-8">
-        <div class="flex items-center gap-4 w-1/3">
-            <input type="text" placeholder="Pesquise na plataforma..." class="border border-gray-300 rounded-full px-4 py-2 w-full text-sm"/>
-        </div>
-        <div class="flex items-center gap-4">
-            <span class="text-gray-600 cursor-pointer">⚙️</span>
-            <span class="text-gray-600 cursor-pointer">🔔</span>
-            <div class="flex items-center gap-2">
-                <span class="font-semibold text-gray-800">Usuário</span>
+<body class="bg-page-bg min-h-screen">
+<div class="flex">
+    <aside class="w-64 bg-sidebar-bg p-6 shadow-lg flex flex-col justify-between fixed top-0 left-0 h-full z-30">
+        <div>
+            <div class="flex items-center mb-10">
+                <img th:src="@{/img/iconebrasfi.png}" alt="BRASFI Conecta Logo" class="h-12 w-15 mr-3">
             </div>
-            <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold">U</div>
+            <nav>
+                <ul class="space-y-1">
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-th-large mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg bg-brasfi-green text-white font-semibold transition group">
+                            <i class="fas fa-route mr-3 text-lg w-5 text-center text-white"></i>
+                            <span class="text-sm font-semibold">Trilhas</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-users mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Grupos</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-gray-100 hover:text-dark-text transition group">
+                            <i class="fas fa-project-diagram mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-dark-text"></i>
+                            <span class="text-sm font-medium">Projetos</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-    </div>
+        <div class="border-t border-gray-200 pt-4">
+            <button class="flex items-center px-3 py-2.5 rounded-lg text-light-text hover:bg-red-50 hover:text-red-600 transition duration-200 w-full group">
+                <i class="fas fa-sign-out-alt mr-3 text-lg w-5 text-center text-gray-400 group-hover:text-red-600"></i>
+                <span class="text-sm font-medium">Sair</span>
+            </button>
+        </div>
+    </aside>
 
-    <div class="flex justify-between items-start mb-6">
-        <div class="w-2/3 pr-8">
-            <a href="/trilhas/listar" class="text-gray-600 hover:text-gray-500 flex items-center mb-4 text-sm">
-                <span class="mr-2">←</span> Todas as Trilhas
-            </a>
-            <h1 class="text-4xl font-bold text-gray-900 leading-tight mb-4" th:text="${trilha.titulo}">
-                Fundamentos de Finanças Sustentáveis
-            </h1>
-            <p class="text-gray-700 mb-6" th:text="${trilha.descricao}">
-                (Descrição) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-            <div class="flex items-center text-sm text-gray-600 mb-8">
-                <span class="text mr-2">★★★★☆</span>
-                <span class="mr-4" th:text="'(' + (${trilha.inscritos != null ? trilha.inscritos.size() : 0}) + ')'"> (32)</span>
-                <span class="bg-[#1268a7] text-white px-3 py-1 rounded-full text-xs font-semibold mr-4" th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.name() : 'SEM EIXO'}">Finanças</span>
-                <span class="text-black font-bold">Duração: <span th:text="${#numbers.formatDecimal(trilha.duracao, 1, 0) + 'hrs'}">3hrs</span></span>
+    <main class="flex-1 p-8 overflow-y-auto ml-64">
+        <header class="flex justify-between items-center mb-8">
+            <div class="relative flex-1 max-w-lg">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" placeholder="Pesquise na plataforma..." class="w-full pl-11 pr-4 py-2.5 text-sm rounded-lg border border-input-border bg-card-bg focus:outline-none focus:ring-2 focus:ring-brasfi-green shadow-sm">
             </div>
-        </div>
-        <div class="w-1/3 flex justify-end">
-            <div class="bg-gray-200 rounded-lg h-48 w-full max-w-sm flex items-center justify-center overflow-hidden">
-                <span th:unless="${trilha.capa != null and !trilha.capa.isEmpty()}" class="text-gray-500">Capa da Trilha</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex gap-8">
-        <div class="w-2/3 bg-white p-6 rounded-lg shadow">
-            <h2 class="text-2xl font-semibold mb-4">Aulas</h2>
-            <div class="flex items-center gap-2 mb-6">
-                <span class="bg-[#1d3c73] text-white text-xs px-3 py-1 rounded-full font-medium">● <span th:text="${aulas != null ? aulas.size() : 0}">26</span> totais</span>
-                <span class="bg-[#65a603] text-white text-xs px-3 py-1 rounded-full font-medium">✓ <span>0</span> concluídas</span> </div>
-
-            <div class="relative border-l-2 border-gray-200 pl-6 space-y-6">
-                <th:block th:each="aula, iterStat : ${aulas}">
-                    <div class="relative">
-                        <div th:classappend="${iterStat.index < 2 ? 'bg-gray-600' : 'bg-gray-300'}"
-                             class="absolute -left-4 top-2 w-6 h-6 rounded-full flex items-center justify-center">
-                            <span th:if="${iterStat.index < 2}" class="text-white text-xs font-bold">✓</span>
-                            <span th:unless="${iterStat.index < 2}" class="text-gray-600 text-xs font-bold"></span>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-100">
-                            <h3 class="font-semibold text-lg text-gray-800" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h3>
-                            <p class="text-sm text-gray-600 mt-1" th:text="${aula.descricao}">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-                            <div class="text-right mt-3 text-sm text-gray-600 flex items-center justify-end gap-1">
-                                <a th:href="@{/aulas/detalhe/{id}(id=${aula.id})}" class="hover:underline font-medium">
-                                    Acessar
-                                    <span>↗</span>
-                                </a>
-                            </div>
-                        </div>
+            <div class="flex items-center gap-5">
+                <span class="text-gray-400 hover:text-brasfi-green cursor-pointer"><i class="fas fa-cog text-xl"></i></span>
+                <span class="text-gray-400 hover:text-brasfi-green cursor-pointer"><i class="fas fa-bell text-xl"></i></span>
+                <div class="flex items-center gap-3">
+                    <div class="bg-gray-200 border-2 border-dashed rounded-xl w-9 h-9"></div>
+                    <div class="text-sm">
+                        <span class="font-semibold text-dark-text block">Jéssica</span>
+                        <span class="text-light-text">Estudante</span>
                     </div>
-                </th:block>
+                </div>
+            </div>
+        </header>
 
-                <div th:if="${aulas.isEmpty()}" class="text-gray-500 text-center py-4">
-                    Nenhuma aula cadastrada para esta trilha ainda.
+        <div class="flex gap-8 mb-10">
+            <div class="w-2/3">
+                <a href="/trilhas/listar" class="text-light-text hover:text-dark-text flex items-center mb-4 text-sm font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i> Todas as Trilhas
+                </a>
+                <h1 class="text-4xl font-extrabold text-dark-text leading-tight mb-3" th:text="${trilha.titulo}">
+                    Fundamentos de Finanças Sustentáveis
+                </h1>
+                <p class="text-medium-text mb-5 text-base" th:text="${trilha.descricao}">
+                    Aprenda os conceitos essenciais de finanças sustentáveis, ESG e investimento consciente para gerar impacto positivo.
+                </p>
+                <div class="flex items-center text-sm text-medium-text">
+                    <span class="text-yellow-400 mr-1.5 flex items-center">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                    </span>
+                    <span class="mr-4 font-medium" th:text="'(' + (${trilha.inscritos != null ? trilha.inscritos.size() : 0}) + ')'">4.0 (32)</span>
+                    <span class="bg-[#1268a7] text-white px-3 py-1 rounded-full text-xs font-semibold mr-4" th:text="${trilha.eixoTematico != null ? trilha.eixoTematico.name() : 'SEM EIXO'}">Finanças</span>
+                    <span class="text-dark-text font-semibold">Duração: <span class="font-normal" th:text="${#numbers.formatDecimal(trilha.duracao, 1, 0) + 'hrs'}">3hrs</span></span>
+                </div>
+            </div>
+            <div class="w-1/3 flex-shrink-0">
+                <div th:if="${trilha.capa != null and !trilha.capa.isEmpty()}" class="rounded-xl w-full h-48 bg-cover bg-center" th:style="'background-image: url(' + ${trilha.capa} + ')'"></div>
+                <div th:unless="${trilha.capa != null and !trilha.capa.isEmpty()}" class="bg-gray-200 border-2 border-dashed rounded-xl w-full h-48 flex items-center justify-center text-gray-500">
+                    Capa da Trilha
                 </div>
             </div>
         </div>
 
-        <aside class="w-1/3 bg-gray-500 text-white p-6 rounded-lg shadow h-fit">
-            <h3 class="text-xl font-semibold mb-4">O que você vai aprender nesta trilha:</h3>
-            <ul class="list-disc list-inside text-gray-200 space-y-2">
-                <li th:each="topico : ${trilha.topicosDeAprendizado != null ? trilha.topicosDeAprendizado.split('\n') : null}"
-                    th:text="${topico}" class="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
-                <li th:if="${trilha.topicosDeAprendizado == null or trilha.topicosDeAprendizado.isEmpty()}" class="text-gray-200 text-sm">
-                    Nenhum tópico de aprendizado especificado.
-                </li>
-            </ul>
-        </aside>
-    </div>
-</main>
+        <div class="flex gap-8">
+            <div class="w-2/3">
+                <div class="flex items-center gap-4 mb-8">
+                    <h2 class="text-2xl font-bold text-dark-text">Aulas</h2>
+                    <div class="counters-container">
+                        <span class="bg-brasfi-blue text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                            <span th:text="${aulas != null ? aulas.size() : 0}">26</span> totais
+                        </span>
+                        <span class="bg-brasfi-green text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                            ✓ <span id="completedLessonsCount">0</span> concluídas
+                        </span>
+                    </div>
+                </div>
+
+                <div class="timeline-container relative">
+                    <div class="timeline-line"></div>
+
+                    <th:block th:each="aula, iterStat : ${aulas}">
+                        <div class="relative mb-6">
+                            <div th:classappend="${iterStat.index < 2 ? 'completed' : 'pending'}"
+                                 class="status-dot"
+                                 th:data-lesson-id="${aula.id}">
+                                <i th:if="${iterStat.index < 2}" class="fas fa-check text-white text-xs"></i>
+                            </div>
+                            <div class="lesson-card">
+                                <div class="lesson-card-content">
+                                    <h3 class="text-lg font-bold text-dark-text" th:text="${aula.titulo}">O que são Finanças Sustentáveis?</h3>
+                                    <p class="text-sm text-medium-text mt-1" th:text="${aula.descricao}">
+                                        Entenda o conceito de finanças sustentáveis e sua importância no contexto atual dos mercados financeiros.
+                                    </p>
+                                    <div class="card-divider"></div>
+                                    <div class="text-right">
+                                        <a th:href="@{/aulas/detalhe/{id}(id=${aula.id})}" class="text-brasfi-green font-semibold text-sm hover:underline flex items-center justify-end gap-1">
+                                            Acessar <i class="fas fa-arrow-right text-xs"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <div th:if="${aulas.isEmpty()}" class="text-gray-500 text-center py-4">
+                        Nenhuma aula cadastrada para esta trilha ainda.
+                    </div>
+                </div>
+            </div>
+
+            <aside class="w-1/3">
+                <div class="sidebar-sticky bg-card-bg p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-semibold mb-4 text-dark-text">O que você vai aprender nesta trilha:</h3>
+
+                    <div class="space-y-3">
+                        <th:block th:each="topico : ${trilha.topicosDeAprendizado != null and !trilha.topicosDeAprendizado.isEmpty() ? trilha.topicosDeAprendizado.split('\n') : null}">
+                            <div class="topic-card">
+                                <i class="fas fa-circle"></i>
+                                <span class="text-sm text-medium-text" th:text="${topico}">Conceitos fundamentais de finanças sustentáveis</span>
+                            </div>
+                        </th:block>
+                        <div th:if="${trilha.topicosDeAprendizado == null or trilha.topicosDeAprendizado.isEmpty()}" class="topic-card">
+                            <span class="text-sm text-medium-text">Nenhum tópico de aprendizado especificado.</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const completedLessonsSpan = document.getElementById('completedLessonsCount');
+        let completedLessonsCount = 0;
+
+        document.querySelectorAll('.status-dot').forEach(dot => {
+            if (dot.classList.contains('completed')) {
+                completedLessonsCount++;
+            }
+
+            dot.addEventListener('click', function() {
+                const isCompleted = this.classList.contains('completed');
+                if (isCompleted) {
+                    // If already completed, do nothing or allow toggling back to pending if desired
+                    // For now, it stays completed if clicked when completed
+                } else {
+                    this.classList.remove('pending');
+                    this.classList.add('completed');
+                    this.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
+                    completedLessonsCount++;
+                    completedLessonsSpan.textContent = completedLessonsCount;
+                }
+            });
+        });
+        completedLessonsSpan.textContent = completedLessonsCount; // Initialize count on load
+    });
+</script>
 </body>
 </html>
