@@ -55,7 +55,7 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
 ### 1. Clone o repositório
 Abra seu terminal e execute o comando:
 ```bash
-git clone https://github.com/gabsvelozo/WitchsJourney.git
+git clone https://github.com/claranevess/BRASFI.git
 ```
 2. Abra a pasta da BRASFI na sua IDE de preferência.
 3. Execute a aplicação, localize a classe principal chamada:
