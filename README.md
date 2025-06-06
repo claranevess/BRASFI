@@ -39,7 +39,7 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
 
 ## 🧷 Links importantes
 <p align="center">
-  <a href="https://exemplo.com/link1" target="_blank">
+  <a href="https://sites.google.com/cesar.school/projetos-3-g5/in%C3%ADcio" target="_blank">
     <img src="https://img.shields.io/badge/Google Sites-FFB300?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Acessar a Plataforma">
   </a>
   <a href="https://brasfi-conecta.onrender.com" target="_blank">
