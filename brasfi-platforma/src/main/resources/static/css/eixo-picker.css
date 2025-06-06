@@ -32,6 +32,7 @@
   opacity: 1;
   font-weight: 600;
   font-size: 1.05rem;
+  color: white;
 }
 
 /* Espaçador para centralizar */
@@ -46,7 +47,7 @@
   left: 0;
   width: 100%;
   height: 50px;
-  background: rgba(200, 200, 200, 0.25);
+  background: #65A603;
   border-radius: 0.75rem;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
