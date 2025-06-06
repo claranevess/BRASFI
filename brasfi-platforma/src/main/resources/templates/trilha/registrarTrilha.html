@@ -5,7 +5,7 @@
         </div>
 
         <div class="p-6 overflow-y-auto flex-grow">
-            <form id="novaTrilhaForm" th:action="@{/trilhas/registrar}" th:object="${trilha}" method="post" enctype="multipart/form-data">
+            <form id="novaTrilhaForm" th:action="@{/trilhas/registrar}" th:object="${trilhaFormDTO}" method="post" enctype="multipart/form-data">
                 <div class="mb-6">
                     <div class="flex items-center justify-center w-full">
                         <label for="dropzone-file" class="relative flex flex-col items-center justify-center w-full h-48 border-2 border-[#437312] rounded-lg cursor-pointer bg-[#437312] hover:bg-[#5a991a]">

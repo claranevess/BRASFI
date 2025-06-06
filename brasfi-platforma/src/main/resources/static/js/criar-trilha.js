@@ -7,7 +7,7 @@ let newTrilhaModal = null; // Variável para armazenar a referência ao modal
 async function loadNewTrilhaModal() {
     if (!newTrilhaModal) { // Carrega o modal apenas uma vez
         try {
-            const response = await fetch('/trilhas/criar-modal');
+            const response = await fetch('/trilhas/nova')
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

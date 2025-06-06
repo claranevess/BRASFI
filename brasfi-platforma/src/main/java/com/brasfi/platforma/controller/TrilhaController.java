@@ -3,6 +3,7 @@ package com.brasfi.platforma.controller;
 import com.brasfi.platforma.config.UserDetailsImpl;
 import com.brasfi.platforma.dto.AulaFormDTO;
 import com.brasfi.platforma.dto.MaterialFormDTO;
+import com.brasfi.platforma.dto.TrilhaFormDTO;
 import com.brasfi.platforma.model.Aula;
 import com.brasfi.platforma.model.EixoTematico;
 import com.brasfi.platforma.model.Trilha;
@@ -11,6 +12,7 @@ import com.brasfi.platforma.service.AulaService;
 import com.brasfi.platforma.service.TrilhaService;
 // Removed @Valid import as it's no longer directly on the list parameter
 import jakarta.validation.ConstraintViolation; // Import for ConstraintViolation
+import jakarta.validation.Valid;
 import jakarta.validation.Validator; // Import for Validator
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -52,108 +54,109 @@ public class TrilhaController {
     @Autowired
     private Validator validator;
 
+    public TrilhaController(TrilhaService trilhaService, AulaService aulaService, Validator validator) {
+        this.trilhaService = trilhaService;
+        this.aulaService = aulaService;
+        this.validator = validator;
+    }
+
     @GetMapping("/registrar")
     public String mostrarRegistroTrilhaForm(Model model) {
-        model.addAttribute("trilha", new Trilha());
-        List<AulaFormDTO> aulas = new ArrayList<>();
+        TrilhaFormDTO trilhaFormDTO = new TrilhaFormDTO();
         AulaFormDTO initialAula = new AulaFormDTO();
-        initialAula.getMateriais().add(new MaterialFormDTO()); // Add an initial material for the first aula
-        aulas.add(initialAula);
-        model.addAttribute("aulas", aulas);
+        initialAula.getMateriais().add(new MaterialFormDTO());
+        trilhaFormDTO.getAulas().add(initialAula); // Add to the DTO's list
+        model.addAttribute("trilhaFormDTO", trilhaFormDTO); // Add the single DTO to the model
         return "trilha/registrarTrilha";
     }
 
     @PostMapping("/registrar")
     public String registrarTrilha(
-            @ModelAttribute Trilha trilha,
-            @RequestParam("duracaoInput") String duracaoStr,
-            @RequestParam("capaFile") MultipartFile capaFile,
-            @ModelAttribute("aulas") List<AulaFormDTO> aulasForms, // REMOVED @Valid here
+            @Valid @ModelAttribute TrilhaFormDTO trilhaFormDTO, // <--- Single DTO for all binding
             BindingResult bindingResult,
             Model model
     ) {
-        // --- START: Manual Validation for aulasForms ---
-        // Removed the problematic line: bindingResult.getFieldErrors("aulas").forEach(bindingResult::removeBindingResult);
-        // Spring's BindingResult will typically not have detailed validation errors for the list itself
-        // when @Valid is removed. We are now explicitly adding them.
+        // --- Manual Validation (if @Valid on TrilhaFormDTO itself is not sufficient or desired) ---
+        // If you use @Valid on TrilhaFormDTO, Spring will populate bindingResult with errors
+        // from TrilhaFormDTO, AulaFormDTO, and MaterialFormDTO automatically.
+        // You might simplify or even remove this manual validation loop if Spring's
+        // built-in validation is sufficient.
 
+        // Example of adjusted manual validation:
         int aulaIndex = 0;
-        for (AulaFormDTO aulaForm : aulasForms) {
-            // Validate each AulaFormDTO instance
-            Set<ConstraintViolation<AulaFormDTO>> aulaViolations = validator.validate(aulaForm);
-            for (ConstraintViolation<AulaFormDTO> violation : aulaViolations) {
-                // Construct the field name to correctly map to Thymeleaf's expected format (e.g., "aulas[0].titulo")
-                String fieldName = "aulas[" + aulaIndex + "]." + violation.getPropertyPath().toString();
-                bindingResult.addError(new FieldError("aulas", fieldName, aulaForm, false, null, null, violation.getMessage()));
-            }
-
-            // Also validate nested MaterialFormDTOs
-            if (aulaForm.getMateriais() != null) {
-                int materialIndex = 0;
-                for (MaterialFormDTO materialForm : aulaForm.getMateriais()) {
-                    // IMPORTANT: Filter out completely empty material DTOs before validating them.
-                    // This prevents validation errors on "empty" rows that the user might have left blank.
-                    // The 'isEmpty()' check in MaterialFormDTO determines if both link and document are empty.
-                    if (materialForm.isEmpty()) {
-                        materialIndex++;
-                        continue; // Skip completely empty material blocks
-                    }
-
-                    Set<ConstraintViolation<MaterialFormDTO>> materialViolations = validator.validate(materialForm);
-                    for (ConstraintViolation<MaterialFormDTO> violation : materialViolations) {
-                        String fieldName = "aulas[" + aulaIndex + "].materiais[" + materialIndex + "]." + violation.getPropertyPath().toString();
-                        bindingResult.addError(new FieldError("aulas", fieldName, materialForm, false, null, null, violation.getMessage()));
-                    }
-                    materialIndex++;
+        // Line 81 in your original code, now potentially safer with a single DTO
+        if (trilhaFormDTO.getAulas() != null) { // Add null check for safety
+            for (AulaFormDTO aulaForm : trilhaFormDTO.getAulas()) {
+                Set<ConstraintViolation<AulaFormDTO>> aulaViolations = validator.validate(aulaForm);
+                for (ConstraintViolation<AulaFormDTO> violation : aulaViolations) {
+                    String fieldName = "aulas[" + aulaIndex + "]." + violation.getPropertyPath().toString();
+                    // Use "trilhaFormDTO" as the objectName to match the @ModelAttribute name
+                    bindingResult.addError(new FieldError("trilhaFormDTO", fieldName, aulaForm, false, null, null, violation.getMessage()));
                 }
-            }
-            aulaIndex++;
-        }
-        // --- END: Manual Validation ---
 
-        // Handle validation errors (including those added manually)
+                if (aulaForm.getMateriais() != null) {
+                    int materialIndex = 0;
+                    for (MaterialFormDTO materialForm : aulaForm.getMateriais()) {
+                        if (materialForm.isEmpty()) {
+                            materialIndex++;
+                            continue;
+                        }
+                        Set<ConstraintViolation<MaterialFormDTO>> materialViolations = validator.validate(materialForm);
+                        for (ConstraintViolation<MaterialFormDTO> violation : materialViolations) {
+                            String fieldName = "aulas[" + aulaIndex + "].materiais[" + materialIndex + "]." + violation.getPropertyPath().toString();
+                            bindingResult.addError(new FieldError("trilhaFormDTO", fieldName, materialForm, false, null, null, violation.getMessage()));
+                        }
+                        materialIndex++;
+                    }
+                }
+                aulaIndex++;
+            }
+        }
+        // --- END Manual Validation ---
+
+        // Handle validation errors
         if (bindingResult.hasErrors()) {
-            model.addAttribute("trilha", trilha);
-            model.addAttribute("aulas", aulasForms); // Repopulate form with submitted data
+            model.addAttribute("trilhaFormDTO", trilhaFormDTO); // Repopulate form with submitted data
             model.addAttribute("mensagemErro", "Erro de validação. Por favor, verifique os campos destacados.");
-            // In a real application, you'd map these errors to specific fields for better UX
-            return "trilha/registrarTrilha";
+            return "trilha/registrarTrilha"; // Return to the form view
         }
 
         try {
-            double duracao = parseDuracao(duracaoStr);
+            // Parse duration
+            double duracao = parseDuracao(trilhaFormDTO.getDuracaoInput());
+
+            // Create and populate Trilha entity from TrilhaFormDTO
+            Trilha trilha = new Trilha();
+            trilha.setId(trilhaFormDTO.getId()); // For update scenarios
+            trilha.setTitulo(trilhaFormDTO.getTitulo());
+            trilha.setDescricao(trilhaFormDTO.getDescricao());
+            trilha.setTopicosDeAprendizado(trilhaFormDTO.getTopicosDeAprendizado());
+            trilha.setEixoTematico(trilhaFormDTO.getEixoTematico());
             trilha.setDuracao(duracao);
 
             // Capa upload logic
-            if (capaFile != null && !capaFile.isEmpty()) {
-                String nomeArquivo = System.currentTimeMillis() + "_" + capaFile.getOriginalFilename();
+            if (trilhaFormDTO.getCapaFile() != null && !trilhaFormDTO.getCapaFile().isEmpty()) {
+                String nomeArquivo = System.currentTimeMillis() + "_" + trilhaFormDTO.getCapaFile().getOriginalFilename();
                 Path pastaUploads = Paths.get(uploadDir).toAbsolutePath().normalize();
                 Files.createDirectories(pastaUploads);
                 Path destino = pastaUploads.resolve(nomeArquivo);
-                capaFile.transferTo(destino.toFile());
+                trilhaFormDTO.getCapaFile().transferTo(destino.toFile());
                 trilha.setCapa("/" + uploadDir + "/" + nomeArquivo);
             }
 
-            if (trilha.getAulas() == null) {
-                trilha.setAulas(new ArrayList<>());
-            }
+            // If Trilha has an 'aulas' field (List<Aula>), initialize it here
+            // Note: You're currently using a ManyToMany for Trilha-Aula.
+            // You'll likely build the list of Aula entities and then set it on Trilha.
+            // Or let the aulaService handle the association.
+
+            // Save the main Trilha entity first to get an ID if it's new
             Trilha trilhaSalva = trilhaService.salvarTrilha(trilha);
 
             // Process and save each aula and its materials
-            if (aulasForms != null && !aulasForms.isEmpty()) {
-                for (AulaFormDTO aulaForm : aulasForms) {
-                    // Skip completely empty aula blocks (e.g., if user added and then cleared inputs)
+            if (trilhaFormDTO.getAulas() != null && !trilhaFormDTO.getAulas().isEmpty()) {
+                for (AulaFormDTO aulaForm : trilhaFormDTO.getAulas()) {
                     if (aulaForm.isEmpty()) {
                         continue;
-                    }
-                    // This check for title/link being empty is a fallback.
-                    // The @NotBlank on AulaFormDTO should ideally catch this first via manual validation.
-                    if (aulaForm.getTitulo() == null || aulaForm.getTitulo().trim().isEmpty() ||
-                            aulaForm.getLink() == null || aulaForm.getLink().trim().isEmpty()) {
-                        model.addAttribute("mensagemErro", "Erro: Título e link são obrigatórios para todas as aulas.");
-                        model.addAttribute("trilha", trilha);
-                        model.addAttribute("aulas", aulasForms);
-                        return "trilha/registrarTrilha";
                     }
 
                     Aula novaAula = new Aula();
@@ -162,18 +165,15 @@ public class TrilhaController {
                     novaAula.setLink(aulaForm.getLink());
                     novaAula.setDescricao(aulaForm.getDescricao());
 
-                    // Filter and prepare documents and links from MaterialFormDTOs
+                    // Prepare documents and links from MaterialFormDTOs
                     List<MultipartFile> documentosDaAula = new ArrayList<>();
                     List<String> linksDaAula = new ArrayList<>();
 
                     if (aulaForm.getMateriais() != null) {
                         for (MaterialFormDTO materialForm : aulaForm.getMateriais()) {
-                            // Filter out completely empty material blocks here again before saving.
-                            // This ensures that only relevant data is passed to the service layer.
                             if (materialForm.isEmpty()) {
                                 continue;
                             }
-
                             if (materialForm.getDocumento() != null && !materialForm.getDocumento().isEmpty()) {
                                 documentosDaAula.add(materialForm.getDocumento());
                             }
@@ -183,7 +183,7 @@ public class TrilhaController {
                         }
                     }
 
-                    // Call the service to save the aula and its materials
+                    // Call the service to save the aula and its materials, associating with trilhaSalva.getId()
                     aulaService.salvarAulaComTrilhaEspecifica(
                             novaAula,
                             trilhaSalva.getId(),
@@ -199,39 +199,40 @@ public class TrilhaController {
             return "redirect:/trilhas/listar";
         } catch (IOException e) {
             model.addAttribute("mensagemErro", "Erro de I/O ao processar arquivos: " + e.getMessage());
-            model.addAttribute("trilha", trilha);
-            model.addAttribute("aulas", aulasForms);
+            model.addAttribute("trilhaFormDTO", trilhaFormDTO); // Repopulate
             return "trilha/registrarTrilha";
         } catch (IllegalArgumentException e) {
             model.addAttribute("mensagemErro", e.getMessage());
-            model.addAttribute("trilha", trilha);
-            model.addAttribute("aulas", aulasForms);
+            model.addAttribute("trilhaFormDTO", trilhaFormDTO); // Repopulate
             return "trilha/registrarTrilha";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("mensagemErro", "Ocorreu um erro inesperado: " + e.getMessage());
-            model.addAttribute("trilha", trilha);
-            model.addAttribute("aulas", aulasForms);
+            model.addAttribute("trilhaFormDTO", trilhaFormDTO); // Repopulate
             return "trilha/registrarTrilha";
         }
     }
 
 
     private double parseDuracao(String duracaoStr) {
-        if (duracaoStr == null || duracaoStr.isEmpty()) {
-            throw new IllegalArgumentException("O campo de duração está vazio ou nulo.");
+        if (duracaoStr == null || duracaoStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("Duração não pode ser vazia.");
         }
         try {
-            String[] partes = duracaoStr.split(":");
-            if (partes.length != 2) {
-                throw new IllegalArgumentException("Formato inválido para duração. Use hh:mm.");
+            // If format is HH:mm
+            if (duracaoStr.contains(":")) {
+                String[] parts = duracaoStr.split(":");
+                if (parts.length == 2) {
+                    int hours = Integer.parseInt(parts[0]);
+                    int minutes = Integer.parseInt(parts[1]);
+                    return hours + (minutes / 60.0);
+                }
             }
-            int horas = Integer.parseInt(partes[0]);
-            int minutos = Integer.parseInt(partes[1]);
-
-            return horas + minutos / 60.0;
+            // Fallback for decimal format (e.g., "1.5" or "1,5")
+            String cleanedDuracao = duracaoStr.replace(',', '.');
+            return Double.parseDouble(cleanedDuracao);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Não foi possível converter duração para número: " + duracaoStr, e);
+            throw new IllegalArgumentException("Duração inválida. Formato esperado HH:mm ou número decimal.");
         }
     }
 
@@ -308,12 +309,27 @@ public class TrilhaController {
         return "trilha/listarTrilha";
     }
 
-    @GetMapping("/criar-modal")
-    public String getCriarTrilhaModal(Model model) {
-        model.addAttribute("trilha", new Trilha());
-        model.addAttribute("eixosTematicos", EixoTematico.values());
-        model.addAttribute("duracaoInput", "");
-        return "trilha/registrarTrilha";
+    // Assuming this is the method your JS's fetch() hits for the modal HTML
+    @GetMapping("/nova") // CHANGE THIS MAPPING
+    public String loadNewTrilhaModalContent(Model model) {
+        TrilhaFormDTO trilhaFormDTO = new TrilhaFormDTO();
+
+        if (trilhaFormDTO.getAulas() == null) {
+            trilhaFormDTO.setAulas(new ArrayList<>());
+        }
+        if (trilhaFormDTO.getAulas().isEmpty()) {
+            AulaFormDTO initialAula = new AulaFormDTO();
+            if (initialAula.getMateriais() == null) {
+                initialAula.setMateriais(new ArrayList<>());
+            }
+            if (initialAula.getMateriais().isEmpty()) {
+                initialAula.getMateriais().add(new MaterialFormDTO());
+            }
+            trilhaFormDTO.getAulas().add(initialAula);
+        }
+
+        model.addAttribute("trilhaFormDTO", trilhaFormDTO);
+        return "trilha/registrarTrilha"; // The name of the HTML template for the modal
     }
 
     @GetMapping("/editar-modal/{id}")
