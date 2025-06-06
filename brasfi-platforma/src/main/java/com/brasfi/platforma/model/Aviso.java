@@ -1,6 +1,7 @@
 package com.brasfi.platforma.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,7 +13,10 @@ public class Aviso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //id é gerado automaticamente
     private Long id;
+
+    @NotBlank(message = "O título é obrigatório")
     private String titulo;
+
     private String conteudo;
     private LocalDate data;
 
