@@ -40,7 +40,7 @@
         }
         .status-dot.completed {
             background-color: #65a603;
-            box-shadow: 0 0 0 2px #65a603; /* Changed to brasfi-green for completed */
+            box-shadow: 0 0 0 2px #65a603;
         }
         .status-dot.pending {
             background-color: white;
@@ -79,7 +79,7 @@
             top: 24px;
         }
         .topic-card {
-            border: 1px solid #E5E7EB; /* Changed from grey to input-border */
+            border: 1px solid #E5E7EB;
             border-radius: 8px;
             padding: 12px 15px;
             margin-bottom: 10px;
@@ -236,10 +236,7 @@
 
                     <th:block th:each="aula, iterStat : ${aulas}">
                         <div class="relative mb-6">
-                            <div th:classappend="${iterStat.index < 2 ? 'completed' : 'pending'}"
-                                 class="status-dot"
-                                 th:data-lesson-id="${aula.id}">
-                                <i th:if="${iterStat.index < 2}" class="fas fa-check text-white text-xs"></i>
+                            <div class="status-dot pending" th:data-lesson-id="${aula.id}">
                             </div>
                             <div class="lesson-card">
                                 <div class="lesson-card-content">
@@ -284,29 +281,42 @@
         </div>
     </main>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const completedLessonsSpan = document.getElementById('completedLessonsCount');
         let completedLessonsCount = 0;
 
         document.querySelectorAll('.status-dot').forEach(dot => {
-            if (dot.classList.contains('completed')) {
-                completedLessonsCount++;
+            const lessonId = dot.dataset.lessonId; // Get the lesson ID from the data attribute
+            const isLessonCompleted = localStorage.getItem(`lesson_${lessonId}_completed`);
+
+            if (isLessonCompleted === 'true') {
+                dot.classList.remove('pending'); // Remove pending if it was somehow added by default
+                dot.classList.add('completed');
+                dot.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
+                completedLessonsCount++; // Increment count for already completed lessons
+            } else {
+                dot.classList.add('pending'); // Ensure it's pending if not in localStorage
             }
 
             dot.addEventListener('click', function() {
-                const isCompleted = this.classList.contains('completed');
-                if (isCompleted) {
-                    // If already completed, do nothing or allow toggling back to pending if desired
-                    // For now, it stays completed if clicked when completed
+                const currentLessonId = this.dataset.lessonId;
+                const isCurrentlyCompleted = this.classList.contains('completed');
+
+                if (isCurrentlyCompleted) {
+                    this.classList.remove('completed');
+                    this.classList.add('pending');
+                    this.innerHTML = ''; // Remove the check icon
+                    completedLessonsCount--;
+                    localStorage.removeItem(`lesson_${currentLessonId}_completed`);
                 } else {
                     this.classList.remove('pending');
                     this.classList.add('completed');
                     this.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
                     completedLessonsCount++;
-                    completedLessonsSpan.textContent = completedLessonsCount;
+                    localStorage.setItem(`lesson_${currentLessonId}_completed`, 'true');
                 }
+                completedLessonsSpan.textContent = completedLessonsCount;
             });
         });
         completedLessonsSpan.textContent = completedLessonsCount; // Initialize count on load
