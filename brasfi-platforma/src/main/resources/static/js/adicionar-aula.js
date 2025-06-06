@@ -111,3 +111,4 @@ function resetForm() {
         document.getElementById('documentos').classList.remove('file-chosen');
     }
 }
+

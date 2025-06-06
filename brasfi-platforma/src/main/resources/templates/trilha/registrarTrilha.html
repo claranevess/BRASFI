@@ -146,6 +146,7 @@
                                        class="w-full border-b-2 border-gray-300 p-2 focus:ring-0 outline-none font-semibold text-lg" required/>
                             </div>
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
                                 <div class="border border-green-600 p-4 rounded-lg flex flex-col">
                                     <label for="linkAula-0" class="flex text-lg items-center text-gray-700 font-medium mb-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
@@ -156,10 +157,11 @@
                                     </label>
                                     <input type="url" id="linkAula-0" name="aulas[0].link" placeholder="Cole o link do vídeo..."
                                            class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4" required>
-                                    <div id="videoPreviewContainer-0" class="w-full bg-gray-200 rounded-md flex items-center justify-center relative" style="min-height: 180px;">
-                                        <span class="text-gray-500">Pré-visualização</span>
-                                    </div>
+                                    <label class="text-gray-700 font-medium mb-2">Pré-visualização</label> <div id="videoPreviewContainer-0" class="w-full bg-gray-200 rounded-md flex items-center justify-center relative video-preview-placeholder" style="min-height: 180px;">
+                                    <span class="text-gray-500">Pré-visualização</span>
                                 </div>
+                                </div>
+
                                 <div class="border border-green-600 p-4 rounded-lg flex flex-col">
                                     <label for="descricaoAula-0" class="flex text-lg items-center text-gray-700 font-medium mb-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-600" viewBox="0 0 19 15" fill="none">
