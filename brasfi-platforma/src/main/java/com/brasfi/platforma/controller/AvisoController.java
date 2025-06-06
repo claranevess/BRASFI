@@ -50,11 +50,25 @@ public class AvisoController {
 
 
     @GetMapping("/dashboard/adm")
-    public String mostrarDashboard(Model model) {
+    public String mostrarDashboard(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            User user = userService.getUserByUsername(username); // Certifique-se que retorna um user
+            if (user != null) {
+                model.addAttribute("nomeUsuario", user.getNome()); // AQUI envia o nome pro HTML
+            }
+        }
         return "visaoAdmQuadroAvisos";
     }
     @GetMapping("/dashboard/estudante")
-    public String mostrarDashboardEstudante(Model model) {
-        return "visaoEstQuadroAvisos";
+    public String mostrarDashboardEstudante(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            User user = userService.getUserByUsername(username);
+            if (user != null) {
+                model.addAttribute("nomeUsuario", user.getNome());
+            }
+        }
+        return "visaoEstQuadroAvisos"; // nome da sua página HTML de estudante
     }
 }
