@@ -10,15 +10,13 @@
 
                 <div class="mb-6">
                     <div class="flex items-center justify-center w-full">
-                        <label for="dropzone-file"
-                               class="relative flex flex-col items-center justify-center w-full h-48 border-2 border-[#437312] rounded-lg cursor-pointer bg-[#437312] hover:bg-[#5a991a]">
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            </div>
+                        <label for="dropzone-file" class="relative flex flex-col items-center justify-center w-full h-48 border-2 border-[#437312] rounded-lg cursor-pointer bg-[#437312] hover:bg-[#5a991a]">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6"></div>
                             <span class="absolute bottom-4 right-4 flex items-center gap-1 bg-[#FFFFFF] font-light text-[#437312] px-3 py-1 rounded hover:bg-blue-700">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#437312" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21" />
-                                    <circle cx="9.5" cy="8" r="1.5" fill="#FFFFFF" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21"/>
+                                    <circle cx="9.5" cy="8" r="1.5" fill="#FFFFFF"/>
                                 </svg>
                                 Upload de Capa
                             </span>
@@ -35,17 +33,17 @@
                     <div class="w-full md:w-1/2 space-y-4">
                         <div class="mb-4">
                             <div class="flex gap-4 items-start">
-                                <label class="w-40 flex items-center gap-2 text-left cursor-pointer pt-2">
+                                <label class="w-60 flex items-center gap-2 text-left cursor-pointer pt-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#437312" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-tag">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z" />
+                                        <path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                        <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z"/>
                                     </svg>
                                     Eixo Temático
                                 </label>
                                 <div class="flex-grow relative">
                                     <button id="togglePickerEixo" type="button"
-                                            class="flex items-center gap-2 bg-white border border-[#437312] rounded p-2 hover:bg-gray-100 w-full justify-between text-left">
+                                            class="flex items-center gap-2 bg-white border border-[#437312] rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left w-full">
                                         <span id="buttonTextEixo" class="text-gray-700">Selecionar...</span>
                                         <span class="text-sm">▼</span>
                                     </button>
@@ -64,20 +62,17 @@
 
                         <div class="mb-4 relative z-20" id="duration-container">
                             <div class="flex items-center gap-4">
-                                <label class="w-40 flex items-center gap-2 text-left cursor-pointer select-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                         viewBox="0 0 24 24" fill="none" stroke="#437312"
-                                         stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
-                                         class="icon icon-tabler icon-tabler-clock">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <circle cx="12" cy="12" r="9" />
-                                        <path d="M12 7v5l3 3" />
+                                <label class="w-60 flex items-center gap-2 text-left cursor-pointer select-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#437312" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-clock">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <circle cx="12" cy="12" r="9"/>
+                                        <path d="M12 7v5l3 3"/>
                                     </svg>
                                     Duração
                                 </label>
                                 <div class="flex-grow relative">
                                     <button id="togglePicker" type="button"
-                                            class="flex items-center gap-2 bg-white border border-[#437312] rounded p-2 hover:bg-gray-100 w-full justify-between text-left">
+                                            class="flex items-center gap-2 bg-white border border-[#437312] rounded p-2 hover:bg-gray-100 min-w-[284px] justify-between text-left">
                                         <span id="buttonText" class="text-gray-700">Selecionar...</span>
                                         <span class="text-sm">▼</span>
                                     </button>
@@ -101,38 +96,37 @@
                             <label for="descricao" class="flex items-center gap-2 cursor-pointer select-none mb-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#437312" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-align-left">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M4 6l16 0" />
-                                    <path d="M4 12l10 0" />
-                                    <path d="M4 18l14 0" />
+                                    <path d="M4 6l16 0"/>
+                                    <path d="M4 12l10 0"/>
+                                    <path d="M4 18l14 0"/>
                                 </svg>
                                 Descrição da Trilha
                             </label>
-                            <textarea id="descricao" th:field="*{descricao}" placeholder="Conte um pouco sobre a trilha..." class="block w-full h-32 border border-[#437312] rounded p-4 resize-none" rows="4"></textarea>
+                            <textarea id="descricao" th:field="*{descricao}" placeholder="Conte um pouco sobre a trilha..." class="block w-full border border-[#437312] rounded p-4 resize-none" rows="4"></textarea>
                         </div>
                     </div>
 
-                    <div class="w-full md:w-1/2">
-                        <div class="mb-4 h-full">
-                            <label for="topicosDeAprendizado" class="flex items-center gap-2 cursor-pointer select-none mb-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#437312" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-list">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M9 6l11 0" />
-                                    <path d="M9 12l11 0" />
-                                    <path d="M9 18l11 0" />
-                                    <path d="M5 6l0 .01" />
-                                    <path d="M5 12l0 .01" />
-                                    <path d="M5 18l0 .01" />
-                                </svg>
-                                Tópicos de Aprendizado
-                            </label>
-                            <textarea id="topicosDeAprendizado" th:field="*{topicosDeAprendizado}" placeholder="Digite o que será aprendido..." class="block w-full h-32 border border-[#437312] rounded p-4 resize-none" rows="9"></textarea>
-                        </div>
+                    <div class="w-1/2 mb-4 flex flex-col h-full">
+                        <label for="topicosDeAprendizado" class="flex items-center gap-2 cursor-pointer select-none mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#437312" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-list">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M9 6l11 0"/>
+                                <path d="M9 12l11 0"/>
+                                <path d="M9 18l11 0"/>
+                                <path d="M5 6l0 .01"/>
+                                <path d="M5 12l0 .01"/>
+                                <path d="M5 18l0 .01"/>
+                            </svg>
+                            Tópicos de Aprendizado
+                        </label>
+                        <textarea id="topicosDeAprendizado" th:field="*{topicosDeAprendizado}" class="block w-full border border-[#437312] rounded p-2" rows="9"></textarea>
                     </div>
                 </div>
+                <!-- Seção de Aulas (Dentro do mesmo formulário ou pode ser separado) -->
                 <div class="bg-[#1268A7] p-12 rounded-2xl">
                     <h2 class="font-semibold text-white text-center text-3xl">Aulas desta trilha</h2>
-                    <div id="aulasContainer" class="mt-6 space-y-6">
-                        <div class="bg-white rounded-2xl p-6 aula-bloco">
+                    <div class="mt-6 space-y-6">
+                        <div class="bg-white rounded-2xl p-6">
                             <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#437312">
                                     <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
@@ -146,6 +140,7 @@
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Link da Aula -->
                                 <div class="border border-green-600 p-4 rounded-lg flex flex-col">
                                     <label for="linkAula" class="flex text-lg items-center text-gray-700 font-medium mb-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
@@ -155,15 +150,16 @@
                                         Link da Aula
                                     </label>
                                     <input type="url" id="linkAula" name="linkAula" placeholder="Cole o link do vídeo..."
-                                           class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4">
+                                           class="w-full p-2 border border-[#437312] rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4">
                                     <div id="videoPreviewContainer" class="w-full bg-gray-200 rounded-md flex items-center justify-center relative" style="min-height: 180px;">
                                         <span class="text-gray-500">Pré-visualização</span>
                                     </div>
                                 </div>
 
+                                <!-- Descrição da Aula -->
                                 <div class="border border-green-600 p-4 rounded-lg flex flex-col">
                                     <label for="descricaoAula" class="flex text-lg items-center text-gray-700 font-medium mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-600" viewBox="0 0 19 15" fill="none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-[#437312]" viewBox="0 0 19 15" fill="none">
                                             <path d="M14.0885 13.0421H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             <path d="M17.7899 9.34073H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             <path d="M14.0885 5.6394H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -172,10 +168,11 @@
                                         Descrição da Aula
                                     </label>
                                     <textarea id="descricaoAula" name="descricaoAula" rows="5" placeholder="Descreva o conteúdo da aula..."
-                                              class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 flex-grow"></textarea>
+                                              class="w-full p-2 border border-[#437312] rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 flex-grow"></textarea>
                                 </div>
                             </div>
 
+                            <!-- Materiais de Apoio -->
                             <div class="mt-6 border border-green-600 p-4 rounded-lg">
                                 <div class="text-gray-700 text-lg font-medium mb-4">
                                     <div class="flex items-baseline mb-1">
@@ -191,16 +188,16 @@
                                     <div>
                                         <label for="linkApoio" class="block text-gray-600 text-sm font-semibold mb-1">Links Externos</label>
                                         <input type="url" id="linkApoio" name="linkApoio" placeholder="https://..."
-                                               class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                                               class="w-full p-2 border border-[#437312] rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
                                     </div>
 
-                                    <div>
+                                    <div class="flex items-center">
                                         <label for="documentosApoio" class="block text-gray-600 text-sm font-semibold mb-1">Documentos</label>
                                         <label class="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:text-blue-800">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="#437312">
                                                 <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                             </svg>
-                                            <span>Upload de Arquivos</span>
+                                            <span class="ml-2 text-[#65A603]">Fazer Upload de Arquivos</span>
                                             <input type="file" id="documentosApoio" name="documentosApoio" multiple class="hidden">
                                         </label>
                                     </div>
@@ -217,14 +214,13 @@
                 </div>
             </form>
         </div>
-
         <div class="p-4 bg-gray-50 border-t border-gray-200 rounded-b-lg sticky bottom-0 z-10">
             <div class="flex justify-end space-x-4 mt-8">
                 <button type="button" id="closeModal" class="px-10 py-2 border border-red-500 text-red-500 rounded-md font-bold hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400">
-                    Cancelar
+                Cancelar
                 </button>
-                <button type="submit" form="editarTrilhaForm" class="px-10 py-2 bg-[#65A603] text-white rounded-md font-semibold hover:bg-[#65A603] focus:outline-none focus:ring-2 focus:ring-green-500">
-                    Salvar
+                <button type="submit" form="editarTrilhaForm"  class="px-10 py-2 bg-[#65A603] text-white rounded-md font-semibold hover:bg-[#65A603] focus:outline-none focus:ring-2 focus:ring-green-500">
+                Salvar
                 </button>
             </div>
         </div>
