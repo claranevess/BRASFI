@@ -1,5 +1,7 @@
 package com.brasfi.platforma.config;
 
+import com.brasfi.platforma.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,8 +15,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class SecurityConfig {
 
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomSuccessHandler customSuccessHandler) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -31,15 +34,15 @@ public class SecurityConfig {
                                 "/*.jpg",
                                 "/favicon-brasfi.png",
                                 "/h2-console/**",
-                                "/aulas/*/concluir" // permite PATCH para concluir aula
+                                "/aulas/*/concluir"
                         ).permitAll()
-                        .requestMatchers("/").authenticated() // exige login
+                        .requestMatchers("/").authenticated()
                         .requestMatchers("/trilhas/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler(customSuccessHandler) // <- agora OK!
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -62,6 +65,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 
     @Bean
