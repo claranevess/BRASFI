@@ -61,7 +61,7 @@ public class UserController {
 
         if (tipo == TipoUsuario.ESTUDANTE) {
             userService.atualizarTipoUsuario(userId, TipoUsuario.ESTUDANTE.name());
-            return "redirect:/";
+            return "redirect:/avisos/dashboard/estudante";
         } else if (tipo == TipoUsuario.ADMINISTRADOR) {
             userService.atualizarTipoUsuario(userId, TipoUsuario.ADMINISTRADOR.name());
 
@@ -103,7 +103,7 @@ public class UserController {
         System.out.println("==== UserController: Resultado da validação (isValid): " + isValid + " ====");
 
         if (isValid) {
-            return "redirect:/"; // Código válido
+            return "redirect:/avisos/dashboard/adm"; // Código válido
         } else {
             return "redirect:/validarCodigo?userId=" + userId + "&error=true";
         }
