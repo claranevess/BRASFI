@@ -119,88 +119,104 @@
                                 </svg>
                                 Tópicos de Aprendizado
                             </label>
-                            <textarea id="topicosDeAprendizado" th:field="*{topicosDeAprendizado}" placeholder="Digite o que será aprendido..."
+                            <textarea id="topicosDeAprendizado" th:field="*{topicosDeAprendizado}" rows="9" placeholder="Digite o que será aprendido..."
                                       class="block w-full h-32 border border-[#437312] rounded p-4 resize-none"></textarea>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-[#1268A7] p-12 rounded-2xl ">
+                <div class="bg-[#1268A7] p-12 rounded-2xl">
                     <h2 class="font-semibold text-white text-center text-3xl">Aulas desta trilha</h2>
-                    <div class="bg-white rounded-2xl p-6 mt-6">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#437312">
-                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
-                            </svg>
-                            Adicionar Aula
-                        </h3>
-
-                        <div class="mb-4">
-                            <input placeholder="Digite o nome da aula..." type="text" name="aulaTitulo"
-                                   class="w-full border-b-2 border-gray-300 p-2 focus:ring-0 outline-none font-semibold text-lg"/>
-                        </div>
-
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="border border-green-600 p-4 rounded-lg flex flex-col">
-                                <label for="linkAula" class="flex text-lg items-center text-gray-700 font-medium mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
-                                        <path d="M10.0811 19.2147C15.0091 19.2147 19.004 15.2198 19.004 10.2918C19.004 5.36379 15.0091 1.36887 10.0811 1.36887C5.15312 1.36887 1.1582 5.36379 1.1582 10.2918C1.1582 15.2198 5.15312 19.2147 10.0811 19.2147Z" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M8.29688 6.72261L13.6506 10.2918L8.29688 13.8609V6.72261Z" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <div id="aulasContainer" class="mt-6 space-y-6">
+                        <div class="bg-white rounded-2xl p-6 aula-bloco" data-aula-index="0">
+                            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#437312">
+                                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                                </svg>
+                                Aula <span class="aula-numero">#1</span>
+                                <button type="button" class="remove-aula-btn ml-auto text-red-500 hover:text-red-700 hidden">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
-                                    Link da Aula
-                                </label>
-                                <input type="url" id="linkAula" name="linkAula" placeholder="Cole o link do vídeo..."
-                                       class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4">
-                                <div id="videoPreviewContainer" class="w-full bg-gray-200 rounded-md flex items-center justify-center relative" style="min-height: 180px;">
-                                    <span class="text-gray-500">Pré-visualização</span>
+                                </button>
+                            </h3>
+
+                            <div class="mb-4">
+                                <input placeholder="Digite o nome da aula..." type="text" name="aulas[0].titulo"
+                                       class="w-full border-b-2 border-gray-300 p-2 focus:ring-0 outline-none font-semibold text-lg" required/>
+                            </div>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div class="border border-green-600 p-4 rounded-lg flex flex-col">
+                                    <label for="linkAula-0" class="flex text-lg items-center text-gray-700 font-medium mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-1" viewBox="0 0 20 21" fill="none">
+                                            <path d="M10.0811 19.2147C15.0091 19.2147 19.004 15.2198 19.004 10.2918C19.004 5.36379 15.0091 1.36887 10.0811 1.36887C5.15312 1.36887 1.1582 5.36379 1.1582 10.2918C1.1582 15.2198 5.15312 19.2147 10.0811 19.2147Z" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M8.29688 6.72261L13.6506 10.2918L8.29688 13.8609V6.72261Z" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Link da Aula
+                                    </label>
+                                    <input type="url" id="linkAula-0" name="aulas[0].link" placeholder="Cole o link do vídeo..."
+                                           class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 mb-4" required>
+                                    <div id="videoPreviewContainer-0" class="w-full bg-gray-200 rounded-md flex items-center justify-center relative" style="min-height: 180px;">
+                                        <span class="text-gray-500">Pré-visualização</span>
+                                    </div>
+                                </div>
+                                <div class="border border-green-600 p-4 rounded-lg flex flex-col">
+                                    <label for="descricaoAula-0" class="flex text-lg items-center text-gray-700 font-medium mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-600" viewBox="0 0 19 15" fill="none">
+                                            <path d="M14.0885 13.0421H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M17.7899 9.34073H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M14.0885 5.6394H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M17.7899 1.93802H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Descrição da Aula
+                                    </label>
+                                    <textarea id="descricaoAula-0" name="aulas[0].descricao" rows="5" placeholder="Descreva o conteúdo da aula..."
+                                              class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 flex-grow"></textarea>
                                 </div>
                             </div>
 
-                            <div class="border border-green-600 p-4 rounded-lg flex flex-col">
-                                <label for="descricaoAula" class="flex text-lg items-center text-gray-700 font-medium mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-600" viewBox="0 0 19 15" fill="none">
-                                        <path d="M14.0885 13.0421H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M17.7899 9.34073H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M14.0885 5.6394H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M17.7899 1.93802H1.13379" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    Descrição da Aula
-                                </label>
-                                <textarea id="descricaoAula" name="descricaoAula" rows="5" placeholder="Descreva o conteúdo da aula..."
-                                          class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 flex-grow"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 border border-green-600 p-4 rounded-lg">
-                            <div class="text-gray-700 text-lg font-medium mb-4">
-                                <div class="flex items-baseline mb-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-2" viewBox="0 0 20 21" fill="none">
-                                        <path d="M18.1688 10.023L10.2942 17.8976C9.32947 18.8623 8.02105 19.4042 6.65676 19.4042C5.29247 19.4042 3.98406 18.8623 3.01936 17.8976C2.05466 16.9329 1.5127 15.6245 1.5127 14.2602C1.5127 12.8959 2.05466 11.5875 3.01936 10.6228L10.894 2.74815C11.5371 2.10502 12.4094 1.74371 13.3189 1.74371C14.2284 1.74371 15.1007 2.10502 15.7438 2.74815C16.387 3.39129 16.7483 4.26356 16.7483 5.17309C16.7483 6.08262 16.387 6.95489 15.7438 7.59803L7.86066 15.4726C7.53909 15.7942 7.10296 15.9749 6.64819 15.9749C6.19343 15.9749 5.75729 15.7942 5.43572 15.4726C5.11416 15.1511 4.9335 14.7149 4.9335 14.2602C4.9335 13.8054 5.11416 13.3693 5.43572 13.0477L12.7105 5.78147" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span>Materiais de Apoio</span>
+                            <div class="mt-6 border border-green-600 p-4 rounded-lg">
+                                <div class="text-gray-700 text-lg font-medium mb-4 flex justify-between items-center">
+                                    <div class="flex items-baseline mb-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 mr-2" viewBox="0 0 20 21" fill="none">
+                                            <path d="M18.1688 10.023L10.2942 17.8976C9.32947 18.8623 8.02105 19.4042 6.65676 19.4042C5.29247 19.4042 3.98406 18.8623 3.01936 17.8976C2.05466 16.9329 1.5127 15.6245 1.5127 14.2602C1.5127 12.8959 2.05466 11.5875 3.01936 10.6228L10.894 2.74815C11.5371 2.10502 12.4094 1.74371 13.3189 1.74371C14.2284 1.74371 15.1007 2.10502 15.7438 2.74815C16.387 3.39129 16.7483 4.26356 16.7483 5.17309C16.7483 6.08262 16.387 6.95489 15.7438 7.59803L7.86066 15.4726C7.53909 15.7942 7.10296 15.9749 6.64819 15.9749C6.19343 15.9749 5.75729 15.7942 5.43572 15.4726C5.11416 15.1511 4.9335 14.7149 4.9335 14.2602C4.9335 13.8054 5.11416 13.3693 5.43572 13.0477L12.7105 5.78147" stroke="#437312" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span>Materiais de Apoio</span>
+                                    </div>
+                                    <button type="button" class="add-material-btn px-3 py-1 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600 text-sm">
+                                        + Material
+                                    </button>
                                 </div>
                                 <p class="text-sm text-gray-500 font-normal">Anexe materiais complementares para esta aula</p>
-                            </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="linkApoio" class="block text-gray-600 text-sm font-semibold mb-1">Links Externos</label>
-                                    <input type="url" id="linkApoio" name="linkApoio" placeholder="https://..."
-                                           class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
-                                </div>
-
-                                <div>
-                                    <label for="documentosApoio" class="block text-gray-600 text-sm font-semibold mb-1">Documentos</label>
-                                    <label class="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:text-blue-800">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="#437312">
-                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <span>Upload de Arquivos</span>
-                                        <input type="file" id="documentosApoio" name="documentosApoio" multiple class="hidden">
-                                    </label>
+                                <div class="materiais-aula-container space-y-4 mt-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 material-bloco" data-material-index="0">
+                                        <div>
+                                            <label for="material-linkApoio-0-0" class="block text-gray-600 text-sm font-semibold mb-1">Links Externos</label>
+                                            <input type="url" id="material-linkApoio-0-0" name="aulas[0].materiais[0].linkApoio" placeholder="https://..."
+                                                   class="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                                        </div>
+                                        <div>
+                                            <label for="material-documento-0-0" class="block text-gray-600 text-sm font-semibold mb-1">Documentos</label>
+                                            <label class="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:text-blue-800">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="#437312">
+                                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                                </svg>
+                                                <span>Upload de Arquivos</span>
+                                                <input type="file" id="material-documento-0-0" name="aulas[0].materiais[0].documento" class="hidden">
+                                            </label>
+                                        </div>
+                                        <button type="button" class="remove-material-btn col-span-2 text-red-500 hover:text-red-700 hidden">Remover Material</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="flex justify-center mt-6">
+                        <button type="button" id="addAulaBtn"
+                                class="px-6 py-2 bg-[#437312] text-white rounded-md font-semibold hover:bg-[#5a991a] focus:outline-none focus:ring-2 focus:ring-green-500">
+                            Adicionar Outra Aula
+                        </button>
                     </div>
                 </div>
 

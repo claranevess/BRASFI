@@ -1,18 +1,24 @@
 package com.brasfi.platforma.controller;
 
 import com.brasfi.platforma.config.UserDetailsImpl;
+import com.brasfi.platforma.dto.AulaFormDTO;
+import com.brasfi.platforma.dto.MaterialFormDTO;
 import com.brasfi.platforma.model.Aula;
 import com.brasfi.platforma.model.EixoTematico;
-import com.brasfi.platforma.model.Material;
 import com.brasfi.platforma.model.Trilha;
-import com.brasfi.platforma.repository.MaterialRepository;
+import com.brasfi.platforma.repository.MaterialRepository; // MaterialRepository still here, but not used in this specific path
 import com.brasfi.platforma.service.AulaService;
 import com.brasfi.platforma.service.TrilhaService;
+// Removed @Valid import as it's no longer directly on the list parameter
+import jakarta.validation.ConstraintViolation; // Import for ConstraintViolation
+import jakarta.validation.Validator; // Import for Validator
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError; // Import for FieldError
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,9 +28,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Set; // Used for Set<ConstraintViolation>
 
 
 @Controller
@@ -38,14 +43,23 @@ public class TrilhaController {
     private AulaService aulaService;
 
     @Autowired
-    private MaterialRepository materialRepository;
+    private MaterialRepository materialRepository; // This autowired dependency is fine
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    // Inject the Validator for manual validation
+    @Autowired
+    private Validator validator;
+
     @GetMapping("/registrar")
     public String mostrarRegistroTrilhaForm(Model model) {
         model.addAttribute("trilha", new Trilha());
+        List<AulaFormDTO> aulas = new ArrayList<>();
+        AulaFormDTO initialAula = new AulaFormDTO();
+        initialAula.getMateriais().add(new MaterialFormDTO()); // Add an initial material for the first aula
+        aulas.add(initialAula);
+        model.addAttribute("aulas", aulas);
         return "trilha/registrarTrilha";
     }
 
@@ -54,84 +68,154 @@ public class TrilhaController {
             @ModelAttribute Trilha trilha,
             @RequestParam("duracaoInput") String duracaoStr,
             @RequestParam("capaFile") MultipartFile capaFile,
-            @RequestParam(value = "aulaTitulo", required = false) String aulaTitulo,
-            @RequestParam(value = "linkAula", required = false) String linkAula,
-            @RequestParam(value = "descricaoAula", required = false) String descricaoAula,
-            @RequestParam(value = "documentosApoio", required = false) MultipartFile[] documentosApoio,
-            @RequestParam(value = "linkApoio", required = false) String[] linkApoioAulas // Renamed for clarity vs. method param
-    ) throws IOException {
-        double duracao = parseDuracao(duracaoStr);
-        trilha.setDuracao(duracao);
-        if (capaFile != null && !capaFile.isEmpty()) {
-            String nomeArquivo = System.currentTimeMillis() + "_" + capaFile.getOriginalFilename();
-            Path pastaUploads = Paths.get(uploadDir).toAbsolutePath().normalize();
-            Files.createDirectories(pastaUploads);
-            Path destino = pastaUploads.resolve(nomeArquivo);
-            capaFile.transferTo(destino.toFile());
-            trilha.setCapa("/" + uploadDir + "/" + nomeArquivo);
-        }
-        if (trilha.getAulas() == null) {
-            trilha.setAulas(new ArrayList<>());
-        }
-        Trilha trilhaSalva = trilhaService.salvarTrilha(trilha);
+            @ModelAttribute("aulas") List<AulaFormDTO> aulasForms, // REMOVED @Valid here
+            BindingResult bindingResult,
+            Model model
+    ) {
+        // --- START: Manual Validation for aulasForms ---
+        // Removed the problematic line: bindingResult.getFieldErrors("aulas").forEach(bindingResult::removeBindingResult);
+        // Spring's BindingResult will typically not have detailed validation errors for the list itself
+        // when @Valid is removed. We are now explicitly adding them.
 
-        if (aulaTitulo != null && !aulaTitulo.trim().isEmpty()) {
-            Aula novaAula = new Aula();
-            novaAula.setTitulo(aulaTitulo);
-            novaAula.setLink(linkAula);
-            novaAula.setDescricao(descricaoAula);
-
-            if (novaAula.getTrilhas() == null) {
-                novaAula.setTrilhas(new ArrayList<>());
+        int aulaIndex = 0;
+        for (AulaFormDTO aulaForm : aulasForms) {
+            // Validate each AulaFormDTO instance
+            Set<ConstraintViolation<AulaFormDTO>> aulaViolations = validator.validate(aulaForm);
+            for (ConstraintViolation<AulaFormDTO> violation : aulaViolations) {
+                // Construct the field name to correctly map to Thymeleaf's expected format (e.g., "aulas[0].titulo")
+                String fieldName = "aulas[" + aulaIndex + "]." + violation.getPropertyPath().toString();
+                bindingResult.addError(new FieldError("aulas", fieldName, aulaForm, false, null, null, violation.getMessage()));
             }
-            if (novaAula.getMateriais() == null) {
-                novaAula.setMateriais(new ArrayList<>());
+
+            // Also validate nested MaterialFormDTOs
+            if (aulaForm.getMateriais() != null) {
+                int materialIndex = 0;
+                for (MaterialFormDTO materialForm : aulaForm.getMateriais()) {
+                    // IMPORTANT: Filter out completely empty material DTOs before validating them.
+                    // This prevents validation errors on "empty" rows that the user might have left blank.
+                    // The 'isEmpty()' check in MaterialFormDTO determines if both link and document are empty.
+                    if (materialForm.isEmpty()) {
+                        materialIndex++;
+                        continue; // Skip completely empty material blocks
+                    }
+
+                    Set<ConstraintViolation<MaterialFormDTO>> materialViolations = validator.validate(materialForm);
+                    for (ConstraintViolation<MaterialFormDTO> violation : materialViolations) {
+                        String fieldName = "aulas[" + aulaIndex + "].materiais[" + materialIndex + "]." + violation.getPropertyPath().toString();
+                        bindingResult.addError(new FieldError("aulas", fieldName, materialForm, false, null, null, violation.getMessage()));
+                    }
+                    materialIndex++;
+                }
             }
-            novaAula.getTrilhas().add(trilhaSalva);
+            aulaIndex++;
+        }
+        // --- END: Manual Validation ---
 
-            trilhaSalva.getAulas().add(novaAula);
+        // Handle validation errors (including those added manually)
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("trilha", trilha);
+            model.addAttribute("aulas", aulasForms); // Repopulate form with submitted data
+            model.addAttribute("mensagemErro", "Erro de validação. Por favor, verifique os campos destacados.");
+            // In a real application, you'd map these errors to specific fields for better UX
+            return "trilha/registrarTrilha";
+        }
 
-            Aula aulaSalva = aulaService.salvarAula(novaAula);
+        try {
+            double duracao = parseDuracao(duracaoStr);
+            trilha.setDuracao(duracao);
 
-            if (documentosApoio != null && documentosApoio.length > 0) {
-                for (MultipartFile arquivo : documentosApoio) {
-                    if (arquivo != null && !arquivo.isEmpty()) {
-                        try {
-                            String nomeOriginal = arquivo.getOriginalFilename();
-                            String aulaMaterialUploadDir = uploadDir + "/aulas/";
-                            Path pastaUploadsAula = Paths.get(aulaMaterialUploadDir).toAbsolutePath().normalize();
-                            Files.createDirectories(pastaUploadsAula);
+            // Capa upload logic
+            if (capaFile != null && !capaFile.isEmpty()) {
+                String nomeArquivo = System.currentTimeMillis() + "_" + capaFile.getOriginalFilename();
+                Path pastaUploads = Paths.get(uploadDir).toAbsolutePath().normalize();
+                Files.createDirectories(pastaUploads);
+                Path destino = pastaUploads.resolve(nomeArquivo);
+                capaFile.transferTo(destino.toFile());
+                trilha.setCapa("/" + uploadDir + "/" + nomeArquivo);
+            }
 
-                            Path destino = pastaUploadsAula.resolve(nomeOriginal);
-                            arquivo.transferTo(destino.toFile());
+            if (trilha.getAulas() == null) {
+                trilha.setAulas(new ArrayList<>());
+            }
+            Trilha trilhaSalva = trilhaService.salvarTrilha(trilha);
 
-                            Material material = new Material();
-                            material.setNomeOriginal(nomeOriginal);
-                            material.setCaminhoArquivo("/" + aulaMaterialUploadDir + nomeOriginal);
-                            material.setAula(aulaSalva);
-                            materialRepository.save(material);
-                            System.out.println("DEBUG: Arquivo de aula salvo: " + nomeOriginal);
-                        } catch (IOException e) {
-                            System.err.println("ERRO: Falha ao salvar o arquivo de apoio da aula '" + arquivo.getOriginalFilename() + "': " + e.getMessage());
+            // Process and save each aula and its materials
+            if (aulasForms != null && !aulasForms.isEmpty()) {
+                for (AulaFormDTO aulaForm : aulasForms) {
+                    // Skip completely empty aula blocks (e.g., if user added and then cleared inputs)
+                    if (aulaForm.isEmpty()) {
+                        continue;
+                    }
+                    // This check for title/link being empty is a fallback.
+                    // The @NotBlank on AulaFormDTO should ideally catch this first via manual validation.
+                    if (aulaForm.getTitulo() == null || aulaForm.getTitulo().trim().isEmpty() ||
+                            aulaForm.getLink() == null || aulaForm.getLink().trim().isEmpty()) {
+                        model.addAttribute("mensagemErro", "Erro: Título e link são obrigatórios para todas as aulas.");
+                        model.addAttribute("trilha", trilha);
+                        model.addAttribute("aulas", aulasForms);
+                        return "trilha/registrarTrilha";
+                    }
+
+                    Aula novaAula = new Aula();
+                    novaAula.setId(aulaForm.getId()); // For update scenarios
+                    novaAula.setTitulo(aulaForm.getTitulo());
+                    novaAula.setLink(aulaForm.getLink());
+                    novaAula.setDescricao(aulaForm.getDescricao());
+
+                    // Filter and prepare documents and links from MaterialFormDTOs
+                    List<MultipartFile> documentosDaAula = new ArrayList<>();
+                    List<String> linksDaAula = new ArrayList<>();
+
+                    if (aulaForm.getMateriais() != null) {
+                        for (MaterialFormDTO materialForm : aulaForm.getMateriais()) {
+                            // Filter out completely empty material blocks here again before saving.
+                            // This ensures that only relevant data is passed to the service layer.
+                            if (materialForm.isEmpty()) {
+                                continue;
+                            }
+
+                            if (materialForm.getDocumento() != null && !materialForm.getDocumento().isEmpty()) {
+                                documentosDaAula.add(materialForm.getDocumento());
+                            }
+                            if (materialForm.getLinkApoio() != null && !materialForm.getLinkApoio().trim().isEmpty()) {
+                                linksDaAula.add(materialForm.getLinkApoio());
+                            }
                         }
                     }
+
+                    // Call the service to save the aula and its materials
+                    aulaService.salvarAulaComTrilhaEspecifica(
+                            novaAula,
+                            trilhaSalva.getId(),
+                            documentosDaAula.toArray(new MultipartFile[0]),
+                            linksDaAula.toArray(new String[0])
+                    );
                 }
+                model.addAttribute("mensagem", "Trilha e aulas salvas com sucesso!");
+            } else {
+                model.addAttribute("mensagem", "Trilha salva com sucesso! Nenhuma aula inicial adicionada.");
             }
 
-            if (linkApoioAulas != null && linkApoioAulas.length > 0) {
-                for (String link : linkApoioAulas) {
-                    if (link != null && !link.isBlank()) {
-                        Material material = new Material();
-                        material.setLinkApoio(link.trim());
-                        material.setAula(aulaSalva);
-                        materialRepository.save(material);
-                        System.out.println("DEBUG: Link de aula salvo: " + link.trim());
-                    }
-                }
-            }
+            return "redirect:/trilhas/listar";
+        } catch (IOException e) {
+            model.addAttribute("mensagemErro", "Erro de I/O ao processar arquivos: " + e.getMessage());
+            model.addAttribute("trilha", trilha);
+            model.addAttribute("aulas", aulasForms);
+            return "trilha/registrarTrilha";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("mensagemErro", e.getMessage());
+            model.addAttribute("trilha", trilha);
+            model.addAttribute("aulas", aulasForms);
+            return "trilha/registrarTrilha";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("mensagemErro", "Ocorreu um erro inesperado: " + e.getMessage());
+            model.addAttribute("trilha", trilha);
+            model.addAttribute("aulas", aulasForms);
+            return "trilha/registrarTrilha";
         }
-        return "redirect:/trilhas/listar";
     }
+
 
     private double parseDuracao(String duracaoStr) {
         if (duracaoStr == null || duracaoStr.isEmpty()) {
@@ -280,5 +364,4 @@ public class TrilhaController {
         model.addAttribute("aulas", trilha.getAulas());
         return "trilha/detalheTrilha";
     }
-
 }
