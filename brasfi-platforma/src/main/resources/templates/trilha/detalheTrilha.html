@@ -101,6 +101,130 @@
             margin-left: auto;
             gap: 12px;
         }
+        /* Style for the completion message (kept but hidden by modal logic) */
+        .completion-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's above everything else */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px); /* Initial state for animation */
+            opacity: 0; /* Initial state for animation */
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0); /* Final state for animation */
+            opacity: 1; /* Final state for animation */
+        }
+
+        .modal-icon {
+            color: #65a603; /* Brasfi Green */
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1F2937; /* Dark text */
+            margin-bottom: 10px;
+        }
+
+        .modal-message {
+            font-size: 16px;
+            color: #4B5563; /* Medium text */
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .modal-rating {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .modal-rating i {
+            color: #F59E0B; /* Pending yellow - used for active stars */
+            font-size: 32px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .modal-rating i:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-button {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none; /* Ensure no default button border */
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .modal-button.primary {
+            background-color: #65a603; /* Brasfi Green */
+            color: white;
+        }
+
+        .modal-button.primary:hover {
+            background-color: #528402; /* Brasfi Green Darker */
+        }
+
+        .modal-button.secondary {
+            background-color: #E5E7EB; /* Light gray */
+            color: #4B5563; /* Medium text */
+        }
+
+        .modal-button.secondary:hover {
+            background-color: #D1D5DB; /* Input border gray */
+        }
     </style>
     <script>
         tailwind.config = {
@@ -223,12 +347,16 @@
                     <h2 class="text-2xl font-bold text-dark-text">Aulas</h2>
                     <div class="counters-container">
                         <span class="bg-brasfi-blue text-white text-xs px-2.5 py-1 rounded-full font-medium">
-                            <span th:text="${aulas != null ? aulas.size() : 0}">26</span> totais
+                            <span id="totalLessonsCount" th:text="${aulas != null ? aulas.size() : 0}">26</span> totais
                         </span>
                         <span class="bg-brasfi-green text-white text-xs px-2.5 py-1 rounded-full font-medium">
                             ✓ <span id="completedLessonsCount">0</span> concluídas
                         </span>
                     </div>
+                </div>
+
+                <div id="completionMessage" class="completion-message">
+                    Parabéns! Você completou todas as aulas desta trilha! 🎉
                 </div>
 
                 <div class="timeline-container relative">
@@ -281,24 +409,76 @@
         </div>
     </main>
 </div>
+
+<div id="completionModal" class="modal-overlay">
+    <div class="modal-content">
+        <i class="fas fa-check-circle modal-icon"></i>
+        <h3 class="modal-title">Muito bem!</h3>
+        <p class="modal-message" th:text="'Você completou todas as aulas de &quot;' + ${trilha.titulo} + '&quot;. Deseja avaliar a trilha?'">
+            Você completou todas as aulas de "Fundamentos de Finanças Sustentáveis". Deseja avaliar a trilha?
+        </p>
+        <div class="modal-rating" id="modalRatingStars">
+            <i class="far fa-star" data-value="1"></i>
+            <i class="far fa-star" data-value="2"></i>
+            <i class="far fa-star" data-value="3"></i>
+            <i class="far fa-star" data-value="4"></i>
+            <i class="far fa-star" data-value="5"></i>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button primary" id="evaluateNowButton">Avaliar agora</button>
+            <button class="modal-button secondary" id="evaluateLaterButton">Avaliar depois</button>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const completedLessonsSpan = document.getElementById('completedLessonsCount');
-        let completedLessonsCount = 0;
+        const totalLessonsSpan = document.getElementById('totalLessonsCount');
+        const completionMessage = document.getElementById('completionMessage'); // Keep for previous text message if desired, or remove
+        const completionModal = document.getElementById('completionModal');
+        const evaluateNowButton = document.getElementById('evaluateNowButton');
+        const evaluateLaterButton = document.getElementById('evaluateLaterButton');
+        const modalRatingStars = document.getElementById('modalRatingStars');
 
+        let completedLessonsCount = 0;
+        const totalLessons = parseInt(totalLessonsSpan.textContent);
+        let selectedRating = 0; // To store the user's selected rating
+
+        // Function to update the completed lessons counter and show/hide modal
+        function updateCompletionStatus() {
+            completedLessonsSpan.textContent = completedLessonsCount;
+
+            if (completedLessonsCount === totalLessons && totalLessons > 0) {
+                // Ensure the previous text message is hidden
+                if (completionMessage) {
+                    completionMessage.style.display = 'none';
+                }
+                completionModal.classList.add('active'); // Show the modal
+            } else {
+                // Ensure both are hidden if not all lessons are complete
+                if (completionMessage) {
+                    completionMessage.style.display = 'none';
+                }
+                completionModal.classList.remove('active'); // Hide the modal
+            }
+        }
+
+        // Initialize status dots on page load
         document.querySelectorAll('.status-dot').forEach(dot => {
-            const lessonId = dot.dataset.lessonId; // Get the lesson ID from the data attribute
+            const lessonId = dot.dataset.lessonId;
             const isLessonCompleted = localStorage.getItem(`lesson_${lessonId}_completed`);
 
             if (isLessonCompleted === 'true') {
-                dot.classList.remove('pending'); // Remove pending if it was somehow added by default
+                dot.classList.remove('pending');
                 dot.classList.add('completed');
                 dot.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
-                completedLessonsCount++; // Increment count for already completed lessons
+                completedLessonsCount++;
             } else {
-                dot.classList.add('pending'); // Ensure it's pending if not in localStorage
+                dot.classList.add('pending');
             }
 
+            // Add click event listener to each status dot
             dot.addEventListener('click', function() {
                 const currentLessonId = this.dataset.lessonId;
                 const isCurrentlyCompleted = this.classList.contains('completed');
@@ -306,7 +486,7 @@
                 if (isCurrentlyCompleted) {
                     this.classList.remove('completed');
                     this.classList.add('pending');
-                    this.innerHTML = ''; // Remove the check icon
+                    this.innerHTML = '';
                     completedLessonsCount--;
                     localStorage.removeItem(`lesson_${currentLessonId}_completed`);
                 } else {
@@ -316,10 +496,66 @@
                     completedLessonsCount++;
                     localStorage.setItem(`lesson_${currentLessonId}_completed`, 'true');
                 }
-                completedLessonsSpan.textContent = completedLessonsCount;
+                updateCompletionStatus(); // Call this function after each click
             });
         });
-        completedLessonsSpan.textContent = completedLessonsCount; // Initialize count on load
+
+        // Handle rating stars interaction
+        if (modalRatingStars) { // Check if modalRatingStars exists before adding event listener
+            modalRatingStars.addEventListener('click', (event) => {
+                if (event.target.tagName === 'I') {
+                    const clickedValue = parseInt(event.target.dataset.value);
+                    selectedRating = clickedValue;
+
+                    // Update star visuals
+                    Array.from(modalRatingStars.children).forEach(star => {
+                        const starValue = parseInt(star.dataset.value);
+                        if (starValue <= selectedRating) {
+                            star.classList.remove('far'); // Empty star
+                            star.classList.add('fas');    // Filled star
+                        } else {
+                            star.classList.remove('fas');
+                            star.classList.add('far');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Handle "Avaliar agora" button click
+        if (evaluateNowButton) { // Check if button exists
+            evaluateNowButton.addEventListener('click', () => {
+                if (selectedRating > 0) {
+                    // Here you would typically send the rating to your backend
+                    console.log(`User rated the trilha: ${selectedRating} stars.`);
+                    alert(`Obrigado por avaliar com ${selectedRating} estrela(s)!`);
+                    completionModal.classList.remove('active'); // Hide the modal
+                    // Optionally, disable rating for this trilha in localStorage
+                    // Make sure to correctly pass trilha.id from Thymeleaf here
+                    // For demonstration, using a placeholder, replace with actual ID:
+                    localStorage.setItem(`trilha_[[${trilha.id}]]_rated`, 'true');
+                } else {
+                    alert('Por favor, selecione uma avaliação de estrelas.');
+                }
+            });
+        }
+
+
+        // Handle "Avaliar depois" button click
+        if (evaluateLaterButton) { // Check if button exists
+            evaluateLaterButton.addEventListener('click', () => {
+                completionModal.classList.remove('active'); // Just hide the modal
+            });
+        }
+
+        // Initial update when the page loads
+        updateCompletionStatus();
+
+        // Optional: Prevent modal from showing if already rated (if you implement the localStorage part)
+        // This part needs the trilha.id to be dynamically inserted by Thymeleaf as well.
+        // if (localStorage.getItem(`trilha_[[${trilha.id}]]_rated`) === 'true') {
+        //     completionModal.classList.remove('active');
+        // }
     });
 </script>
 </body>
