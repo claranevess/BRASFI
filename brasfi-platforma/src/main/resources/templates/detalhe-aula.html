@@ -58,8 +58,10 @@
         <input type="hidden" id="aulaId" th:value="${aula.id}">
         <div class="flex justify-between items-center mb-6">
             <nav class="text-sm text-gray-600 space-x-1">
-                <span>Trilhas</span> >
-                <span>Fundamentos de Finanças Sustentáveis</span> >
+                <a th:href="@{/trilhas/listar}" class="text-gray-600 hover:text-gray-500">Trilhas</a>
+                <span> > </span>
+                <a th:href="@{/trilhas/{id}(id=${aula.trilhas[0].id})}" class="text-gray-600 hover:text-gray-500" th:text="${aula.trilhas[0].titulo}">Fundamentos de Finanças Sustentáveis</a>
+                <span> > </span>
                 <span class="font-semibold text-brasfi-green-light" th:text="${aula.titulo}">Nome da Aula</span>
             </nav>
             <div class="flex items-center space-x-2">
