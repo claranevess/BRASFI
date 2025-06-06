@@ -49,7 +49,7 @@ Junte-se à comunidade BRASFI e inicie sua jornada de impacto, liderança e apre
     <img src="https://img.shields.io/badge/Figma-1D3C73?style=for-the-badge&logo=github&logoColor=white" alt="Contribuir">
   </a>
   <a href="https://drive.google.com/file/d/1MO1dJAaOV1l_LVFfqIA3c-jK03SrP3g6/view" target="_blank">
-    <img alt="Diagrama de Classes">
+    <img src="https://img.shields.io/badge/Site do projeto-437312?style=for-the-badge&logo=bookstack&logoColor=white" alt="Diagrama de Classes">
   </a>
 </p>
 
