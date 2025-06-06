@@ -10,9 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
         .avatar-group > img {
             margin-left: -8px; /* Overlap avatars */
             border: 2px solid white; /* Border for avatars */
@@ -79,7 +76,7 @@
         }
     </script>
 </head>
-<body class="flex min-h-screen bg-white">
+<body class="flex min-h-screen bg-gray-100 font-sans">
 
 <div class="w-64 bg-sidebar-bg p-6 shadow-md flex flex-col justify-between">
     <div>
@@ -93,11 +90,11 @@
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="/trilhas/listar" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
+                    <a href="#" class="flex items-center p-3 rounded-lg text-medium-gray-text hover:bg-gray-100 hover:text-dark-text transition duration-200">
                         <i class="fas fa-route mr-3 text-lg"></i> Trilhas
                     </a>
                 </li>
-                <li class="mb-2"> <a href="/chat" class="flex items-center p-3 rounded-lg bg-[#65a603] text-white font-semibold transition duration-200">
+                <li class="mb-2"> <a href="#" class="flex items-center p-3 rounded-lg bg-[#65a603] text-white font-semibold transition duration-200">
                     <i class="fas fa-users mr-3 text-lg text-white"></i> Grupos
                 </a>
                 </li>
@@ -122,7 +119,7 @@
     <div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-3">
     </div>
 
-    <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm mb-8 sticky top-0 z-40">
+    <div class="flex justify-between items-center p-5 rounded-xl mb-8 sticky top-0 z-40">
         <div class="relative flex-1 mr-4">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
             <input type="text" placeholder="Pesquise na plataforma..." class="w-full pl-12 pr-4 py-3 rounded-lg border border-input-border focus:outline-none focus:ring-1 focus:ring-brasfi-blue">
@@ -675,7 +672,6 @@
         membersListElement.innerHTML = '<li class="text-center text-gray-500 p-4">Carregando membros...</li>';
         try {
             const response = await fetch(/*[[@{'/grupo/'}]]*/'/grupo/' + groupId + '/membros');
-            console.log("Attempting to fetch from URL:", url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
